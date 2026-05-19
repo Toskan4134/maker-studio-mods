@@ -1,4 +1,4 @@
-# Maker Studio Mods Registry
+# Maker Studio Mods Registry 
 
 This repository is the curated index for the Maker Studio mod marketplace. The editor fetches `index.json` from this repo to populate the in-app Marketplace.
 

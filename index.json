@@ -1,6 +1,19 @@
 {
-  "$schema": "./schema/index.schema.json",
-  "schemaVersion": 1,
-  "updatedAt": "2026-05-19T00:00:00Z",
-  "mods": []
+    "$schema": "./schema/index.schema.json",
+    "schemaVersion": 1,
+    "updatedAt": "2026-05-19T13:00:00Z",
+    "mods": [
+        {
+            "id": "com.toskan4134.discord-rich-presence",
+            "name": "Discord Rich Presence",
+            "author": "Toskan4134",
+            "repo": "Toskan4134/ms-discord-rich-presence",
+            "description": "Shows your current project, map, and elapsed time in Discord status.",
+            "tags": ["discord", "integration", "status"],
+            "homepage": "https://x.com/Toskan4134",
+            "apiVersion": "1.0.0",
+            "pubkey": "RWTWbH+fJBQ8BmM/+0Ixf+t5IzEvQ04Jw0DvMdq89whiWW6CveNLkiKd",
+            "permissions": ["ui.toasts"]
+        }
+    ]
 }
