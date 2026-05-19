@@ -66,9 +66,18 @@ jobs:
           ' | while IFS=$'\t' read -r id repo pubkey; do
               echo ""
               echo "Checking $id ($repo)..."
-              # Fetch the latest release. Returns 404 if no releases.
+
+              # Repo must exist + be public.
+              if ! gh api "repos/$repo" >/dev/null 2>&1; then
+                echo "  FAIL: repos/$repo not found (typo'd name? still private?)."
+                fail=1
+                continue
+              fi
+
+              # Repo must have a published release. Drafts / prereleases don't count.
               if ! release=$(gh api "repos/$repo/releases/latest" 2>/dev/null); then
-                echo "  WARN: $repo has no published releases yet (acceptable if pre-release)."
+                echo "  FAIL: repos/$repo has no published release. Publish v1.0.0 (or whichever tag) on GitHub before listing."
+                fail=1
                 continue
               fi
               tag=$(echo "$release" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).tag_name)")

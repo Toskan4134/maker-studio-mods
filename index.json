@@ -1,7 +1,7 @@
 {
     "$schema": "./schema/index.schema.json",
     "schemaVersion": 1,
-    "updatedAt": "2026-05-19T13:00:00Z",
+    "updatedAt": "2026-05-19T14:00:00Z",
     "mods": [
         {
             "id": "com.toskan4134.discord-rich-presence",
