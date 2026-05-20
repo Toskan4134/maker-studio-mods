@@ -56,6 +56,7 @@ The `ctx` argument passed to `activate(ctx)` provides:
 ### Editor accessors
 
 ```ts
+editor.version(): string
 editor.activeMapId(): number | null
 editor.activeLayerIndex(): number
 editor.activeTool(): string

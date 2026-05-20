@@ -331,6 +331,8 @@ export interface CancellableResult {
 // ============================================================================
 
 export interface EditorCtx {
+  /** The running editor's version (e.g. "0.1.1") — same value the updater checks. */
+  version(): string;
   activeMapId(): number | null;
   activeLayerIndex(): number;
   activeTool(): string;
