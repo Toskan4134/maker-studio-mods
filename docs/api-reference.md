@@ -41,6 +41,7 @@ All mod capabilities are reached through it.
 ## `editor`
 
 ```ts
+editor.version(): string
 editor.activeMapId(): number | null
 editor.activeLayerIndex(): number
 editor.activeTool(): string
@@ -59,8 +60,10 @@ editor.viewOptions(): { showGrid, showCollision, showEvents, showDim, darkMode }
 editor.setViewOptions(opts: Partial<{...}>): void
 ```
 
-Read/write access to editor state. `setTool` accepts both built-in
-ids (`"brush"`, `"eraser"`, ...) and ids of mod-registered tools.
+Read/write access to editor state. `version()` returns the running editor's
+version (e.g. `"0.1.1"`) — the same value the in-app updater compares against;
+handy for gating features behind a `minStudioVersion`. `setTool` accepts both
+built-in ids (`"brush"`, `"eraser"`, ...) and ids of mod-registered tools.
 
 `setBrushSize` changes the active brush size. `setBrushTileProperties` merges
 partial props into the current brush. `setViewport` pans/zooms the active map.
