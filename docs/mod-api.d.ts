@@ -28,7 +28,7 @@
 export interface ModManifest {
   /** Reverse-DNS unique id, e.g. "com.author.mod". */
   id: string;
-  /** Human-readable name shown in the Mod Manager. */
+  /** The mod's display name, shown in the Mod Manager and Marketplace. */
   name: string;
   /** Mod version (semver). */
   version: string;

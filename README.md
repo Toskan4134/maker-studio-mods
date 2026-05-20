@@ -38,7 +38,7 @@ Example entry:
 ```json
 {
   "id": "com.author.modname",
-  "name": "Human Name",
+  "name": "My Mod",
   "author": "Author Name",
   "repo": "owner/repo-name",
   "description": "One sentence pitch.",
