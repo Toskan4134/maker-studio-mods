@@ -59,10 +59,10 @@ ctx.map.writeTile(mapId, layer, x, y, newTileId, "paint");
 
 ```js
 const info = ctx.map.info(mapId);
-// { width, height, layers: [...] }
+// { id, name, width, height, tilesetId, layerCount }
 
 const layers = ctx.map.layers(mapId);
-// [{ index, name, visible, ... }]
+// [{ index, name, visible, opacity, kind }]
 ```
 
 ## Read tileset data
@@ -82,7 +82,7 @@ ctx.tools.registerTool({
   icon: "✦",
   onActivate() { /* tool selected */ },
   onDeactivate() { /* tool deselected */ },
-  onPointerDown(ev) { /* ev: { mapId, layer, x, y, button } */ },
+  onPointerDown(ev) { /* ev: { mapId, tileX, tileY, layerIndex, buttons, shiftKey, ctrlKey, altKey } */ },
   onPointerMove(ev) { /* ... */ },
   onPointerUp(ev) { /* ... */ },
 });

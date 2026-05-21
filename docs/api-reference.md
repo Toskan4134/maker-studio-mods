@@ -703,7 +703,7 @@ Query and modify the editor's keyboard shortcuts. `KeybindInfo` contains `action
 
 `onChanged` subscribes to any keybind change (from the settings dialog or other mods). Returns a `Disposable`.
 
-Built-in action IDs include: `tool.brush`, `tool.eraser`, `tool.fill`, `tool.rectangle`, `tool.eyedropper`, `tool.select`, `view.toggleGrid`, `view.toggleCollision`, `view.toggleEvents`, `view.toggleDim`, `brush.sizeUp`, `brush.sizeDown`, `brush.rotateCW`, `brush.rotateCCW`, `zoom.in`, `zoom.out`, `layer.select1`–`layer.select9`, `edit.save`, `edit.saveShadow`, `edit.undo`, `edit.redo`, `edit.selectAll`, `edit.deselect`, `edit.copy`, `edit.paste`, `dev.toggleDevTools`.
+Built-in action IDs include: `tool.brush`, `tool.eraser`, `tool.fill`, `tool.rectangle`, `tool.eyedropper`, `tool.select`, `tool.pan`, `view.toggleGrid`, `view.toggleCollision`, `view.toggleDim`, `brush.sizeUp`, `brush.sizeDown`, `brush.rotateCW`, `brush.rotateCCW`, `zoom.in`, `zoom.out`, `layer.select1`–`layer.select9`, `edit.save`, `edit.saveAll`, `edit.saveShadow`, `edit.undo`, `edit.redo`, `edit.selectAll`, `edit.deselect`, `edit.copy`, `edit.paste`, `edit.cut`, `app.runGame`, `dev.toggleDevTools`. Call `ctx.keybinds.list()` for the full set.
 
 ### Lifecycle
 

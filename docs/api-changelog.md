@@ -37,7 +37,8 @@ The `ctx` argument passed to `activate(ctx)` provides:
 | `editor`     | Active map / layer / tool / brush / viewport / view options state |
 | `map`        | Read and write tiles, query layers, selection, CRUD maps, undo grouping |
 | `tileset`    | Tileset images, tile properties, create/delete tilesets |
-| `shadow`     | Shadow layer list, visibility, CRUD |
+| `shadow`     | Shadow layer list, visibility, CRUD, setOpacity, generateFromTiles |
+| `fog`        | Fog layer list, visibility, CRUD, setOpacity, setConfig |
 | `events`     | RMXP-style events: list, get, getFull, create, delete, move, rename, update |
 | `tools`      | Register custom editing tools |
 | `menu`       | Add menu items (with isChecked, isEnabled) |

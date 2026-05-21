@@ -63,7 +63,7 @@ Common problems and how to fix them.
 **Symptom**: `ctx.ui.registerPanel(...)` was called but no panel is visible.
 
 1. **Panels start in the default position** — check the edges of the editor window. It may be docked but collapsed.
-2. **Use `defaultPosition`** — set it to `"left"`, `"right"`, `"bottom"`, or `"center"`.
+2. **Use `defaultPosition`** — set it to `"left"`, `"right"`, `"below"`, or `"above"`.
 3. **Check the console** — if `render(host)` throws, the panel content is empty but the tab should still appear.
 4. **Unique id required** — if another mod (or the same mod reloaded) registered the same panel id, the second registration is silently ignored.
 
