@@ -16,6 +16,18 @@ First public API. Includes the full modding surface for the 1.0 release.
 
 ### Additions since initial release
 
+- **`ctx.events.registerCommand(def): Disposable`** — register a custom RMXP
+  event command. It appears on a dedicated puzzle-icon mod page (`🧩1`, `🧩2`, …; 24 per page)
+  in the event-command picker and edits through a native declarative form
+  (`ModCommandDef` / `ModCommandField` / `ModCommandParams` / `CoordinateValue`
+  types). The form builds a plain code-355 Script command from `def.script(params)`
+  that runs in-game directly — no dispatcher — and `def.parse` recovers params so
+  it stays re-editable. Field types: `number`, `text`, `select`, `checkbox`,
+  `switch`, `variable`, `coordinate` (Transfer-Player Direct/Variables source),
+  `record` (`recordKind`), `event`, `graphic` (`subfolder`), `audio` (`category`);
+  any field can set `disabled` / `hidden` predicates `(params) => boolean`.
+  Omitting `fields` gives a freeform script textarea. Mod commands can be
+  favourited (the ★ tab tracks them by registry key). Additive, non-breaking.
 - **`ctx.selectors`** — Promise-based modal pickers that mount the editor's stock selector dialogs. Methods: `pickActor`, `pickClass`, `pickSkill`, `pickItem`, `pickWeapon`, `pickArmor`, `pickEnemy`, `pickTroop`, `pickState`, `pickAnimation`, `pickCommonEvent`, `pickEntity`, `pickSwitch`, `pickVariable`, `pickMap`, `pickEvent`, `pickTileset`, `pickAudio`, `pickGraphic`, `pickKeyboardButton`. Each resolves to the picked value or `null` on cancel. Additive, non-breaking.
 - **`ctx.projectData`** — Read-only access to project-wide RPG record lists (actors, classes, skills, items, weapons, armors, enemies, troops, states, animations, common events) plus switch/variable name arrays and the map info list. Additive, non-breaking.
 - **`PublicRpgRecord`, `PublicRecordKind`, `EntityPickResult`, `AudioPickResult`, `GraphicPickResult`, `KeyboardButtonPickResult`, `SelectorExtra`, `SelectorOpts`, `AudioCategory`, `SelectorsCtx`, `ProjectDataCtx` interfaces** — exported from `src/mod-api/types.ts` for type-safe consumers.

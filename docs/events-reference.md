@@ -92,3 +92,16 @@ Mods can emit and listen to the standard events freely. There is no
 sandboxing in v1 — all mods share the same bus. Use the `commands` API
 (via `ctx.commands.register/execute`) for direct request/response patterns
 where the bus would be awkward.
+
+## Custom event commands (not bus events)
+
+Distinct from the editor event **bus** above, a mod can also register a custom
+**RMXP event command** that map makers insert into event pages — see
+[`events.registerCommand`](./api-reference.md). These are not emitted on the bus;
+they are stored on the map and run in-game.
+
+Each mod command is saved as a standard RMXP Script command (code 355) whose
+`parameters[0]` is the literal Ruby that the command's `script(params)` returns
+(e.g. `pbCameraScrollTo(0, -4)`). This keeps the map's `.rxdata` round-tripping
+unchanged, passes `validateEvent` (355 is a known code), and runs in-game like
+any other event script — there is no runtime dispatcher or handler to register.

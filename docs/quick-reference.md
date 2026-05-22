@@ -187,6 +187,32 @@ ctx.commands.register("my-mod.do-thing", async (arg) => {
 const result = await ctx.commands.execute("other-mod.do-thing", arg);
 ```
 
+## Register a custom event command
+
+```js
+ctx.events.registerCommand({
+  id: "cameraScrollTo",
+  name: "Camera Scroll To",
+  fields: [
+    { type: "coordinate", key: "target", label: "Target tile", showMapSelector: true },
+    { type: "checkbox", key: "useSpeed", label: "Set speed" },
+    { type: "number", key: "speed", label: "Speed", min: 1, default: 4, hidden: (p) => !p.useSpeed },
+  ],
+  // The form builds a plain Script command; this literal Ruby runs in-game.
+  script: (p) => `pbCameraScrollTo(${p.target.x | 0}, ${p.target.y | 0}${p.useSpeed ? `, ${p.speed | 0}` : ""})`,
+  // parse() recovers params so the command stays named + re-editable.
+  parse: (t) => { const m = /^pbCameraScrollTo\((-?\d+), (-?\d+)(?:, (\d+))?\)$/.exec(t);
+    return m ? { target: { mode: "direct", mapId: 0, x: +m[1], y: +m[2], varMapId: 1, varX: 1, varY: 1 }, useSpeed: m[3] != null, speed: +m[3] || 4 } : null; },
+  summary: (p) => `(${p.target.x}, ${p.target.y})`,
+});
+// Omit `fields` for a freeform script command (params.script).
+// Field types: number, text, select, checkbox, switch, variable,
+//   coordinate (Transfer-Player Direct/Variables source), record (recordKind),
+//   event, graphic (subfolder), audio (category). Any field: disabled/hidden(params).
+// Appears on a puzzle-icon mod page (🧩1, 🧩2, …) in the picker; stored as code-355
+// Script command running the literal text — no runtime dispatcher.
+```
+
 ## Call Tauri commands directly
 
 ```js

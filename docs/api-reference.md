@@ -449,12 +449,105 @@ events.commandSchemas(): PublicCommandSchema[]
 events.getCommandSchema(code: number): PublicCommandSchema | null
 events.createCommand(code: number, params?: unknown[]): { code, indent, parameters }
 events.validateEvent(event: PublicEventFull): { valid: boolean; errors: string[] }
+events.registerCommand(def: ModCommandDef): Disposable
 ```
 
 `commandSchemas()` returns all known RMXP event command schemas (code, name, category, defaultParams).
 `getCommandSchema(code)` looks up a single schema by code (returns `null` for unknown codes).
 `createCommand(code)` builds a valid command struct with default parameters — use when inserting commands into event pages.
 `validateEvent` checks that all command codes in an event's pages are known. Use before calling `events.update`.
+
+### `events.registerCommand(def)` — custom event commands
+
+Register a brand-new event command that map makers can insert from the
+event-command picker. Your command appears on a dedicated **mod page** in the
+picker (puzzle-icon tabs `🧩1`, `🧩2`, … after the built-in `1 2 3`, 24 commands per page) and
+edits through a native declarative form. The form is a **builder for a Script
+command**: filling it in generates plain Ruby that the engine runs directly —
+there is no runtime dispatcher.
+
+```ts
+events.registerCommand(def: ModCommandDef): Disposable
+```
+
+```ts
+interface ModCommandDef {
+  id: string;                              // unique within your mod, e.g. "cameraScrollTo"
+  name: string;                            // shown in the picker + command list
+  page?: string;                           // reserved (per-mod page titles)
+  fields?: ModCommandField[];              // omit → freeform script textarea (params.script)
+  script?: (params: ModCommandParams) => string;  // the Ruby stored & run in-game
+  parse?: (scriptText: string) => ModCommandParams | null;  // recover params to re-edit
+  summary?: (params: ModCommandParams) => string; // one-line label in the command list
+}
+```
+
+The registry key is `"<modId>:<id>"`. Duplicate keys are skipped (first wins).
+The returned `Disposable` unregisters the command; it is also auto-removed when
+your mod unloads.
+
+**Declarative fields** (`def.fields`) render with the editor's own controls and
+selectors, so the dialog matches the built-in command dialogs. Each field's
+`key` becomes a property on the `params` object passed to `script`, `parse`, and
+`summary`. Any field may set `disabled: (params) => boolean` to grey its control
+out, or `hidden: (params) => boolean` to remove it entirely, conditionally.
+
+| `type`     | Renders | Stored value |
+|------------|---------|--------------|
+| `number`   | number box (`min`/`max`/`step`) | `number` |
+| `text`     | text input | `string` |
+| `select`   | dropdown from `options: { value, label }[]` | `number` |
+| `checkbox` | checkbox | `boolean` |
+| `switch`   | switch picker | switch id (`number`) |
+| `variable` | variable picker | variable id (`number`) |
+| `coordinate` | Transfer-Player-style tile input: a **Source** dropdown — *Direct appointment* (map-dialog picker **+** editable X/Y) or *Appoint with variables* (X/Y variable pickers). `showMapSelector?` adds the Map ID dimension + map tree | `{ mode, mapId, x, y, varMapId, varX, varY }` |
+| `record`   | record picker (`recordKind`: actor/class/skill/item/weapon/armor/enemy/troop/state/animation/common_event) | record id (`number`) |
+| `event`    | event picker (`includePlayer?`/`includeThisEvent?`) | event id (`number`) |
+| `graphic`  | graphic browser under `Graphics/<subfolder>/` (`showHue?`) | filename (`string`) |
+| `audio`    | audio browser (`category`: BGM/BGS/ME/SE) | `{ name, volume, pitch }` |
+
+Omitting `fields` gives a freeform script command: the editor shows a single
+script textarea bound to `params.script`.
+
+```js
+const off = ctx.events.registerCommand({
+  id: "cameraScrollTo",
+  name: "Camera Scroll To",
+  fields: [
+    { type: "coordinate", key: "target", label: "Target tile", showMapSelector: true },
+    { type: "checkbox", key: "useSpeed", label: "Set speed" },
+    { type: "number", key: "speed", label: "Speed", min: 1, default: 4, hidden: (p) => !p.useSpeed },
+  ],
+  script: (p) => {
+    const t = p.target || {};
+    const cx = t.mode === "variable" ? `$game_variables[${t.varX | 0}]` : (t.x | 0);
+    const cy = t.mode === "variable" ? `$game_variables[${t.varY | 0}]` : (t.y | 0);
+    const args = [cx, cy];
+    if (p.useSpeed) args.push(p.speed | 0);
+    return `pbCameraScrollTo(${args.join(", ")})`;
+  },
+  parse: (text) => {
+    const m = /^pbCameraScrollTo\(\s*(-?\d+)\s*,\s*(-?\d+)\s*(?:,\s*(\d+)\s*)?\)$/.exec(text.trim());
+    return m ? { target: { mode: "direct", mapId: 0, x: +m[1], y: +m[2], varMapId: 1, varX: 1, varY: 1 },
+                 useSpeed: m[3] != null, speed: m[3] != null ? +m[3] : 4 } : null;
+  },
+  summary: (p) => `(${p.target?.x ?? 0}, ${p.target?.y ?? 0})`,
+});
+// off.dispose() to remove it early.
+```
+
+**How it round-trips & runs.** A mod command is stored as an ordinary RMXP
+Script command (code 355) whose `parameters[0]` is exactly the string your
+`script(params)` returns, e.g. `pbCameraScrollTo(0, -4)`. That keeps the map's
+`.rxdata` round-tripping unchanged, passes `validateEvent`, and runs in-game like
+any other event script — **no plugin code or handler is required**. `parse`
+recognises a stored script so the command keeps its name in the list and reopens
+its form (provide it for re-editability; without it, an inserted command becomes
+an ordinary Script command once the dialog closes).
+
+**Limitations**: values the generated script can't carry back (e.g. a picked
+`coordinate` `mapId`, or whether a literal coordinate was *picked* vs *typed*)
+reset on reopen; there is no imperative custom-render field type yet.
 
 ---
 

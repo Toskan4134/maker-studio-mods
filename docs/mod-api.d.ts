@@ -536,6 +536,74 @@ export interface EventCommandValidationResult {
   errors: string[];
 }
 
+/** A tile coordinate captured by a `coordinate` field. Mirrors RPG Maker's
+ *  Transfer Player destination: `mode` is either `"direct"` (a value picked on a
+ *  map or typed in) or `"variable"` (read from game variables at runtime). */
+export interface CoordinateValue {
+  mode: "direct" | "variable";
+  /** Used by `direct` mode (mapId only when the field shows the map selector). */
+  mapId: number;
+  x: number;
+  y: number;
+  /** Variable ids used by `variable` mode. */
+  varMapId: number;
+  varX: number;
+  varY: number;
+}
+
+/** A declarative field in a mod-defined event command's editor UI. Each type
+ *  maps to a native editor control (number box, dropdown, switch/variable
+ *  picker, map picker, entity picker, graphic/audio browser…) so the dialog
+ *  matches the built-in command dialogs. `disabled` greys the control out, and
+ *  `hidden` removes it entirely, based on the current params (e.g. hide "speed"
+ *  until a "set speed" box is on). */
+export type ModCommandField = {
+  disabled?: (params: Record<string, unknown>) => boolean;
+  hidden?: (params: Record<string, unknown>) => boolean;
+} & (
+  | { type: "number"; key: string; label: string; min?: number; max?: number; step?: number; default?: number }
+  | { type: "text"; key: string; label: string; default?: string }
+  | { type: "select"; key: string; label: string; options: { value: number; label: string }[]; default?: number }
+  | { type: "checkbox"; key: string; label: string; default?: boolean }
+  | { type: "switch"; key: string; label: string; default?: number }
+  | { type: "variable"; key: string; label: string; default?: number }
+  | { type: "coordinate"; key: string; label: string; showMapSelector?: boolean; default?: Partial<CoordinateValue> }
+  | { type: "record"; key: string; label: string; recordKind: "actor" | "class" | "skill" | "item" | "weapon" | "armor" | "enemy" | "troop" | "state" | "animation" | "common_event"; default?: number }
+  | { type: "event"; key: string; label: string; includePlayer?: boolean; includeThisEvent?: boolean; default?: number }
+  | { type: "graphic"; key: string; label: string; subfolder: string; showHue?: boolean; default?: string }
+  | { type: "audio"; key: string; label: string; category: "BGM" | "BGS" | "ME" | "SE"; default?: { name: string; volume: number; pitch: number } }
+);
+
+/** A mod command's parameter values, keyed by each field's `key`. */
+export type ModCommandParams = Record<string, unknown>;
+
+/** Definition of a mod-provided event command, registered via
+ *  `ctx.events.registerCommand(def)`. The command appears on a dedicated page in
+ *  the event-command picker. Filling its form generates a normal RMXP Script
+ *  command (code 355) whose text is `script(params)` — that literal Ruby runs
+ *  in-game as-is (no runtime dispatcher). Omit `fields` for a freeform script
+ *  command (the editor shows a script textarea bound to `params.script`). */
+export interface ModCommandDef {
+  /** Unique within the mod (e.g. "cameraScrollTo"). Combined with the mod id. */
+  id: string;
+  /** Display name in the picker and the command list. */
+  name: string;
+  /** Optional grouping label (reserved for future per-mod page titles). */
+  page?: string;
+  /** Declarative parameter fields. Omit for a freeform script command. */
+  fields?: ModCommandField[];
+  /** Build the Script command text from the params. Stored verbatim and run
+   *  in-game directly. Required when `fields` are given; for a fields-less
+   *  command the editor stores `params.script` as-is. */
+  script?: (params: ModCommandParams) => string;
+  /** Recognize a previously generated script back into params so the command
+   *  keeps its name and reopens its custom form. Return null if not this
+   *  command. Without it, an inserted command becomes an ordinary Script. */
+  parse?: (scriptText: string) => ModCommandParams | null;
+  /** Optional one-line summary shown after the name in the command list. */
+  summary?: (params: ModCommandParams) => string;
+}
+
 /** Info passed to advanced overlay render callbacks. */
 export interface AdvancedOverlayInfo {
   mapId: number;
@@ -695,6 +763,12 @@ export interface EventsCtx {
   createCommand?(code: number, params?: unknown[]): PublicEventCommand;
   /** Validate all commands in an event. Returns {valid, errors}. */
   validateEvent?(event: PublicEventFull): EventCommandValidationResult;
+
+  /** Register a new event command contributed by this mod. It appears on a
+   *  dedicated page in the event-command picker, edits through a native
+   *  declarative form, and is stored as a plain Script command (`def.script`)
+   *  that runs in-game directly. Returns a Disposable that removes it. */
+  registerCommand?(def: ModCommandDef): Disposable;
 }
 
 export interface ToolsCtx {
