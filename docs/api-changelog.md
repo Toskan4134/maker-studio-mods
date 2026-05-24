@@ -28,9 +28,9 @@ First public API. Includes the full modding surface for the 1.0 release.
   any field can set `disabled` / `hidden` predicates `(params) => boolean`.
   Omitting `fields` gives a freeform script textarea. Mod commands can be
   favourited (the ★ tab tracks them by registry key). Additive, non-breaking.
-- **`ctx.selectors`** — Promise-based modal pickers that mount the editor's stock selector dialogs. Methods: `pickActor`, `pickClass`, `pickSkill`, `pickItem`, `pickWeapon`, `pickArmor`, `pickEnemy`, `pickTroop`, `pickState`, `pickAnimation`, `pickCommonEvent`, `pickEntity`, `pickSwitch`, `pickVariable`, `pickMap`, `pickEvent`, `pickTileset`, `pickAudio`, `pickGraphic`, `pickKeyboardButton`. Each resolves to the picked value or `null` on cancel. Additive, non-breaking.
+- **`ctx.selectors`** — Promise-based modal pickers that mount the editor's stock selector dialogs. Methods: `pickActor`, `pickClass`, `pickSkill`, `pickItem`, `pickWeapon`, `pickArmor`, `pickEnemy`, `pickTroop`, `pickState`, `pickAnimation`, `pickCommonEvent`, `pickEntity`, `pickSwitch`, `pickVariable`, `pickMap`, `pickEvent`, `pickTileset`, `pickAudio`, `pickGraphic`, `pickKeyboardButton`, `pickCoordinate`. Each resolves to the picked value or `null` on cancel. Additive, non-breaking.
 - **`ctx.projectData`** — Read-only access to project-wide RPG record lists (actors, classes, skills, items, weapons, armors, enemies, troops, states, animations, common events) plus switch/variable name arrays and the map info list. Additive, non-breaking.
-- **`PublicRpgRecord`, `PublicRecordKind`, `EntityPickResult`, `AudioPickResult`, `GraphicPickResult`, `KeyboardButtonPickResult`, `SelectorExtra`, `SelectorOpts`, `AudioCategory`, `SelectorsCtx`, `ProjectDataCtx` interfaces** — exported from `src/mod-api/types.ts` for type-safe consumers.
+- **`PublicRpgRecord`, `PublicRecordKind`, `EntityPickResult`, `AudioPickResult`, `GraphicPickResult`, `KeyboardButtonPickResult`, `CoordinatePickResult`, `SelectorExtra`, `SelectorOpts`, `AudioCategory`, `SelectorsCtx`, `ProjectDataCtx` interfaces** — exported from `src/mod-api/types.ts` for type-safe consumers.
 - **New selector components** — `MapSelector` (project map tree picker) and `TilesetSelector` (tileset picker) added to the React component library and surfaced via `ctx.selectors.pickMap` / `pickTileset`.
 - **`ctx.ui.openUrl(url)`** — Opens a URL in the user's default browser after showing a confirmation dialog. Additive, non-breaking.
 - **Manifest `url` field** — Optional string. Displayed as a clickable link on the author name in the Mod Manager. Shows the same confirmation dialog before opening.
@@ -63,7 +63,7 @@ The `ctx` argument passed to `activate(ctx)` provides:
 | `lifecycle`  | Activation hooks (onMapLoad, onSave, onActivate, onDeactivate, onToolChange, onLayerChange) |
 | `stats`      | Editor usage statistics (global + per-project), single-stat getters, custom stats (get/set/increment), combined snapshots |
 | `keybinds`   | Query and modify keyboard shortcuts, listen for changes |
-| `selectors`  | Modal pickers (actor, class, skill, item, weapon, armor, enemy, troop, state, animation, common event, switch, variable, event, map, tileset, audio, graphic, keyboard button) |
+| `selectors`  | Modal pickers (actor, class, skill, item, weapon, armor, enemy, troop, state, animation, common event, switch, variable, event, map, tileset, audio, graphic, keyboard button, coordinate) |
 | `projectData`| Read-only RPG record lists (actors, items, classes, …) plus switch/variable names and map info |
 
 ### Editor accessors

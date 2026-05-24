@@ -1089,6 +1089,14 @@ export interface KeyboardButtonPickResult {
 /** Audio category subfolder under `<gameRoot>/Audio/`. */
 export type AudioCategory = "BGM" | "BGS" | "ME" | "SE";
 
+/** Result of picking a coordinate on a map. */
+export interface CoordinatePickResult {
+  mapId: number;
+  mapName: string;
+  x: number;
+  y: number;
+}
+
 export interface SelectorsCtx {
   // -- RPG record pickers (return record id or null if cancelled) --
   /** Pick an actor (1-indexed). */
@@ -1129,6 +1137,12 @@ export interface SelectorsCtx {
   // -- Input pickers --
   /** Pick an RMXP `Input.trigger?` button (directional, action, modifier, F-key). */
   pickKeyboardButton(opts?: { value?: number }): Promise<KeyboardButtonPickResult | null>;
+
+  // -- Map coordinate picker --
+  /** Pick a tile coordinate on a map. Opens the LocationPicker dialog.
+   *  Set `lockMap` to hide the map tree and constrain to one map
+   *  (uses `initial.mapId` or the active map as fallback). */
+  pickCoordinate(opts?: { initial?: CoordinatePickResult; lockMap?: boolean; title?: string }): Promise<CoordinatePickResult | null>;
 }
 
 // ============================================================================
