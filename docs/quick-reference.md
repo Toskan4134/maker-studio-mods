@@ -73,6 +73,17 @@ const props = ctx.tileset.getTileProperties(tilesetId, tileId);
 // { passage, priority, terrainTag }
 ```
 
+## Add custom terrain tags / priorities
+
+```js
+// Appear (named) in the Tileset Editor's Terrain Tag / Priority dropdowns.
+// Built-in ids: terrain tags 0-17, priorities 0-5 — use 18+ / 6+ for custom.
+ctx.tileset.registerTerrainTag({ id: 18, name: "Lava" });
+ctx.tileset.registerPriority({ id: 6, name: "Above 6" });
+// The chosen id is written verbatim to @terrain_tags / @priorities. No runtime
+// dispatcher — read it in-game via $game_map.terrain_tag(x, y) and branch on it.
+```
+
 ## Register a custom tool
 
 ```js

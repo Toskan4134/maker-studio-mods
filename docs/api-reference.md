@@ -178,6 +178,26 @@ tileset.resolveTileProperties(tileId, tilesetId?): { passage, priority, terrainT
 `transformTileProperties` returns passage/priority/terrain adjusted for the given rotation/flip — passage direction bits are rotated to match the visual transform.
 `resolveTileProperties` resolves tile properties from any tileset (falls back to the active palette tileset when `tilesetId` is omitted).
 
+```ts
+tileset.registerTerrainTag({ id, name }): Disposable
+tileset.registerPriority({ id, name }): Disposable
+```
+
+`registerTerrainTag` / `registerPriority` add a named entry to the Tileset
+Editor's **Terrain Tag** / **Priority** dropdowns. `id` is the integer written
+verbatim to `@terrain_tags` / `@priorities` (Table1, i16, no clamp) when the user
+paints that value. Built-in ids are **0–17** for terrain tags (the Pokemon
+Essentials defaults) and **0–5** for priorities (0 = ground, 1–5 = tiles
+overhead), so use **18+** / **6+** for custom entries to avoid clobbering them.
+Duplicate ids are ignored (first registration wins). Both return a `Disposable`
+and are auto-removed when the mod unloads.
+
+The editor only contributes the picker label + selectable range — there is **no
+runtime dispatcher**. To give a tag in-game behavior, read it back in your game
+scripts (`$game_map.terrain_tag(x, y)` — a plain Integer in RMXP/BES/LBDS; resolved
+through `PBTerrain` / `GameData::TerrainTag` in Pokemon Essentials) and branch on
+the value. See the `custom-tile-properties` example mod.
+
 ---
 
 ## `selectors`
