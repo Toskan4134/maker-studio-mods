@@ -689,6 +689,24 @@ export interface TilesetCtx {
    * Falls back to the map's default tileset when tilesetId is omitted.
    */
   resolveTileProperties?(tileId: number, tilesetId?: number): { passage: number; priority: number; terrainTag: number } | null;
+
+  /**
+   * Register a custom terrain tag so it appears (named) in the Tileset Editor's
+   * **Terrain Tag** dropdown. `id` is the integer written verbatim to
+   * `@terrain_tags`; built-in ids 0–17 are the Pokemon Essentials defaults, so
+   * use 18+ for custom tags. Selecting it paints that value like any built-in
+   * tag — the game reads it back via the engine's terrain_tag (no runtime
+   * dispatcher; behavior is up to your game scripts). Duplicate ids are ignored
+   * (first registration wins). Auto-removed when the mod unloads.
+   */
+  registerTerrainTag?(def: { id: number; name: string }): Disposable;
+  /**
+   * Register a custom tile priority so it appears (named) in the Tileset
+   * Editor's **Priority** dropdown. `id` is the integer written to
+   * `@priorities`; built-in ids are 0–5 (0 = ground, 1–5 = tiles overhead), so
+   * use 6+ for custom priorities. Duplicate ids ignored. Auto-removed on unload.
+   */
+  registerPriority?(def: { id: number; name: string }): Disposable;
 }
 
 export interface ShadowCtx {

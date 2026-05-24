@@ -37,6 +37,7 @@ First public API. Includes the full modding surface for the 1.0 release.
 - **`ctx.keybinds`** — Query and modify keyboard shortcuts. Methods: `list()`, `get(actionId)`, `set(actionId, key)`, `reset(actionId)`, `onChanged(cb)`. Fires `"keybind.changed"` event.
 - **`"keybind.changed"` event** — `{ actionId, oldKey, newKey }`. Fired when any keybind changes.
 - **`KeybindInfo` interface** — `{ actionId, label, category, key, defaultKey, isCustom }`. Returned by `ctx.keybinds.list()` and `ctx.keybinds.get()`.
+- **`ctx.tileset.registerTerrainTag(def): Disposable`** and **`ctx.tileset.registerPriority(def): Disposable`** — register a custom terrain tag / tile priority (`{ id, name }`) that appears, named, in the Tileset Editor's Terrain Tag / Priority dropdowns. Built-in ids are terrain tags 0–17 and priorities 0–5; use 18+ / 6+ for custom entries. The chosen id is written verbatim to `@terrain_tags` / `@priorities` (Table1, i16, no clamp); duplicate ids are ignored (first registration wins) and both auto-remove on unload. No runtime dispatcher — game behavior is read back via the engine's `terrain_tag`. See the `custom-tile-properties` example mod. Additive, non-breaking.
 
 ### Core context
 
