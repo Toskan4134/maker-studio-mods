@@ -186,8 +186,11 @@ export interface PanelDef {
   id: string;
   /** Title shown in tab. */
   title: string;
-  /** React component (or function returning element). The loader will pass it
-   *  through as a Dockview component factory. */
+  /** Render into the panel host. The loader passes it through as a Dockview
+   *  component factory. `host` lives in the editor DOM, so the editor's theme
+   *  CSS variables (`--bg-primary`, `--text-primary`, `--accent`, `--border`, …)
+   *  cascade in — style with `var(--…)` to match the app and auto-flip on
+   *  light/dark. Return an optional cleanup function. */
   render: (host: HTMLElement) => void | (() => void);
   /** Where to dock by default when first opened. */
   defaultPosition?: "right" | "left" | "below" | "above";
@@ -219,7 +222,9 @@ export interface CustomDialogOptions {
   width?: string;
   height?: string;
   zIndex?: number;
-  /** Render content into the dialog body. Return a cleanup function or void. */
+  /** Render content into the dialog body. `body` is in the editor DOM, so the
+   *  editor's theme CSS variables (`var(--bg-primary)`, `var(--accent)`, …)
+   *  cascade in — use them to match the app. Return a cleanup function or void. */
   render(body: HTMLElement): (() => void) | void;
 }
 

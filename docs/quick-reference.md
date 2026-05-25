@@ -113,6 +113,20 @@ ctx.ui.registerPanel({
 });
 ```
 
+## Match the editor's theme
+
+```js
+// Panels & custom dialogs render in the editor DOM — its theme CSS vars
+// cascade in. Use var(--name) so your UI flips with light/dark automatically.
+host.innerHTML = `<div style="
+  background: var(--bg-primary); color: var(--text-primary);
+  border: 1px solid var(--border); font-family: inherit; padding: 8px;">…</div>`;
+// Common: --bg-primary/secondary/tertiary --bg-hover --border --input-bg
+//         --text-primary/secondary/tertiary --accent --accent-hover --accent-text
+//         --danger --warning --success
+// Canvas overlays can't use CSS vars — branch on ctx.editor.theme() instead.
+```
+
 ## Register a context menu item
 
 ```js

@@ -677,6 +677,79 @@ from the Mods menu (use with your own `registerMenuItem` instead).
 null if cancelled. `showContextMenu` displays a native context menu at the
 given screen coordinates with labels, actions, separators, and submenus.
 
+### Theming & CSS variables
+
+Panels (`registerPanel`) and custom dialogs (`showCustomDialog`) render into the
+editor's own DOM — not an iframe or shadow root. The editor sets its theme
+variables on the `<html>` element, so **they cascade into your UI**. Reference
+them with `var(--name)` instead of hardcoding colors, and your panel matches the
+app and flips automatically when the user toggles light/dark.
+
+```js
+ctx.ui.registerPanel({
+  id: "mymod.panel",
+  title: "My Panel",
+  render(host) {
+    host.innerHTML = `
+      <div style="
+        padding: 8px;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 13px;">
+        <div style="
+          font-weight: 600; text-transform: uppercase; font-size: 11px;
+          color: var(--text-tertiary); margin-bottom: 6px;">Header</div>
+        <button style="
+          padding: 4px 10px; border-radius: 4px; cursor: pointer;
+          border: 1px solid var(--border);
+          background: var(--accent); color: var(--accent-text);">OK</button>
+        <button style="
+          padding: 4px 10px; border-radius: 4px; cursor: pointer;
+          border: 1px solid var(--danger); background: transparent;
+          color: var(--danger);">Delete</button>
+      </div>`;
+  },
+});
+```
+
+Stable palette (same names in both themes — values differ per active theme):
+
+| Variable | Role |
+|----------|------|
+| `--bg-primary`    | Main panel background |
+| `--bg-secondary`  | Sidebar / inset background |
+| `--bg-tertiary`   | Headers, toolbars, raised controls |
+| `--bg-hover`      | Hover-state background |
+| `--input-bg`      | Form input background |
+| `--border`        | Borders and dividers |
+| `--text-primary`  | Primary text |
+| `--text-secondary`| Labels / secondary text |
+| `--text-tertiary` | Muted / placeholder text |
+| `--accent`        | Accent / primary-action color |
+| `--accent-hover`  | Accent hover |
+| `--accent-muted`  | Translucent accent (subtle fills, highlights) |
+| `--accent-text`   | Text on an accent background |
+| `--danger`        | Destructive / error |
+| `--warning`       | Warning |
+| `--highlight`     | Selection / emphasis |
+| `--success`, `--success-hover`, `--success-border` | Success states |
+| `--shadow`        | Drop-shadow color (rgba) |
+| `--canvas-bg`     | Map canvas backdrop |
+
+The body font is inherited too — set `font-family: inherit` (13px base) to match.
+
+Notes:
+- Treat the names above as the **public** palette. Other variables exist
+  (`--ec-*` event-command syntax colors, `--dv-*` Dockview tab tokens,
+  `--tile-preview-*`) but are internal and may change — don't depend on them,
+  and don't override the `--dv-*` tokens.
+- CSS variables only apply to **DOM**. Canvas overlays (`registerOverlay` /
+  `registerAdvancedOverlay`) draw with a `CanvasRenderingContext2D` where
+  `var(--…)` does nothing — branch on `ctx.editor.theme()` for a literal color,
+  or read one with
+  `getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()`.
+
 ### Context menu registration
 
 ```ts
