@@ -70,7 +70,13 @@ async function updatePresence(ctx) {
 }
 
 export function activate(ctx) {
-  connect(ctx).then(() => updatePresence(ctx));
+  connected = false;
+  // Delay Discord connection so it doesn't compete with mod loading.
+  // The Rust command is async (spawn_blocking) so it won't freeze IPC,
+  // but giving it a beat avoids overlapping with other initialization.
+  setTimeout(() => {
+    connect(ctx).then(() => updatePresence(ctx));
+  }, 300);
 
   ctx.bus.on("map.loaded", () => {
     updatePresence(ctx);
@@ -92,11 +98,9 @@ export function activate(ctx) {
 }
 
 export async function deactivate() {
-  if (connected) {
-    try {
-      await invoke("discord_rpc_clear");
-      await invoke("discord_rpc_disconnect");
-    } catch (_) {}
-    connected = false;
-  }
+  try {
+    await invoke("discord_rpc_clear");
+    await invoke("discord_rpc_disconnect");
+  } catch (_) {}
+  connected = false;
 }

@@ -305,6 +305,78 @@ const boss = ctx.projectData.commonEvents().filter((c) => c.name.startsWith("bos
 
 ---
 
+## Manifest: `pluginDependencies`
+
+Mods can declare dependencies on Essentials plugins (Ruby, installed in
+`<gameRoot>/Plugins/*/meta.txt`) via the optional `pluginDependencies` array
+in `manifest.json`:
+
+```json
+{
+  "pluginDependencies": [
+    { "name": "My Plugin" },
+    { "name": "Other Plugin", "url": "https://example.com/other" },
+    { "name": "Strict Plugin", "enforcement": "pluginAndVersion", "version": "1.2.0" },
+    { "name": "Optional Plugin", "enforcement": "none", "url": "https://example.com/opt" }
+  ]
+}
+```
+
+```ts
+interface PluginDependency {
+  /** Plugin name as it appears in meta.txt's Name field. */
+  name: string;
+  /** URL where the plugin can be found/downloaded (shown in warnings). */
+  url?: string;
+  /**
+   * How strictly to enforce this dependency.
+   * - "plugin" (default) — block if the plugin is missing; ignore version.
+   * - "pluginAndVersion" — block if missing OR version doesn't satisfy versionCheck.
+   * - "none" — never block, only warn.
+   */
+  enforcement?: "plugin" | "pluginAndVersion" | "none";
+  /**
+   * Required plugin version (semver). Only checked when enforcement is
+   * "pluginAndVersion". Setting enforcement to "pluginAndVersion" without
+   * a version is a ManifestError.
+   */
+  version?: string;
+  /**
+   * How to compare installed version against version. Default: "greaterOrEqual".
+   * - "greaterOrEqual" — installed >= required
+   * - "exact"          — installed == required
+   * - "compatible"     — same major, installed minor.patch >= required
+   */
+  versionCheck?: "greaterOrEqual" | "exact" | "compatible";
+}
+```
+
+**Behaviour at load time:**
+
+- **v21+ projects** (Plugins/ directory exists): the editor scans
+  `Plugins/*/meta.txt` and checks each declared dependency according to its
+  `enforcement` setting:
+  - `"plugin"` (default): blocks the mod if the plugin is missing; version is
+    ignored.
+  - `"pluginAndVersion"`: blocks the mod if the plugin is missing or its
+    installed version does not satisfy the `versionCheck` comparison against
+    `version`. Setting this without a `version` is a `ManifestError`.
+  - `"none"`: never blocks the mod; the editor only logs a warning.
+- **v16 / BES v5 projects** (no Plugins/ directory): the editor logs a console
+  warning but loads the mod anyway, since plugin presence cannot be verified.
+
+The version comparison uses simple semver major.minor.patch (pre-release
+suffixes are ignored). The `versionCheck` field controls the comparison
+operator: `"greaterOrEqual"` (default, installed >= required), `"exact"`
+(installed == required), or `"compatible"` (same major, installed
+minor.patch >= required).
+
+In the Mod Manager's expanded detail view, plugin dependencies are listed with
+clickable links (if `url` is provided), the enforcement level, and the version
+requirement (when applicable).
+
+---
+
 ## Direct Tauri Access
 
 Mods run in the same web context as the editor. When `withGlobalTauri`

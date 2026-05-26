@@ -6,5 +6,14 @@
   "url": "https://x.com/Toskan4134",
   "description": "Pops a toast each time a map loads. Demonstrates registerShortcut.",
   "apiVersion": "1.0.0",
-  "main": "index.js"
+  "main": "index.js",
+  "pluginDependencies": [
+    {
+      "name": "MakerStudio",
+      "enforcement": "pluginAndVersion",
+      "version": "1.0.0",
+      "versionCheck": "greaterOrEqual",
+      "url": "https://github.com/Toskan4134/maker-studio/tree/main/Integrations"
+    }
+  ]
 }

@@ -46,6 +46,8 @@ export interface ModManifest {
   dependencies?: Record<string, string>;
   /** Forward-compat. Recorded but not enforced in v1. */
   permissions?: ModPermission[];
+  /** Dependencies on Essentials plugins (by meta.txt Name). Validated at load. */
+  pluginDependencies?: PluginDependency[];
 }
 
 export type ModPermission =
@@ -55,6 +57,33 @@ export type ModPermission =
   | "events.cancel.save"
   | "ui.dialogs"
   | "ui.toasts";
+
+/** A dependency on an Essentials plugin (from Plugins folder meta.txt). */
+export interface PluginDependency {
+  /** Plugin name as it appears in meta.txt's Name field. */
+  name: string;
+  /** URL where the plugin can be found/downloaded (shown in warnings). */
+  url?: string;
+  /**
+   * How strictly to enforce this dependency.
+   * - "plugin" (default) — block if the plugin is missing; ignore version.
+   * - "pluginAndVersion" — block if missing OR version doesn't satisfy `versionCheck`.
+   * - "none" — never block, only warn.
+   */
+  enforcement?: "plugin" | "pluginAndVersion" | "none";
+  /**
+   * Required plugin version (semver). Only checked when enforcement is
+   * "pluginAndVersion".
+   */
+  version?: string;
+  /**
+   * How to compare installed version against `version`. Default: "greaterOrEqual".
+   * - "greaterOrEqual" — installed >= required
+   * - "exact"          — installed == required
+   * - "compatible"     — same major, installed minor.patch >= required
+   */
+  versionCheck?: "greaterOrEqual" | "exact" | "compatible";
+}
 
 // ============================================================================
 // Disposable

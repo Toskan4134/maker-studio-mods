@@ -293,3 +293,33 @@ ctx.log.info("Something happened", { detail: "value" });
 ctx.log.warn("Unexpected state");
 ctx.log.error(err);
 ```
+
+## Plugin dependencies (manifest)
+
+```jsonc
+// In manifest.json — declare dependencies on Essentials plugins.
+// Plugins are loaded from <gameRoot>/Plugins/*/meta.txt.
+{
+  "pluginDependencies": [
+    { "name": "My Plugin" },                                // block if missing, ignore version
+    { "name": "Other Plugin",
+      "url": "https://example.com/plugin" },                // link shown in warnings
+    { "name": "Strict Plugin",
+      "enforcement": "pluginAndVersion",
+      "version": "1.2.0" },                                 // block if missing OR < 1.2.0
+    { "name": "Exact Plugin",
+      "enforcement": "pluginAndVersion",
+      "versionCheck": "exact",
+      "version": "2.0.0" },                                 // block unless exactly 2.0.0
+    { "name": "Optional Plugin",
+      "enforcement": "none",
+      "url": "https://example.com/opt" }                    // never block, only warn
+  ]
+}
+// enforcement: "plugin" (default) | "pluginAndVersion" | "none"
+// versionCheck: "greaterOrEqual" (default) | "exact" | "compatible"
+// "compatible" = same major, installed minor.patch >= required
+// "pluginAndVersion" without version → ManifestError
+// v21+ projects: enforcement controls blocking (see above).
+// v16 projects (no Plugins/ folder): console warning, mod loads anyway.
+```
