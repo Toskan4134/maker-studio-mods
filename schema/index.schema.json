@@ -31,7 +31,7 @@
     "Mod": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "author", "repo"],
+      "required": ["id", "name", "authors", "repo"],
       "properties": {
         "id": {
           "type": "string",
@@ -44,10 +44,18 @@
           "minLength": 1,
           "maxLength": 80
         },
-        "author": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 80
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+              "url": { "type": "string", "format": "uri" }
+            }
+          },
+          "minItems": 1,
+          "description": "Author(s) with optional clickable URL."
         },
         "repo": {
           "type": "string",
