@@ -2,8 +2,7 @@
   "id": "com.toskan4134.event-inspector",
   "name": "Event Inspector",
   "version": "1.0.0",
-  "author": "Toskan4134",
-  "url": "https://x.com/Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Right-click events to inspect details or clone them. Demonstrates registerContextMenuItem (map-event), events.getFull, events.create, events.update.",
   "apiVersion": "1.0.0",
   "main": "index.js"

@@ -2,7 +2,7 @@
   "id": "com.toskan4134.custom-tile-properties",
   "name": "Custom Tile Properties",
   "version": "1.0.0",
-  "author": "Toskan4134",
+  "authors": [{ "name": "Toskan4134" }],
   "description": "Adds custom terrain tags (Lava, Swamp, Spikes) and extra tile priorities to the Tileset Editor dropdowns. Demonstrates ctx.tileset.registerTerrainTag / registerPriority.",
   "apiVersion": "1.0.0",
   "main": "index.js"

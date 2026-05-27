@@ -2,8 +2,7 @@
   "id": "com.toskan4134.achievements",
   "name": "Achievements",
   "version": "1.0.0",
-  "author": "Toskan4134",
-  "url": "https://x.com/Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Unlocks achievements based on editor stats. Demonstrates ctx.stats API (getters, custom stats, setters).",
   "apiVersion": "1.0.0",
   "main": "index.js"

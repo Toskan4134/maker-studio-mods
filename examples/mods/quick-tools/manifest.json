@@ -2,8 +2,7 @@
   "id": "com.toskan4134.quick-tools",
   "name": "Quick Tools",
   "version": "1.0.0",
-  "author": "Toskan4134",
-  "url": "https://x.com/Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Keyboard shortcuts for view toggles + a Fill Layer tool. Demonstrates registerShortcut, viewOptions/setViewOptions, beginUndoGroup/endUndoGroup, batchWrite.",
   "apiVersion": "1.0.0",
   "main": "index.js"

@@ -2,8 +2,7 @@
   "id": "com.toskan4134.tile-stats",
   "name": "Tile Stats",
   "version": "1.0.0",
-  "author": "Toskan4134",
-  "url": "https://x.com/Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Opens a panel showing live tile usage counts. Demonstrates viewOptions.",
   "apiVersion": "1.0.0",
   "main": "index.js"

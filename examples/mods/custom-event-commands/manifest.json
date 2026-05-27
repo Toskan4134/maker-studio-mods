@@ -2,8 +2,7 @@
   "id": "com.toskan4134.custom-event-commands",
   "name": "Custom Event Commands",
   "version": "1.0.0",
-  "author": "Toskan4134",
-  "url": "https://x.com/Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Registers new event commands that appear on a dedicated picker page. Demonstrates ctx.events.registerCommand with a declarative field schema and a script-fallback command.",
   "apiVersion": "1.0.0",
   "main": "index.js"

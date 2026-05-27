@@ -25,6 +25,13 @@
 // Manifest
 // ============================================================================
 
+export interface ModAuthor {
+  /** Author display name. */
+  name: string;
+  /** URL for the author — shown as clickable link. */
+  url?: string;
+}
+
 export interface ModManifest {
   /** Reverse-DNS unique id, e.g. "com.author.mod". */
   id: string;
@@ -32,10 +39,8 @@ export interface ModManifest {
   name: string;
   /** Mod version (semver). */
   version: string;
-  /** Optional author / description / homepage metadata. */
-  author?: string;
-  /** URL for the author — shown as clickable link in Mod Manager. */
-  url?: string;
+  /** Author(s) of the mod. Array of {name, url?}. */
+  authors?: ModAuthor[];
   description?: string;
   homepage?: string;
   /** Editor API version this mod targets (semver). */

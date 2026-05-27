@@ -2,8 +2,7 @@
   "id": "com.toskan4134.discord-rich-presence",
   "name": "Discord Rich Presence",
   "version": "1.0.0",
-  "author": "Toskan4134",
-  "url": "https://x.com/Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Shows your current project, map, and elapsed time in Discord status.",
   "apiVersion": "1.0.0",
   "main": "index.js"

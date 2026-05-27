@@ -29,7 +29,7 @@ all projects. Project mods take priority over global mods with the same id.
   "id": "com.toskan4134.hello-world",
   "name": "Hello World",
   "version": "1.0.0",
-  "author": "You",
+  "authors": [{ "name": "You" }],
   "description": "Says hello when a map loads.",
   "apiVersion": "1.0.0",
   "main": "index.js"
@@ -46,7 +46,7 @@ Required fields:
 | `apiVersion`  | Editor API version your mod targets (semver). |
 | `main`        | Path to the JS entry, relative to the mod folder. |
 
-Optional: `author`, `url` (author link shown as clickable in Mod Manager), `description`, `homepage`, `dependencies`, `permissions`.
+Optional: `authors` (array of `{name, url?}` — supports multiple authors), `description`, `homepage`, `dependencies`, `permissions`.
 
 ## 3. Write the mod
 

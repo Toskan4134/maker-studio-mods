@@ -2,7 +2,7 @@
   "id": "com.toskan4134.tile-highlighter",
   "name": "Tile Highlighter",
   "version": "1.0.0",
-  "author": "Toskan4134",
+  "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "url": "https://x.com/Toskan4134",
   "description": "Right-click tiles to highlight them with colored overlays. Demonstrates registerOverlay and registerContextMenuItem (map-tile).",
   "apiVersion": "1.0.0",
