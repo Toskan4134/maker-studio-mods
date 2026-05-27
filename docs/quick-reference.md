@@ -14,6 +14,23 @@ export function deactivate() {
 }
 ```
 
+## Multi-file mod (optional)
+
+```js
+// utils.js — place alongside index.js in your mod folder
+export function myHelper() { return 42; }
+
+// index.js (entry, matches manifest "main")
+import { myHelper } from './utils.js';  // relative specifier required
+
+export function activate(ctx) {
+  ctx.ui.showToast({ message: `Answer: ${myHelper()}`, level: "info" });
+}
+```
+
+All `.js` files in the mod directory (including subdirectories) are discovered.
+Only `./` and `../` relative imports are rewritten. CommonJS mods stay single-file.
+
 ## Show a toast
 
 ```js

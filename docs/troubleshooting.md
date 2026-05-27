@@ -115,3 +115,13 @@ The type definitions live in `src/mod-api/types.ts` in the editor source.
 1. **Check key format** — must be `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Case-sensitive, `+` separated.
 2. **Check for conflicts** — built-in editor shortcuts take priority. Avoid `Ctrl+S` (save), `Ctrl+Z` (undo), etc.
 3. **Check mod is active** — shortcuts only work while the mod is loaded and enabled.
+
+## Multi-file import doesn't work
+
+**Symptom**: `import { x } from './utils.js'` causes the mod to fail to load.
+
+1. **Use relative specifiers only** — imports must start with `./` or `../`. Bare specifiers like `'lodash'` or `'my-lib'` will not work — the editor does not bundle npm packages.
+2. **Include the `.js` extension** — always write `'./utils.js'`, not `'./utils'`. The file extension is required.
+3. **File must exist in the mod folder** — all imported files must be `.js` files inside the mod directory (subdirectories are fine). The editor discovers files by scanning the directory tree.
+4. **Check for syntax errors in imported files** — any syntax error in any `.js` file in the mod folder can prevent the mod from loading. Check the Mod Manager log for the specific file and line.
+5. **CommonJS mods are single-file only** — if your entry uses `module.exports = ...`, the `new Function` fallback does not support multi-file imports. Use ESM syntax (`export function ...`) in your entry to enable multi-file support.
