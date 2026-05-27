@@ -45,7 +45,7 @@ examples/mods/
 1. Copy the example folder under a new name.
 2. Edit `manifest.json`:
    - Change `id` to your own reverse-DNS (e.g. `com.yourname.yourmod`).
-   - Change `name`, `author`, `url`, `description`.
+   - Change `name`, `authors`, `description`.
    - Reset `version` to `1.0.0`.
 3. Edit `index.js` — write your own logic, keep what you need from the example.
 4. Rewrite the folder's `README.md` to describe your mod.
