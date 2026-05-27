@@ -36,9 +36,8 @@ ms-my-mod/
   "version": "1.0.0",
   "apiVersion": "1.0.0",
   "main": "index.js",
-  "author": "Your Name",
+  "authors": [{ "name": "Your Name", "url": "https://your-site-or-handle" }],
   "description": "What it does in one sentence.",
-  "url": "https://your-site-or-handle",
   "permissions": ["ui.toasts"]
 }
 ```
@@ -52,10 +51,9 @@ Field rules:
 | `version` | yes | Semver. Must match release tag (without leading `v`) |
 | `apiVersion` | yes | Editor's Mod API version your mod targets |
 | `main` | yes | Relative path to JS entry. No `..` or absolute paths |
-| `author` | recommended | Display name |
+| `authors` | recommended | Array of `{ name, url? }`. Shown as clickable links |
 | `description` | recommended | Long descriptions get truncated in the card |
-| `url` | recommended | Author link shown in Mod Manager |
-| `homepage` | optional | Separate from `url` |
+| `homepage` | optional | Mod homepage, separate from author URL |
 | `dependencies` | optional | `{ "other.mod.id": "^1.0.0" }` — loader topo-sorts |
 | `permissions` | optional | See [Permissions](#permissions) below |
 
@@ -163,7 +161,7 @@ Fork this repo. Open `index.json` and add an entry to the `mods` array:
 {
   "id": "com.yourname.mymod",
   "name": "My Mod",
-  "author": "Your Name",
+  "authors": [{ "name": "Your Name", "url": "https://your-site-or-twitter" }],
   "repo": "your-github-handle/ms-my-mod",
   "description": "One-line pitch of what the mod does.",
   "tags": ["tools", "ui"],
