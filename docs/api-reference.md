@@ -377,6 +377,34 @@ requirement (when applicable).
 
 ---
 
+## Multi-File Mod Structure
+
+Mods can split code across multiple `.js` files using native ES module `import`:
+
+```js
+// utils.js
+export function helper() { return 42; }
+
+// index.js (entry — matches manifest "main")
+import { helper } from './utils.js';
+
+export function activate(ctx) {
+  ctx.ui.showToast({ message: `Answer: ${helper()}`, level: "info" });
+}
+```
+
+**How it works**: the editor discovers all `.js` files in your mod folder, builds a dependency graph from `import`/`from` specifiers, sorts them topologically (leaf modules first), creates blob URLs bottom-up while rewriting relative imports to blob URLs, then imports your entry module. No manifest changes required — just add `.js` files alongside your entry.
+
+**Rules**:
+
+- Only `.js` files in the mod directory are discovered (subdirectories included).
+- Only **relative** specifiers starting with `./` or `../` are rewritten. Bare specifiers (e.g. `import _ from 'lodash'`) are left as-is and will fail at runtime.
+- Circular dependencies are handled gracefully (the cycle is broken and modules still load).
+- CommonJS mods (`module.exports = ...`) remain **single-file only** — the `new Function` fallback does not support multi-file.
+- Single-file mods work exactly as before — no changes needed.
+
+---
+
 ## Direct Tauri Access
 
 Mods run in the same web context as the editor. When `withGlobalTauri`
