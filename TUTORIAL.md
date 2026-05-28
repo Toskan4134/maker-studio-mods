@@ -1,6 +1,6 @@
 # Tutorial — Your First Marketplace Mod
 
-Hands-on walkthrough from zero to a live, signed, installable mod in the Maker Studio Marketplace. Should take about 30 minutes the first time. Subsequent mods take 10.
+Hands-on walkthrough from zero to a live, installable mod in the Maker Studio Marketplace. Should take about 25 minutes the first time. Subsequent mods take 10.
 
 We'll pretend you're an author called "Alex" publishing a mod called **Hello Streak** (`com.alex.hello-streak`) that tracks how many days in a row you've opened the editor.
 
@@ -15,9 +15,8 @@ You'll need:
 - A **public** GitHub account.
 - Maker Studio installed locally (to test the mod).
 - Git on your machine. PowerShell on Windows, or bash on macOS/Linux.
-- (Optional but recommended) minisign — for signing your releases. The registry's `scripts/` folder bundles it for Windows; mac/Linux: `brew install minisign` / `apt install minisign`.
 
-Clone the registry repo locally — you'll need its scripts:
+Clone the registry repo locally — you'll need its scaffold scripts and the workflow template:
 
 ```powershell
 gh repo clone Toskan4134/maker-studio-mods
@@ -137,32 +136,18 @@ Remove-Item -Recurse "$env:APPDATA\maker-studio\Mods\hello-streak"
 
 ---
 
-## Step 4 — Generate a signing key (recommended)
+## Step 4 — Drop in the GitHub Actions workflow (recommended)
 
-Signed mods get a green **Verified** chip in the Marketplace and skip the "I understand this is unverified code" confirmation step. Users are much more likely to install them.
-
-From your scaffolded mod folder, point the keypair script at the registry clone:
+The registry ships a workflow at [`templates/publish.yml`](templates/publish.yml). It takes care of zipping the mod, computing the SHA-256, creating the GitHub Release, and printing the exact registry-PR diff. Copy it into your mod repo:
 
 ```powershell
-# Windows — uses bundled minisign.exe, no install needed
-C:\path\to\maker-studio-mods\scripts\generate-keypair.ps1
-
-# macOS / Linux
-/path/to/maker-studio-mods/scripts/generate-keypair.sh
+mkdir .github\workflows
+Copy-Item C:\path\to\maker-studio-mods\templates\publish.yml .github\workflows\publish.yml
 ```
 
-When prompted for the mod id, enter `com.alex.hello-streak`. The script produces two files in the current directory:
+Commit it now along with your code. No secrets to configure — the default `GITHUB_TOKEN` is enough to publish a release on your own repo.
 
-```
-com.alex.hello-streak.key   ← SECRET. Never push. Back up offline.
-com.alex.hello-streak.pub   ← public. Line 2 (starts with RWQ) goes in your registry entry.
-```
-
-**Back up `.key` to two offline locations now** (USB + encrypted cloud). Lose it = lose this identity forever; new key means a registry PR + every installed user gets sig-failure errors until they reinstall.
-
-Copy line 2 of `.pub` — you'll paste it into `index.json` in Step 7.
-
-If you don't want to sign yet, skip this step. Your mod will install with an "Unverified" warning. You can add signing later by republishing.
+If you'd rather build releases manually, skip this step and do `Compress-Archive` + `Get-FileHash` by hand in Step 6. The rest of the flow is identical.
 
 ---
 
@@ -179,59 +164,50 @@ Click **Create repository**. Copy the repo URL (e.g. `https://github.com/alex/ms
 
 ---
 
-## Step 6 — Push, tag, build, sign, release
-
-Back in your mod's working directory:
+## Step 6 — Push and tag the release
 
 ```powershell
 cd C:\Users\Alex\Desktop\ms-hello-streak
 
-# 1. Init + push
 git init
-git add manifest.json index.js README.md
+git add .
 git commit -m "v1.0.0 — initial release"
 git branch -M main
 git remote add origin https://github.com/alex/ms-hello-streak.git
 git push -u origin main
 
-# 2. Tag the release (tag must match manifest version exactly — without 'v')
+# Tag the release. Tag must match manifest version exactly — without 'v'.
 git tag v1.0.0
 git push --tags
-
-# 3. Build the release zip
-$zip = "com.alex.hello-streak-1.0.0.zip"
-Compress-Archive -Path manifest.json,index.js,README.md -DestinationPath $zip
-
-# 4. Sign (skip if you didn't generate a key)
-$key      = ".\com.alex.hello-streak.key"
-$minisign = "C:\path\to\maker-studio-mods\scripts\bin\win\minisign.exe"
-& $minisign -S -s $key -m $zip
 ```
 
-You should now have two files in the directory: `<modId>-1.0.0.zip` and `<modId>-1.0.0.zip.minisig`.
+### If you copied the template Action
 
-### Create the GitHub Release
+Pushing the tag fires `.github/workflows/publish.yml`. Open the **Actions** tab on your mod repo:
 
-Web UI: <https://github.com/alex/ms-hello-streak/releases/new>
+1. Watch the run. It zips, hashes, and creates the GitHub Release automatically.
+2. Open the final `Print registry PR block` step. It prints something like:
+   ```
+   "version": "1.0.0",
+   "assetName": "com.alex.hello-streak-1.0.0.zip",
+   "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+   ```
+3. Copy those three lines. You'll paste them into the registry PR in Step 7.
 
-- **Choose a tag:** `v1.0.0` (already exists from the push above — pick it)
-- **Release title:** `v1.0.0`
-- **Describe this release:** write the changelog. Becomes the body of the card in the Marketplace:
-  ```
-  Initial release. Tracks how many days in a row you've opened the editor and
-  shows a streak toast on every project load.
-  ```
-- **Attach binaries:** drag both `<modId>-1.0.0.zip` AND `<modId>-1.0.0.zip.minisig` into the assets area.
-- Click **Publish release**.
+### If you're doing it manually
 
-Or via `gh` CLI:
 ```powershell
-gh release create v1.0.0 $zip "$zip.minisig" `
+$zip = "com.alex.hello-streak-1.0.0.zip"
+Compress-Archive -Path manifest.json,index.js,README.md -DestinationPath $zip
+$sha = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+Write-Host "sha256: $sha"
+
+gh release create v1.0.0 $zip `
   --title "v1.0.0" `
   --notes "Initial release. Tracks daily editor-open streak."
 ```
 
-Verify the release page shows both assets and the green "Latest" badge.
+Save `$sha` somewhere — you'll need it in Step 7.
 
 ---
 
@@ -244,24 +220,24 @@ This is the only step that touches the maker-studio-mods repo. Two paths.
 1. Go to <https://github.com/Toskan4134/maker-studio-mods/blob/main/index.json>
 2. Click the **pencil icon** (top right of the file view) — **Edit this file**.
 3. GitHub auto-forks the registry to your account behind the scenes. No `git` commands.
-4. Add your mod entry inside the `"mods": [ ... ]` array. If the array is empty, paste:
+4. Add your mod entry inside the `"mods": [ ... ]` array:
    ```json
-   "mods": [
-     {
-       "id": "com.alex.hello-streak",
-       "name": "Hello Streak",
-       "author": "Alex",
-       "repo": "alex/ms-hello-streak",
-       "description": "Tracks how many days in a row you've opened the editor.",
-       "tags": ["stats", "motivation"],
-       "homepage": "https://github.com/alex/ms-hello-streak",
-       "apiVersion": "1.0.0",
-       "pubkey": "RWQ...your-pubkey-line-from-step-4...",
-       "permissions": ["ui.toasts"]
-     }
-   ]
+   {
+     "id": "com.alex.hello-streak",
+     "name": "Hello Streak",
+     "authors": [{ "name": "Alex", "url": "https://github.com/alex" }],
+     "repo": "alex/ms-hello-streak",
+     "version": "1.0.0",
+     "assetName": "com.alex.hello-streak-1.0.0.zip",
+     "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+     "description": "Tracks how many days in a row you've opened the editor.",
+     "tags": ["stats", "motivation"],
+     "homepage": "https://github.com/alex/ms-hello-streak",
+     "apiVersion": "1.0.0",
+     "permissions": ["ui.toasts"]
+   }
    ```
-   If there are already entries, add yours as the last item (don't forget the comma after the previous one).
+   Replace `version`, `assetName`, and `sha256` with what Step 6 printed. If there are already entries, add yours as the last item (don't forget the comma after the previous one).
 5. Also update `updatedAt` to the current ISO-8601 timestamp.
 6. Scroll down to **Propose changes**. Commit message can be anything — `add: com.alex.hello-streak` works.
 7. **Create pull request** → fill in the PR template (it auto-loads). Submit.
@@ -283,22 +259,23 @@ gh pr create --fill
 
 ## Step 8 — Wait for CI, respond to review
 
-When the PR opens, the registry's CI workflow runs three checks:
+When the PR opens, the registry's CI workflow runs these checks:
 
 | Check | What it does |
 |-------|--------------|
-| **Schema validation** | `index.json` matches `schema/index.schema.json` (required fields, valid id pattern, semver shape, pubkey format) |
+| **Schema validation** | `index.json` matches `schema/index.schema.json` (required fields, valid id pattern, semver shape, 64-hex sha256) |
 | **Duplicate id check** | No two entries share the same `id` |
-| **Release asset check** | The repo you listed actually has a `releases/latest` containing a `.zip` whose name includes your `id`, plus a `.minisig` if you set `pubkey` |
+| **Release asset check** | The repo you listed has a release at the pinned `v{version}` tag containing an asset matching `assetName` |
+| **Hash check** | The maintainer (or CI, if available) verifies the listed `sha256` matches the actual bytes on the release |
 
 All green? The maintainer reviews and merges. If something's red, click the failed check for the exact error message. Common fixes:
 
 | Error | Cause | Fix |
 |-------|-------|-----|
 | `should match pattern "^[a-zA-Z0-9._-]+$"` for `id` | Used spaces or unusual chars in the id | Edit to only letters/digits/`._-` |
-| `repo has no published releases yet` | You forgot to publish the Release in Step 6 | Publish the release, push the PR again (it re-runs CI) |
-| `no .zip asset whose name contains '<id>'` | Zip is named differently | Re-upload zip named `<modId>-<version>.zip` |
-| `pubkey declared in registry but no .minisig asset` | You added `pubkey` but didn't attach the `.minisig` | Attach the `.minisig` to the release OR remove `pubkey` from the PR |
+| `repo has no release at tag v{version}` | You forgot to publish the Release in Step 6 | Publish the release, push the PR again |
+| `release has no asset named '<assetName>'` | Zip is named differently from what your PR claims | Re-upload the zip with the right name, or fix `assetName` in the PR |
+| `sha256 doesn't match release asset` | You edited or rebuilt the zip after computing the hash | Re-download from the release, recompute `sha256sum`, update the PR |
 
 Push fixes to the same branch — CI re-runs automatically. Once merged, you're live within ~1 hour (editor caches the index for that long).
 
@@ -308,9 +285,10 @@ Push fixes to the same branch — CI re-runs automatically. Once merged, you're 
 
 Open Maker Studio → **Mods → Mod Manager → Marketplace** → click **Refresh** (forces an immediate fetch).
 
-- Your card should appear with a green **Verified** chip (if you signed) or yellow **Unverified** (if you didn't).
+- Your card should appear, pinned to `v1.0.0`.
 - Click **Install**. A consent dialog lists your declared permissions. Accept.
-- Wait for the "Installed Hello Streak" toast.
+- The editor downloads from your release, verifies the SHA-256 matches the registry, and installs.
+- Wait for the "Installed Hello Streak v1.0.0" toast.
 - Switch to the **Installed** tab — your mod is loaded and active.
 
 That's it. You shipped a mod.
@@ -319,25 +297,26 @@ That's it. You shipped a mod.
 
 ## Releasing updates
 
-Every subsequent release is the simplified loop:
+Every subsequent release is the same loop — including the registry PR:
 
 1. Edit code.
 2. Bump `manifest.json#version` (`1.0.0` → `1.0.1`).
 3. Commit, tag `v1.0.1`, push.
-4. Build new zip, sign, attach both to a new GitHub Release.
-5. **No registry PR.** Editor sees the new tag on its next update check (within 1 hour). Users get an "Update available" toast.
+4. Template Action builds the zip, hashes it, publishes the release, prints the new 3-line diff.
+5. Open a PR to the registry that **only** changes `version`, `assetName`, and `sha256` on your entry.
+6. Merge → users get the update.
 
-That's it — the registry only cares about pointing at your repo; release management lives entirely on your side.
+That's the whole point of the SHA-256 pin: a new release on your repo doesn't reach users until the registry PR merges. If you skip step 5, users keep installing v1.0.0 — by design.
 
 ---
 
 ## Common first-time pitfalls
 
-- **Tag doesn't match manifest version.** Tag must be exactly `v1.0.0` if manifest says `"version": "1.0.0"`. Off by one character → CI rejects.
+- **Tag doesn't match manifest version.** Tag must be exactly `v1.0.0` if manifest says `"version": "1.0.0"`. Off by one character → install rejects.
 - **Forgot to flip the repo to public.** Default for new GitHub repos can be Private. Settings → General → Visibility → Change → Public.
 - **Zip wraps content in a deep folder.** The installer only auto-strips a single top-level folder. `my-mod/manifest.json` inside the zip = fine. `Documents/stuff/my-mod/manifest.json` = breaks.
+- **Recomputed the hash after editing the release.** If you re-upload the zip, you must recompute and re-open / re-push the registry PR with the new sha256.
 - **Permissions in manifest don't match code.** If you `ctx.fs.writeProjectFile(...)` but don't declare `fs.write.project`, reviewers will reject.
-- **Committed your `.key` file.** Don't. The registry's `.gitignore` blocks `*.key` by default; do the same in your mod repo's `.gitignore`. If you ever do leak it: generate a new keypair and PR the new `pubkey` to the registry immediately.
 
 ---
 

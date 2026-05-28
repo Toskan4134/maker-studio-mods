@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   validate:
-    name: Schema + release assets
+    name: Schema + pinned asset + SHA-256
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -53,7 +53,7 @@ jobs:
             console.log('No duplicate ids.');
           "
 
-      - name: Verify each mod's latest release ships the expected assets
+      - name: Verify each mod's pinned release + SHA-256
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -62,10 +62,10 @@ jobs:
           mods_json=$(node -e "console.log(JSON.stringify(require('./index.json').mods))")
           echo "$mods_json" | node -e '
             const mods = JSON.parse(require("fs").readFileSync(0, "utf8"));
-            for (const m of mods) console.log(`${m.id}\t${m.repo}\t${m.pubkey ?? ""}`);
-          ' | while IFS=$'\t' read -r id repo pubkey; do
+            for (const m of mods) console.log(`${m.id}\t${m.repo}\t${m.version}\t${m.assetName}\t${m.sha256}`);
+          ' | while IFS=$'\t' read -r id repo version assetName sha256; do
               echo ""
-              echo "Checking $id ($repo)..."
+              echo "Checking $id ($repo) pinned to v$version..."
 
               # Repo must exist + be public.
               if ! gh api "repos/$repo" >/dev/null 2>&1; then
@@ -74,44 +74,48 @@ jobs:
                 continue
               fi
 
-              # Repo must have a published release. Drafts / prereleases don't count.
-              if ! release=$(gh api "repos/$repo/releases/latest" 2>/dev/null); then
-                echo "  FAIL: repos/$repo has no published release. Publish v1.0.0 (or whichever tag) on GitHub before listing."
+              # Pinned tag must exist as a published release.
+              if ! release=$(gh api "repos/$repo/releases/tags/v$version" 2>/dev/null); then
+                echo "  FAIL: repos/$repo has no release at tag v$version. Publish that tag before merging this PR."
                 fail=1
                 continue
               fi
-              tag=$(echo "$release" | node -e "console.log(JSON.parse(require('fs').readFileSync(0,'utf8')).tag_name)")
-              echo "  Latest tag: $tag"
 
-              # Expect one zip asset whose name contains the mod id.
-              has_zip=$(echo "$release" | node -e "
+              # Pinned asset must exist on that release.
+              asset_url=$(echo "$release" | node -e "
                 const r = JSON.parse(require('fs').readFileSync(0, 'utf8'));
-                const id = process.argv[1];
-                console.log(r.assets.some(a => a.name.toLowerCase().endsWith('.zip') && a.name.includes(id)));
-              " "$id")
-              if [ "$has_zip" != "true" ]; then
-                echo "  FAIL: no .zip asset whose name contains '$id'."
+                const want = process.argv[1];
+                const a = r.assets.find(a => a.name === want);
+                console.log(a ? a.browser_download_url : '');
+              " "$assetName")
+              if [ -z "$asset_url" ]; then
+                echo "  FAIL: release v$version has no asset named '$assetName'."
                 fail=1
                 continue
               fi
 
-              # If pubkey declared, require a .minisig.
-              if [ -n "$pubkey" ]; then
-                has_sig=$(echo "$release" | node -e "
-                  const r = JSON.parse(require('fs').readFileSync(0, 'utf8'));
-                  console.log(r.assets.some(a => a.name.toLowerCase().endsWith('.minisig')));
-                ")
-                if [ "$has_sig" != "true" ]; then
-                  echo "  FAIL: pubkey declared in registry but no .minisig asset on the release."
-                  fail=1
-                  continue
-                fi
+              # SHA-256 must match the bytes on disk.
+              tmpfile=$(mktemp)
+              if ! curl -sLf -o "$tmpfile" "$asset_url"; then
+                echo "  FAIL: could not download $asset_url for hashing."
+                rm -f "$tmpfile"
+                fail=1
+                continue
+              fi
+              actual=$(sha256sum "$tmpfile" | awk '{print $1}')
+              rm -f "$tmpfile"
+              if [ "$actual" != "$sha256" ]; then
+                echo "  FAIL: sha256 mismatch."
+                echo "    registry: $sha256"
+                echo "    actual:   $actual"
+                fail=1
+                continue
               fi
 
               echo "  OK"
             done
             if [ "$fail" -ne 0 ]; then
               echo ""
-              echo "One or more entries failed asset checks. See output above."
+              echo "One or more entries failed pinned-release checks. See output above."
               exit 1
             fi

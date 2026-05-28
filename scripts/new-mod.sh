@@ -123,17 +123,17 @@ $DESCRIPTION
 
 1. Push this folder to a public GitHub repo (one repo per mod).
 2. Tag \`v1.0.0\` (must match \`manifest.json#version\`).
-3. Build the release zip:
+3. Build the release zip + compute its SHA-256:
    \`\`\`bash
    zip -r $MOD_ID-1.0.0.zip manifest.json index.js README.md
+   sha256sum $MOD_ID-1.0.0.zip
    \`\`\`
-4. Sign it (see \`../KEYS.md\` for keypair setup):
-   \`\`\`bash
-   minisign -S -s your-mod.key -m $MOD_ID-1.0.0.zip
-   \`\`\`
-5. Create a GitHub Release for the tag, attach both files.
-6. Open a PR to the [registry](https://github.com/Toskan4134/maker-studio-mods)
-   adding your entry to \`index.json\`. See \`../PUBLISHING.md\` for the full walkthrough.
+   (Or drop the registry's \`templates/publish.yml\` workflow into \`.github/workflows/\` —
+   it builds and hashes on every tag push.)
+4. Create a GitHub Release for the tag, attach the zip.
+5. Open a PR to the [registry](https://github.com/Toskan4134/maker-studio-mods)
+   adding your entry to \`index.json\` with \`version\`, \`assetName\`, and \`sha256\`.
+   See \`../PUBLISHING.md\` for the full walkthrough.
 EOF
 
 # Summary

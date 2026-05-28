@@ -1,6 +1,6 @@
 {
     "$schema": "./schema/index.schema.json",
-    "schemaVersion": 1,
+    "schemaVersion": 2,
     "updatedAt": "2026-05-28T00:00:00Z",
     "mods": [
         {
@@ -8,10 +8,12 @@
             "name": "Discord Rich Presence",
             "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
             "repo": "Toskan4134/msmod-discord-rich-presence",
+            "version": "1.0.0",
+            "assetName": "com.toskan4134.discord-rich-presence-1.0.0.zip",
+            "sha256": "54b7705a31c40021b16f0973f64f993d5c09685b20b7b71fcc461cf98cb24f1b",
             "description": "Shows your current project, map, and elapsed time in Discord status.",
             "tags": ["discord", "integration", "status"],
             "apiVersion": "1.0.0",
-            "pubkey": "RWTWbH+fJBQ8BmM/+0Ixf+t5IzEvQ04Jw0DvMdq89whiWW6CveNLkiKd",
             "permissions": ["ui.toasts"]
         },
         {
@@ -19,10 +21,12 @@
             "name": "Image to Tileset",
             "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
             "repo": "Toskan4134/msmod-image-to-tileset",
+            "version": "1.0.0",
+            "assetName": "com.toskan4134.image-to-tileset-1.0.0.zip",
+            "sha256": "64c28aefd122b7eea4886944f6a6ca97d9deda1d8023e5e9f7e5203be05e0fca",
             "description": "Import any image as a new tileset. Pick an image, preview with grid overlay, and create a tileset entry in one click.",
             "tags": ["tileset", "import", "graphics", "tools"],
             "apiVersion": "1.0.0",
-            "pubkey": "RWTWbH+fJBQ8BmM/+0Ixf+t5IzEvQ04Jw0DvMdq89whiWW6CveNLkiKd",
             "permissions": ["fs.project", "fs.write.project", "ui.dialogs", "ui.toasts"]
         },
         {
@@ -30,10 +34,12 @@
             "name": "PBS Editor",
             "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
             "repo": "Toskan4134/msmod-pbs-editor",
+            "version": "1.0.0",
+            "assetName": "com.toskan4134.pbs-editor-1.0.0.zip",
+            "sha256": "737b95b38a61bc75010cce71f9d6ff3a2b4878be0808b6d2f988e226a3f2891d",
             "description": "Edit Pokémon Essentials PBS files directly from the editor. Supports v16, v17, and v21 formats.",
             "tags": ["pbs", "essentials", "editor", "data"],
             "apiVersion": "1.0.0",
-            "pubkey": "RWTWbH+fJBQ8BmM/+0Ixf+t5IzEvQ04Jw0DvMdq89whiWW6CveNLkiKd",
             "permissions": ["fs.project", "fs.write.project", "ui.dialogs", "ui.toasts"]
         }
     ]

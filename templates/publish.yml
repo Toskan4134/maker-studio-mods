@@ -1,0 +1,149 @@
+# Drop this file into your mod repo at `.github/workflows/publish.yml`.
+#
+# What it does:
+#   1. Triggers when you push a tag like `v1.2.3`.
+#   2. Reads `manifest.json#version`, refuses to continue if it doesn't match the tag.
+#   3. Zips your mod folder as `<modId>-<version>.zip`.
+#   4. Computes the SHA-256 of that zip.
+#   5. Creates the GitHub Release (or updates one already created for that tag)
+#      and uploads the zip + a `SHA256SUMS.txt` file as assets.
+#   6. Prints the exact `index.json` block you need to PR to
+#      https://github.com/Toskan4134/maker-studio-mods to update your registry entry.
+#
+# Required repo secrets / settings: none. The default `GITHUB_TOKEN` is enough to publish
+# releases on your own repo.
+#
+# Optional automation: see the commented `registry-pr` job at the bottom — it will open the
+# registry PR for you if you set a `REGISTRY_PAT` secret (Personal Access Token with `repo`
+# scope on an account that has a fork of `maker-studio-mods`).
+
+name: Publish mod release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    outputs:
+      mod-id: ${{ steps.meta.outputs.mod-id }}
+      version: ${{ steps.meta.outputs.version }}
+      asset-name: ${{ steps.meta.outputs.asset-name }}
+      sha256: ${{ steps.hash.outputs.sha256 }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read manifest + validate tag
+        id: meta
+        run: |
+          MOD_ID=$(jq -r '.id' manifest.json)
+          MANIFEST_VER=$(jq -r '.version' manifest.json)
+          TAG="${GITHUB_REF_NAME}"
+          TAG_VER="${TAG#v}"
+          if [ "$MANIFEST_VER" != "$TAG_VER" ]; then
+            echo "::error::manifest.json#version ($MANIFEST_VER) does not match tag ($TAG_VER)"
+            exit 1
+          fi
+          ASSET="${MOD_ID}-${MANIFEST_VER}.zip"
+          echo "mod-id=$MOD_ID" >> "$GITHUB_OUTPUT"
+          echo "version=$MANIFEST_VER" >> "$GITHUB_OUTPUT"
+          echo "asset-name=$ASSET" >> "$GITHUB_OUTPUT"
+
+      - name: Build zip
+        run: |
+          # Zip everything in the repo root EXCEPT git, CI, and dev-only files.
+          # The Maker Studio installer expects `manifest.json` at the zip root.
+          zip -r "${{ steps.meta.outputs.asset-name }}" . \
+            -x ".git/*" \
+            -x ".github/*" \
+            -x ".gitignore" \
+            -x "*.zip"
+
+      - name: Compute SHA-256
+        id: hash
+        run: |
+          SHA=$(sha256sum "${{ steps.meta.outputs.asset-name }}" | awk '{print $1}')
+          echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
+          echo "$SHA  ${{ steps.meta.outputs.asset-name }}" > SHA256SUMS.txt
+
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: |
+            ${{ steps.meta.outputs.asset-name }}
+            SHA256SUMS.txt
+          fail_on_unmatched_files: true
+
+      - name: Print registry PR block
+        run: |
+          cat <<EOF
+          ====================================================================
+          Update https://github.com/Toskan4134/maker-studio-mods/blob/main/index.json
+          Change your mod entry to:
+
+            "version": "${{ steps.meta.outputs.version }}",
+            "assetName": "${{ steps.meta.outputs.asset-name }}",
+            "sha256": "${{ steps.hash.outputs.sha256 }}"
+
+          Open a PR with that change. Until the PR is merged, users still install
+          the previously approved version.
+          ====================================================================
+          EOF
+
+  # ----------------------------------------------------------------------------------
+  # OPTIONAL: auto-open the registry PR.
+  # Enable by:
+  #   1. Forking https://github.com/Toskan4134/maker-studio-mods on the GitHub account
+  #      whose token you'll use below.
+  #   2. Creating a PAT with `repo` scope on that account.
+  #   3. Adding it as a repo secret named REGISTRY_PAT.
+  #   4. Uncommenting this job and adjusting `fork-owner` to that account's handle.
+  # ----------------------------------------------------------------------------------
+  #
+  # registry-pr:
+  #   needs: build-and-release
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     REGISTRY_REPO: Toskan4134/maker-studio-mods
+  #     FORK_OWNER: your-github-handle
+  #   steps:
+  #     - name: Checkout fork
+  #       uses: actions/checkout@v4
+  #       with:
+  #         repository: ${{ env.FORK_OWNER }}/maker-studio-mods
+  #         token: ${{ secrets.REGISTRY_PAT }}
+  #         path: registry
+  #
+  #     - name: Update index.json
+  #       working-directory: registry
+  #       run: |
+  #         MOD_ID="${{ needs.build-and-release.outputs.mod-id }}"
+  #         VERSION="${{ needs.build-and-release.outputs.version }}"
+  #         ASSET="${{ needs.build-and-release.outputs.asset-name }}"
+  #         SHA="${{ needs.build-and-release.outputs.sha256 }}"
+  #         jq --arg id "$MOD_ID" --arg v "$VERSION" --arg a "$ASSET" --arg s "$SHA" \
+  #           '(.mods[] | select(.id == $id)) |= (.version = $v | .assetName = $a | .sha256 = $s)' \
+  #           index.json > index.json.tmp && mv index.json.tmp index.json
+  #
+  #     - name: Create PR
+  #       uses: peter-evans/create-pull-request@v6
+  #       with:
+  #         path: registry
+  #         token: ${{ secrets.REGISTRY_PAT }}
+  #         push-to-fork: ${{ env.FORK_OWNER }}/maker-studio-mods
+  #         branch: bump-${{ needs.build-and-release.outputs.mod-id }}-${{ needs.build-and-release.outputs.version }}
+  #         commit-message: "bump ${{ needs.build-and-release.outputs.mod-id }} to v${{ needs.build-and-release.outputs.version }}"
+  #         title: "bump ${{ needs.build-and-release.outputs.mod-id }} to v${{ needs.build-and-release.outputs.version }}"
+  #         body: |
+  #           Automated PR from `${{ github.repository }}` on release of v${{ needs.build-and-release.outputs.version }}.
+  #
+  #           - asset: `${{ needs.build-and-release.outputs.asset-name }}`
+  #           - sha256: `${{ needs.build-and-release.outputs.sha256 }}`

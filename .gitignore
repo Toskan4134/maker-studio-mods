@@ -1,14 +1,6 @@
-# Minisign keys — NEVER commit these.
-# Both maintainer and any author who runs scripts/generate-keypair from inside
-# this repo would otherwise risk publishing their secret key.
+# Stray secrets — never commit private key material of any kind.
 *.key
 *.pub
-
-# Minisign binary dropped into the repo root by mistake.
-# (The intentional bundled copy under scripts/bin/win/ is explicitly allowed.)
-/minisign
-/minisign.exe
-!scripts/bin/win/minisign.exe
 
 # OS / editor cruft
 .DS_Store

@@ -13,8 +13,8 @@
     },
     "schemaVersion": {
       "type": "integer",
-      "const": 1,
-      "description": "Format version. Bumping is a breaking change for the editor."
+      "const": 2,
+      "description": "Format version. Bumping is a breaking change for the editor. v2 added required `version`, `sha256`, `assetName` and removed `pubkey`."
     },
     "updatedAt": {
       "type": "string",
@@ -31,7 +31,7 @@
     "Mod": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "authors", "repo"],
+      "required": ["id", "name", "authors", "repo", "version", "sha256", "assetName"],
       "properties": {
         "id": {
           "type": "string",
@@ -60,7 +60,22 @@
         "repo": {
           "type": "string",
           "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$",
-          "description": "GitHub owner/name. Releases are looked up at api.github.com/repos/{repo}/releases/latest."
+          "description": "GitHub owner/name. The pinned release is fetched at api.github.com/repos/{repo}/releases/tags/v{version}."
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$",
+          "description": "Pinned semver of the release the editor must install. The release tag is expected to be `v{version}`."
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Lowercase hex SHA-256 of the release asset named `assetName`. Install is refused if the downloaded bytes do not match."
+        },
+        "assetName": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._-]+\\.zip$",
+          "description": "Exact filename of the .zip asset on the pinned release that the editor will download."
         },
         "description": {
           "type": "string",
@@ -94,11 +109,6 @@
         "apiVersion": {
           "type": "string",
           "description": "Mod API version (semver or 'X.x' wildcard)."
-        },
-        "pubkey": {
-          "type": "string",
-          "pattern": "^RW[A-Za-z0-9+/=]{40,}$",
-          "description": "Minisign public key (single line). If set, signature verification is MANDATORY at install."
         },
         "verified": {
           "type": "boolean",
