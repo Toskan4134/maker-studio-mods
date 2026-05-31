@@ -217,6 +217,15 @@ await ctx.storage.set("myKey", { count: 42 });
 const val = await ctx.storage.get("myKey", { count: 0 });
 ```
 
+## OS text clipboard
+
+```js
+await ctx.clipboard.writeText("hello");
+const text = await ctx.clipboard.readText();   // string | null
+```
+
+Not the tile clipboard — that's `ctx.map.getClipboard()` / `setClipboard()`.
+
 ## Cross-mod commands
 
 ```js
