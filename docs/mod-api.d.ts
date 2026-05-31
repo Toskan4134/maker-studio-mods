@@ -979,6 +979,19 @@ export interface StorageCtx {
   keys(): Promise<string[]>;
 }
 
+/**
+ * OS text clipboard. This is the system clipboard shared with every other
+ * application — distinct from the tile clipboard on `ctx.map.getClipboard()`,
+ * which only holds copied map tiles. Reads return whatever raw text the OS
+ * clipboard currently holds (which may be a copy made by another app).
+ */
+export interface ClipboardCtx {
+  /** Read the OS text clipboard. Resolves to null when empty or unavailable. */
+  readText(): Promise<string | null>;
+  /** Write plain text to the OS text clipboard. */
+  writeText(text: string): Promise<void>;
+}
+
 export interface LogCtx {
   info(...args: unknown[]): void;
   warn(...args: unknown[]): void;
@@ -1225,6 +1238,8 @@ export interface ModContext {
   bus: BusCtx;
   fs: FsCtx;
   storage: StorageCtx;
+  /** OS text clipboard (system-wide). Not the tile clipboard — see `map.getClipboard()`. */
+  clipboard: ClipboardCtx;
   log: LogCtx;
   lifecycle: LifecycleCtx;
   stats: StatsCtx;

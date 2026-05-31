@@ -29,6 +29,7 @@ All mod capabilities are reached through it.
 | `bus`        | `BusCtx`              | Subscribe to / emit events. |
 | `fs`         | `FsCtx`               | Path-scoped filesystem. |
 | `storage`    | `StorageCtx`          | Per-mod persistent K/V. |
+| `clipboard`  | `ClipboardCtx`        | OS text clipboard read/write (not the tile clipboard). |
 | `stats`      | `StatsCtx`            | Read editor usage statistics. |
 | `keybinds`   | `KeybindsCtx`         | Query and modify keyboard shortcuts. |
 | `selectors`  | `SelectorsCtx`        | Modal pickers (actor, item, switch, map, tileset, audio, graphic, …). |
@@ -1055,6 +1056,29 @@ const v = await ctx.storage.get<number>("counter", 0);
 ```
 
 Backed by `<modDir>/.storage.json`.
+
+---
+
+## `clipboard`
+
+The **OS text clipboard** — the system-wide clipboard shared with every other application.
+
+```ts
+clipboard.readText(): Promise<string | null>
+clipboard.writeText(text: string): Promise<void>
+```
+
+```ts
+await ctx.clipboard.writeText("hello");
+const text = await ctx.clipboard.readText();   // null if empty / unavailable
+```
+
+`readText` returns whatever raw text the OS clipboard holds — which may be a copy made by
+another app — or `null` when empty or the clipboard is unavailable (permission / headless).
+`writeText` is a no-op when the clipboard is unavailable; neither method throws.
+
+This is **not** the tile clipboard: `ctx.map.getClipboard()` / `setClipboard()` hold copied
+map tiles, fire `clipboard.changed`, and never touch the OS clipboard.
 
 ---
 
