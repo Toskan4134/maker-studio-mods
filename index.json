@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-05-30T21:16:26Z",
+  "updatedAt": "2026-05-31T03:00:27Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -62,12 +62,16 @@
         {
           "name": "Toskan4134",
           "url": "https://x.com/Toskan4134"
+        },
+        {
+          "name": "DPertierra",
+          "url": "https://github.com/dpertierra"
         }
       ],
       "repo": "Toskan4134/msmod-pbs-editor",
       "version": "1.1.0",
       "assetName": "com.toskan4134.pbs-editor-1.1.0.zip",
-      "sha256": "91a37fd7c0a5db90ffe9c854dd55b674a459ab70966da0e7ab04cdae676370b4",
+      "sha256": "e3e2dba5823b8afe8bb7dc1f1a6acdecc43876cd92302d200377d14eda6f356c",
       "description": "Edit Pokémon Essentials PBS files directly from the editor. Supports v16, v17, and v21 formats.",
       "tags": [
         "pbs",
