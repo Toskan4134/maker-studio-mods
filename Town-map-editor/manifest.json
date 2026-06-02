@@ -1,0 +1,19 @@
+{
+  "id": "com.Miolthor.Town-map-editor",
+  "name": "Town Map Editor",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Miolthor"
+    }
+  ],
+  "description": "Editor for town_map.txt. Inspect and edit fly points and locations directly in MakerStudio.",
+  "apiVersion": "1.0.0",
+  "main": "index.js",
+  "permissions": [
+    "fs.project",
+    "fs.write.project",
+    "ui.dialogs",
+    "ui.toasts"
+  ]
+}
