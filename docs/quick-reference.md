@@ -44,6 +44,7 @@ ctx.ui.showToast({ message: "Done!", level: "info" });
 ctx.menu.registerMenuItem({
   menu: "Mods",
   label: "My Action",
+  icon: "database",   // optional: built-in icon name, SVG markup, or unicode glyph
   handler: () => { /* do something */ },
   isEnabled: () => true,
 });

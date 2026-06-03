@@ -227,7 +227,7 @@ export interface ToolPointerEvent {
 }
 
 export interface MenuItemDef {
-  /** Top-level menu to insert into: "Project" | "Edit" | "View" | "Tools" | "Info" | custom. */
+  /** Top-level menu to insert into: "File" | "Edit" | "View" | "Map" | "Tools" | "Help" | custom. */
   menu: string;
   label: string;
   /** Optional keyboard shortcut hint string, e.g. "Ctrl+Shift+P". */
@@ -236,6 +236,12 @@ export interface MenuItemDef {
   /** Optional state evaluator — invoked when menu opens. */
   isEnabled?: () => boolean;
   isChecked?: () => boolean;
+  /**
+   * Optional icon, rendered in the same style as built-in menu items.
+   * Accepts a built-in icon name (e.g. "database", "code", "save", "grid"),
+   * raw inline SVG markup, or a single unicode glyph.
+   */
+  icon?: string;
 }
 
 export interface PanelDef {

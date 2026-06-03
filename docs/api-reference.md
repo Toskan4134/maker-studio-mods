@@ -819,17 +819,31 @@ ctx.menu.registerMenuItem({
   menu: "Mods",          // any existing or new top-level menu
   label: "Do Something",
   shortcut: "Ctrl+Shift+D", // hint only — register the binding separately
+  icon: "database",      // optional: built-in icon name, SVG markup, or glyph
   handler: () => { /* ... */ },
   isEnabled: () => true,
   isChecked: () => false,
 });
 ```
 
-If `menu` matches an existing top-level (`"Project"`, `"Edit"`, `"View"`,
-`"Tools"`, `"Mods"`, `"About"`), the item is appended to it. If it matches
-a submenu label within a top-level menu (e.g. `"Import & Export Maps"`),
+If `menu` matches an existing top-level (`"File"`, `"Edit"`, `"View"`,
+`"Map"`, `"Tools"`, `"Mods"`, `"Help"`), the item is appended to it. If it
+matches a submenu label within a top-level menu (e.g. `"Import & Export Maps"`),
 the item is inserted there. Otherwise a new top-level menu is created with
 that label.
+
+The optional `icon` is rendered in the same style as built-in menu items.
+It accepts any of three forms, resolved in order:
+
+1. **A built-in icon name** (kebab-case) — renders the matching editor icon in
+   the same family as native menu items. Common names: `database`, `code`,
+   `save`, `save-all`, `grid`, `layers`, `undo`, `redo`, `cut`, `copy`,
+   `paste`, `import`, `export`, `download`, `zoom-in`, `zoom-out`,
+   `select-all`, `collision`, `events`, `dim`, `lock`, `unlock`, `info`,
+   `mods`, `keyboard`, `terminal`, `run`. (Aliases exist, e.g. `recent` /
+   `history`, `new` / `file-plus`, `scripts` / `code`, `dark-mode` / `moon`.)
+2. **Raw inline SVG markup** — any string containing a `<` is rendered as-is.
+3. **A single unicode glyph** — anything else (e.g. `"📊"`).
 
 ---
 

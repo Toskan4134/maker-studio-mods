@@ -16,6 +16,14 @@ First public API. Includes the full modding surface for the 1.0 release.
 
 ### Additions since initial release
 
+- **`MenuItemDef.icon`** — optional `icon?: string` on menu items registered via
+  `ctx.menu.registerMenuItem(def)`, rendered in the same style as built-in menu
+  items. Accepts a built-in icon name (kebab-case, e.g. `"database"`, `"code"`,
+  `"save"`, `"grid"`, `"lock"`), raw inline SVG markup, or a single unicode glyph
+  — resolved in that order. Mirrors the existing `icon` on `ToolDef` / `PanelDef`
+  / `ToolbarButtonDef`. Additive, non-breaking. *(Also: the `MenuItemDef.menu`
+  doc example was corrected to the current top-level menu names — `"File"`,
+  `"Edit"`, `"View"`, `"Map"`, `"Tools"`, `"Help"`.)*
 - **`ctx.events.registerCommand(def): Disposable`** — register a custom RMXP
   event command. It appears on a dedicated puzzle-icon mod page (`🧩1`, `🧩2`, …; 24 per page)
   in the event-command picker and edits through a native declarative form
