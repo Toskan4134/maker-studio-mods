@@ -6,8 +6,9 @@
   "description": "Pops a toast each time a map loads. Demonstrates registerShortcut.",
   "apiVersion": "1.0.0",
   "main": "index.js",
-  "pluginDependencies": [
+  "requires": [
     {
+      "type": "plugin",
       "name": "MakerStudio",
       "enforcement": "pluginAndVersion",
       "version": "1.0.0",

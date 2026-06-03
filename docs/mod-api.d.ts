@@ -47,12 +47,34 @@ export interface ModManifest {
   apiVersion: string;
   /** Path to the JS entry file, relative to the mod folder. */
   main: string;
-  /** Map of mod id -> semver range. Topo-sorted on load. */
-  dependencies?: Record<string, string>;
+  /**
+   * Unified dependency list — other installed mods and/or Essentials plugins
+   * this mod needs. Each entry is a discriminated union on `type`:
+   *   - `{ type: "mod", id, version? }`    — another mod; topo-sorted on load.
+   *   - `{ type: "plugin", name, ... }`    — an Essentials plugin; validated
+   *     against the plugins under `<gameRoot>/Plugins/`.
+   */
+  requires?: ModRequirement[];
   /** Forward-compat. Recorded but not enforced in v1. */
   permissions?: ModPermission[];
-  /** Dependencies on Essentials plugins (by meta.txt Name). Validated at load. */
-  pluginDependencies?: PluginDependency[];
+}
+
+/** An entry in `manifest.requires`. Discriminated on `type`. */
+export type ModRequirement = ModDependency | PluginDependency;
+
+/**
+ * A dependency on another installed mod. Topo-sorted so the dependency loads
+ * first; a missing mod dependency blocks this mod from loading.
+ */
+export interface ModDependency {
+  type: "mod";
+  /** Reverse-DNS id of the required mod (matches that mod's manifest `id`). */
+  id: string;
+  /**
+   * Optional semver range. Recorded for tooling; the loader enforces presence
+   * (the mod is installed), not the version range, in v1.
+   */
+  version?: string;
 }
 
 export type ModPermission =
@@ -65,6 +87,7 @@ export type ModPermission =
 
 /** A dependency on an Essentials plugin (from Plugins folder meta.txt). */
 export interface PluginDependency {
+  type: "plugin";
   /** Plugin name as it appears in meta.txt's Name field. */
   name: string;
   /** URL where the plugin can be found/downloaded (shown in warnings). */
@@ -1216,6 +1239,92 @@ export interface SelectorsCtx {
 }
 
 // ============================================================================
+// Installed mods / plugins (runtime registry queries)
+// ============================================================================
+
+/** A mod the editor currently knows about (read-only snapshot). */
+export interface InstalledModInfo {
+  /** Reverse-DNS id from the mod's manifest. */
+  id: string;
+  /** Display name. */
+  name: string;
+  /** Mod version (semver). */
+  version: string;
+  /** False if the user has disabled the mod in the Mod Manager. */
+  enabled: boolean;
+  /**
+   * Load state:
+   *   - "active"   — loaded and running.
+   *   - "error"    — failed to activate.
+   *   - "disabled" — present but switched off by the user.
+   * Mods blocked before load (missing dependency, version block) are not listed.
+   */
+  status: "active" | "error" | "disabled";
+  /** Where the mod was loaded from. */
+  source: "project" | "global";
+}
+
+export interface ModsCtx {
+  /** Every mod the editor knows about (all sources), including this one. */
+  list(): InstalledModInfo[];
+  /** Look up a single mod by id. Null if not installed. */
+  get(id: string): InstalledModInfo | null;
+  /** True if a mod with this id is installed (any status). */
+  isInstalled(id: string): boolean;
+  /** True if a mod with this id is installed and currently active. */
+  isActive(id: string): boolean;
+}
+
+/** A plugin reference with an optional version constraint, from a meta.txt
+ *  `Requires` / `Exact` / `Optional` field. */
+export interface PluginRequirement {
+  /** Referenced plugin's meta.txt `Name`. */
+  name: string;
+  /** Version constraint (minimum for `requires`, exact for `exact`), or null. */
+  version: string | null;
+}
+
+/**
+ * An Essentials plugin discovered under `<gameRoot>/Plugins/`, parsed from its
+ * `meta.txt`. Mirrors the standard Essentials plugin metadata fields.
+ */
+export interface InstalledPluginInfo {
+  /** `Name` field — the plugin's name. */
+  name: string;
+  /** `Version` field, or null if the plugin declares none. */
+  version: string | null;
+  /** `Essentials` field — compatible Essentials versions, e.g. ["19.1", "20"]. */
+  essentials: string[];
+  /** `Link` field — plugin homepage / download URL, or null. */
+  link: string | null;
+  /** `Credits` field — credited authors. */
+  credits: string[];
+  /** `Requires` entries — plugins needed at any version or a minimum. */
+  requires: PluginRequirement[];
+  /** `Exact` entries — plugins needed at an exact version. */
+  exact: PluginRequirement[];
+  /** `Optional` entries — plugins loaded before this one when installed. */
+  optional: PluginRequirement[];
+  /** `Conflicts` entries — incompatible plugins, by name. */
+  conflicts: string[];
+}
+
+export interface PluginsCtx {
+  /**
+   * False on projects with no `Plugins/` directory (v16 / BES v5), where plugin
+   * presence cannot be verified. When false, `list()` is empty and the other
+   * queries always report "not installed".
+   */
+  available(): boolean;
+  /** Every installed Essentials plugin. Empty when `available()` is false. */
+  list(): InstalledPluginInfo[];
+  /** Look up a single plugin by its meta.txt name. Null if not installed. */
+  get(name: string): InstalledPluginInfo | null;
+  /** True if a plugin with this name is installed. */
+  isInstalled(name: string): boolean;
+}
+
+// ============================================================================
 // ModContext — the root facade passed to activate(ctx).
 // ============================================================================
 
@@ -1248,6 +1357,10 @@ export interface ModContext {
   selectors: SelectorsCtx;
   /** Read-only access to project-wide RPG record lists (actors, items, …). */
   projectData: ProjectDataCtx;
+  /** Query other installed mods (presence, status) at runtime. */
+  mods: ModsCtx;
+  /** Query installed Essentials plugins (under `<gameRoot>/Plugins/`) at runtime. */
+  plugins: PluginsCtx;
 }
 
 // ============================================================================

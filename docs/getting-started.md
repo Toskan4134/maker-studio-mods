@@ -26,7 +26,7 @@ all projects. Project mods take priority over global mods with the same id.
 
 ```json
 {
-  "id": "com.toskan4134.hello-world",
+  "id": "com.example.hello-world",
   "name": "Hello World",
   "version": "1.0.0",
   "authors": [{ "name": "You" }],
@@ -46,7 +46,7 @@ Required fields:
 | `apiVersion`  | Editor API version your mod targets (semver). |
 | `main`        | Path to the JS entry, relative to the mod folder. |
 
-Optional: `authors` (array of `{name, url?}` — supports multiple authors), `description`, `homepage`, `dependencies`, `permissions`.
+Optional: `authors` (array of `{name, url?}` — supports multiple authors), `description`, `homepage`, `requires` (unified mod + plugin dependencies — see the API reference), `permissions`.
 
 ## 3. Write the mod
 

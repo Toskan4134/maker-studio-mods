@@ -320,30 +320,56 @@ ctx.log.warn("Unexpected state");
 ctx.log.error(err);
 ```
 
-## Plugin dependencies (manifest)
+## Query installed mods / plugins (runtime)
+
+```js
+// Other mods (soft/optional deps, feature detection):
+ctx.mods.list();                         // [{ id, name, version, enabled, status, source }]
+ctx.mods.isInstalled("com.author.x");    // present in any status
+ctx.mods.isActive("com.author.x");       // present AND running
+ctx.mods.get("com.author.x");            // InstalledModInfo | null
+
+// Essentials plugins (from <gameRoot>/Plugins/), full meta.txt:
+ctx.plugins.available();                 // false on v16/BES (no Plugins/ dir)
+ctx.plugins.list();                      // [{ name, version, essentials, link, credits,
+                                         //    requires, exact, optional, conflicts }]
+ctx.plugins.isInstalled("Following Pokemon EX");
+ctx.plugins.get("Following Pokemon EX"); // InstalledPluginInfo | null
+```
+
+For *hard* dependencies that should block your mod from loading, use the
+manifest `requires` array below instead.
+
+## Dependencies (manifest `requires`)
 
 ```jsonc
-// In manifest.json — declare dependencies on Essentials plugins.
-// Plugins are loaded from <gameRoot>/Plugins/*/meta.txt.
+// In manifest.json — one unified array for mod + plugin dependencies.
+// Each entry is discriminated by "type". Plugins load from <gameRoot>/Plugins/.
 {
-  "pluginDependencies": [
-    { "name": "My Plugin" },                                // block if missing, ignore version
-    { "name": "Other Plugin",
-      "url": "https://example.com/plugin" },                // link shown in warnings
-    { "name": "Strict Plugin",
+  "requires": [
+    // -- other mods (topo-sorted; missing id blocks this mod) --
+    { "type": "mod", "id": "com.author.coremod" },          // must be installed
+    { "type": "mod", "id": "com.author.utils",
+      "version": "^1.2.0" },                                 // range recorded, not enforced in v1
+
+    // -- Essentials plugins --
+    { "type": "plugin", "name": "My Plugin" },               // block if missing, ignore version
+    { "type": "plugin", "name": "Other Plugin",
+      "url": "https://example.com/plugin" },                 // link shown in warnings
+    { "type": "plugin", "name": "Strict Plugin",
       "enforcement": "pluginAndVersion",
-      "version": "1.2.0" },                                 // block if missing OR < 1.2.0
-    { "name": "Exact Plugin",
+      "version": "1.2.0" },                                  // block if missing OR < 1.2.0
+    { "type": "plugin", "name": "Exact Plugin",
       "enforcement": "pluginAndVersion",
       "versionCheck": "exact",
-      "version": "2.0.0" },                                 // block unless exactly 2.0.0
-    { "name": "Optional Plugin",
+      "version": "2.0.0" },                                  // block unless exactly 2.0.0
+    { "type": "plugin", "name": "Optional Plugin",
       "enforcement": "none",
-      "url": "https://example.com/opt" }                    // never block, only warn
+      "url": "https://example.com/opt" }                     // never block, only warn
   ]
 }
-// enforcement: "plugin" (default) | "pluginAndVersion" | "none"
-// versionCheck: "greaterOrEqual" (default) | "exact" | "compatible"
+// plugin enforcement: "plugin" (default) | "pluginAndVersion" | "none"
+// plugin versionCheck: "greaterOrEqual" (default) | "exact" | "compatible"
 // "compatible" = same major, installed minor.patch >= required
 // "pluginAndVersion" without version → ManifestError
 // v21+ projects: enforcement controls blocking (see above).
