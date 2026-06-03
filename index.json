@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-06-03T20:32:50Z",
+  "updatedAt": "2026-06-03T20:50:14Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -13,9 +13,9 @@
         }
       ],
       "repo": "Toskan4134/msmod-discord-rich-presence",
-      "version": "1.0.0",
-      "assetName": "com.toskan4134.discord-rich-presence-1.0.0.zip",
-      "sha256": "54b7705a31c40021b16f0973f64f993d5c09685b20b7b71fcc461cf98cb24f1b",
+      "version": "1.0.1",
+      "assetName": "com.toskan4134.discord-rich-presence-1.0.1.zip",
+      "sha256": "8aac435fb07df40277d5034e3195bc70f0c799b28e7ef67fe43f0744b4c5e283",
       "description": "Shows your current project, map, and elapsed time in Discord status.",
       "tags": [
         "discord",
