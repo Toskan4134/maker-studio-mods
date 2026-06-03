@@ -16,6 +16,14 @@ First public API. Includes the full modding surface for the 1.0 release.
 
 ### Additions since initial release
 
+- **`MenuItemDef.shortcut` is now a functional, user-rebindable binding** *(2026-06-03)* — setting
+  `shortcut` on an item registered via `ctx.menu.registerMenuItem(def)` now registers a real keyboard
+  binding that fires the item's `handler`. Previously it was display-only (the key was shown next to the
+  label but never fired). The binding appears in the editor's Keyboard Shortcuts dialog under a new
+  "Mods" section and is rebindable there; user overrides persist. The signature is unchanged
+  (`shortcut?: string`), so this is backward-compatible — no `apiVersion` bump. **Migration note:** if a
+  mod previously set `shortcut` *and* also called `ctx.ui.registerShortcut` for the same combo to make it
+  fire, drop the `registerShortcut` call — keeping both now double-registers the key.
 - **`MenuItemDef.icon`** — optional `icon?: string` on menu items registered via
   `ctx.menu.registerMenuItem(def)`, rendered in the same style as built-in menu
   items. Accepts a built-in icon name (kebab-case, e.g. `"database"`, `"code"`,

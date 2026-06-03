@@ -110,11 +110,15 @@ The type definitions live in `src/mod-api/types.ts` in the editor source.
 
 ## Keyboard shortcut doesn't fire
 
-**Symptom**: `ctx.ui.registerShortcut()` was called but pressing the keys does nothing.
+**Symptom**: `ctx.ui.registerShortcut()` (or a menu item's `shortcut`) was called but pressing the keys does nothing.
 
 1. **Check key format** — must be `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Case-sensitive, `+` separated.
-2. **Check for conflicts** — built-in editor shortcuts take priority. Avoid `Ctrl+S` (save), `Ctrl+Z` (undo), etc.
+2. **Check for conflicts** — if your key clashes with a built-in or another mod's shortcut, open the editor's **Keyboard Shortcuts** dialog (the "Mods" section lists every mod menu shortcut) and rebind whichever side you want. Avoid the common built-ins like `Ctrl+S` (save) and `Ctrl+Z` (undo).
 3. **Check mod is active** — shortcuts only work while the mod is loaded and enabled.
+
+> **Note**: A menu item's `shortcut` (`ctx.menu.registerMenuItem({ shortcut })`) now fires `handler`
+> on its own and is rebindable in the Keyboard Shortcuts dialog. You do **not** need a separate
+> `ctx.ui.registerShortcut` for it — calling both double-registers the key.
 
 ## Multi-file import doesn't work
 

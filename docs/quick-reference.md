@@ -44,10 +44,14 @@ ctx.ui.showToast({ message: "Done!", level: "info" });
 ctx.menu.registerMenuItem({
   menu: "Mods",
   label: "My Action",
-  icon: "database",   // optional: built-in icon name, SVG markup, or unicode glyph
+  icon: "database",          // optional: built-in icon name, SVG markup, or unicode glyph
+  shortcut: "Ctrl+Shift+D",  // optional: registers a real, rebindable binding (NOT just a hint)
   handler: () => { /* do something */ },
   isEnabled: () => true,
 });
+// `shortcut` binds the key and fires `handler`; it's rebindable in the editor's
+// Keyboard Shortcuts dialog ("Mods" section). Don't also call registerShortcut
+// for the same key — that double-registers it.
 ```
 
 ## Listen to editor events
