@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-06-03T20:32:50Z",
+  "updatedAt": "2026-06-03T20:50:13Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -37,9 +37,9 @@
         }
       ],
       "repo": "Toskan4134/msmod-image-to-tileset",
-      "version": "1.0.0",
-      "assetName": "com.toskan4134.image-to-tileset-1.0.0.zip",
-      "sha256": "64c28aefd122b7eea4886944f6a6ca97d9deda1d8023e5e9f7e5203be05e0fca",
+      "version": "1.0.1",
+      "assetName": "com.toskan4134.image-to-tileset-1.0.1.zip",
+      "sha256": "33e47a171d88b989c8e9740eb5814c834ab6a45b7f90fb9cb09a6a6dd0f77af2",
       "description": "Import any image as a new tileset. Pick an image, preview with grid overlay, and create a tileset entry in one click.",
       "tags": [
         "tileset",
