@@ -85,7 +85,30 @@
         "fs.write.project",
         "ui.dialogs",
         "ui.toasts"
-      ]
+      ],
+
+      {
+      "id": "com.Miolthor.Town-map-editor",
+      "name": "Town Map Editor",
+      "authors": [
+        { 
+        "name": "Miolthor", 
+          "url": "https://github.com/fasbert85-boop" }
+      ],
+      "repo": "fasbert85-boop/town-map-editor",
+      "description": "Visual editor for waypoints and locations on the regional map.",
+      "tags": ["editor", "data", "pbs"],
+      "apiVersion": "1.0.0",
+      "permissions": [
+        "fs.project",
+        "fs.write.project",
+        "ui.dialogs",
+        "ui.toasts"
+      ],
+      "version": "1.0.0",
+      "assetName": "com.Miolthor.Town-map-editor-1.0.0.zip",
+      "sha256": "199b646962b145907d14b2d217552e9ed7c0447f3a31a46610e8ffe32cca1be2"
+    }
     }
   ]
 }
