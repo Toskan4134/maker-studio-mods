@@ -230,7 +230,13 @@ export interface MenuItemDef {
   /** Top-level menu to insert into: "File" | "Edit" | "View" | "Map" | "Tools" | "Help" | custom. */
   menu: string;
   label: string;
-  /** Optional keyboard shortcut hint string, e.g. "Ctrl+Shift+P". */
+  /**
+   * Optional keyboard shortcut, e.g. "Ctrl+Shift+P". Setting this registers a
+   * real, functional binding that fires `handler` — it is NOT just a display
+   * hint. The binding shows in (and is rebindable from) the editor's Keyboard
+   * Shortcuts dialog under a "Mods" section, and user overrides persist.
+   * Do NOT also call `ctx.ui.registerShortcut` for the same key.
+   */
   shortcut?: string;
   handler: () => void | Promise<void>;
   /** Optional state evaluator — invoked when menu opens. */

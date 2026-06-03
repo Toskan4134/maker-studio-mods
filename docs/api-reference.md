@@ -818,7 +818,7 @@ tool is removed automatically when the mod unloads.
 ctx.menu.registerMenuItem({
   menu: "Mods",          // any existing or new top-level menu
   label: "Do Something",
-  shortcut: "Ctrl+Shift+D", // hint only — register the binding separately
+  shortcut: "Ctrl+Shift+D", // registers a real, rebindable binding — do NOT also registerShortcut
   icon: "database",      // optional: built-in icon name, SVG markup, or glyph
   handler: () => { /* ... */ },
   isEnabled: () => true,
@@ -831,6 +831,15 @@ If `menu` matches an existing top-level (`"File"`, `"Edit"`, `"View"`,
 matches a submenu label within a top-level menu (e.g. `"Import & Export Maps"`),
 the item is inserted there. Otherwise a new top-level menu is created with
 that label.
+
+The optional `shortcut` (e.g. `"Ctrl+Shift+D"`) registers a **real, functional
+keyboard binding** that fires the item's `handler` — it is not just a hint shown
+next to the label. The binding appears in the editor's **Keyboard Shortcuts**
+dialog under a **"Mods"** section, where the user can rebind it; their override
+persists and is reflected in the menu's displayed shortcut. Because setting
+`shortcut` already binds the key, do **not** also call
+`ctx.ui.registerShortcut` for the same combo — that double-registers it. (Use
+`ctx.ui.registerShortcut` only for shortcuts that have no menu item.)
 
 The optional `icon` is rendered in the same style as built-in menu items.
 It accepts any of three forms, resolved in order:
