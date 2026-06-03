@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-06-03T14:59:25Z",
+  "updatedAt": "2026-06-03T20:32:50Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -69,9 +69,9 @@
         }
       ],
       "repo": "Toskan4134/msmod-pbs-editor",
-      "version": "1.1.0",
-      "assetName": "com.toskan4134.pbs-editor-1.1.0.zip",
-      "sha256": "e3e2dba5823b8afe8bb7dc1f1a6acdecc43876cd92302d200377d14eda6f356c",
+      "version": "1.1.1",
+      "assetName": "com.toskan4134.pbs-editor-1.1.1.zip",
+      "sha256": "15759e1b31d389494a1f73e12b1293b2a8ad18aee39261d73f6222b0fdf04738",
       "description": "Edit Pokémon Essentials PBS files directly from the editor. Supports v16, v17, and v21 formats.",
       "tags": [
         "pbs",
@@ -87,18 +87,22 @@
         "ui.toasts"
       ]
     },
-    
-      {
+    {
       "id": "com.Miolthor.Town-map-editor",
       "name": "Town Map Editor",
       "authors": [
-        { 
-        "name": "Miolthor", 
-          "url": "https://github.com/fasbert85-boop" }
+        {
+          "name": "Miolthor",
+          "url": "https://github.com/fasbert85-boop"
+        }
       ],
       "repo": "fasbert85-boop/town-map-editor",
       "description": "Visual editor for waypoints and locations on the regional map.",
-      "tags": ["editor", "data", "pbs"],
+      "tags": [
+        "editor",
+        "data",
+        "pbs"
+      ],
       "apiVersion": "1.0.0",
       "permissions": [
         "fs.project",
@@ -110,6 +114,5 @@
       "assetName": "com.Miolthor.Town-map-editor-1.0.0.zip",
       "sha256": "199b646962b145907d14b2d217552e9ed7c0447f3a31a46610e8ffe32cca1be2"
     }
-    
   ]
 }
