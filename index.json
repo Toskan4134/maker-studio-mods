@@ -85,8 +85,9 @@
         "fs.write.project",
         "ui.dialogs",
         "ui.toasts"
-      ],
-
+      ]
+    },
+    
       {
       "id": "com.Miolthor.Town-map-editor",
       "name": "Town Map Editor",
@@ -109,6 +110,6 @@
       "assetName": "com.Miolthor.Town-map-editor-1.0.0.zip",
       "sha256": "199b646962b145907d14b2d217552e9ed7c0447f3a31a46610e8ffe32cca1be2"
     }
-    }
+    
   ]
 }
