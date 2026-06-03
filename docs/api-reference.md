@@ -34,6 +34,8 @@ All mod capabilities are reached through it.
 | `keybinds`   | `KeybindsCtx`         | Query and modify keyboard shortcuts. |
 | `selectors`  | `SelectorsCtx`        | Modal pickers (actor, item, switch, map, tileset, audio, graphic, …). |
 | `projectData`| `ProjectDataCtx`      | Read-only RPG record lists (actors, items, switches, …). |
+| `mods`       | `ModsCtx`             | Query other installed mods (presence, status). |
+| `plugins`    | `PluginsCtx`          | Query installed Essentials plugins. |
 | `log`        | `LogCtx`              | Namespaced logger. |
 | `lifecycle`  | `LifecycleCtx`        | Activation hooks. |
 
@@ -306,25 +308,135 @@ const boss = ctx.projectData.commonEvents().filter((c) => c.name.startsWith("bos
 
 ---
 
-## Manifest: `pluginDependencies`
+## `mods`
 
-Mods can declare dependencies on Essentials plugins (Ruby, installed in
-`<gameRoot>/Plugins/*/meta.txt`) via the optional `pluginDependencies` array
-in `manifest.json`:
+Query the other mods the editor currently knows about — for soft/optional
+dependencies, feature detection, or integrating with a companion mod. (Hard
+dependencies that should block your mod from loading belong in
+[`manifest.requires`](#manifest-requires) instead.)
+
+```ts
+mods.list(): InstalledModInfo[]            // every known mod, incl. this one
+mods.get(id: string): InstalledModInfo | null
+mods.isInstalled(id: string): boolean      // present in any status
+mods.isActive(id: string): boolean         // present AND loaded/running
+```
+
+```ts
+interface InstalledModInfo {
+  id: string;
+  name: string;
+  version: string;
+  enabled: boolean;                         // false if user-disabled
+  status: "active" | "error" | "disabled";  // blocked mods are not listed
+  source: "project" | "global";
+}
+```
+
+The snapshot is read-only and reflects the current load cycle. Mods blocked
+before load (missing dependency, plugin version block, duplicate id) are **not**
+listed — only mods that loaded (`active`), failed to activate (`error`), or were
+switched off by the user (`disabled`).
+
+```ts
+// Example — only register an integration when a companion mod is active.
+if (ctx.mods.isActive("com.author.coremod")) {
+  ctx.commands.execute("com.author.coremod:registerExtension", myExtension);
+}
+```
+
+---
+
+## `plugins`
+
+Query the Essentials plugins installed under `<gameRoot>/Plugins/` (Ruby). Same
+data the editor uses to validate `requires` plugin entries, exposed for runtime
+feature detection.
+
+```ts
+plugins.available(): boolean               // false on v16/BES (no Plugins/ dir)
+plugins.list(): InstalledPluginInfo[]       // empty when not available
+plugins.get(name: string): InstalledPluginInfo | null
+plugins.isInstalled(name: string): boolean
+```
+
+```ts
+interface InstalledPluginInfo {
+  name: string;                  // meta.txt Name
+  version: string | null;        // Version, or null if none declared
+  essentials: string[];          // Essentials — compatible versions, e.g. ["19.1","20"]
+  link: string | null;           // Link — homepage / download URL
+  credits: string[];             // Credits — authors
+  requires: PluginRequirement[]; // Requires — needed plugins (any/min version)
+  exact: PluginRequirement[];    // Exact — needed plugins at an exact version
+  optional: PluginRequirement[]; // Optional — load before this if installed
+  conflicts: string[];           // Conflicts — incompatible plugin names
+}
+
+interface PluginRequirement {
+  name: string;
+  version: string | null;        // min version (requires) / exact version (exact), or null
+}
+```
+
+Every field of the plugin's `meta.txt` is exposed. Repeatable fields
+(`Requires`, `Exact`, `Optional`, `Conflicts`) collect every line; comma-list
+fields (`Essentials`, `Credits`) are split and trimmed. `Requires` / `Exact` /
+`Optional` values parse as `Name` or `Name,version`.
+
+`available()` is `false` on projects with no `Plugins/` directory (RMXP v16 /
+Base Essentials v5), where plugin presence can't be verified — in that case the
+other queries always report "not installed". Names match the plugin's `meta.txt`
+`Name` field (the same string you'd put in a `requires` plugin entry).
+
+```ts
+// Example — adapt behaviour to an installed plugin's version.
+const fp = ctx.plugins.get("Following Pokemon EX");
+if (fp && fp.version && fp.version >= "1.5.0") {
+  // use the newer plugin feature
+}
+```
+
+---
+
+## Manifest: `requires`
+
+Mods declare everything they depend on — other installed mods **and** Essentials
+plugins (Ruby) — through one unified `requires` array in `manifest.json`. Each
+entry is a discriminated union on `type`:
 
 ```json
 {
-  "pluginDependencies": [
-    { "name": "My Plugin" },
-    { "name": "Other Plugin", "url": "https://example.com/other" },
-    { "name": "Strict Plugin", "enforcement": "pluginAndVersion", "version": "1.2.0" },
-    { "name": "Optional Plugin", "enforcement": "none", "url": "https://example.com/opt" }
+  "requires": [
+    { "type": "mod", "id": "com.author.coremod" },
+    { "type": "mod", "id": "com.author.utils", "version": "^1.2.0" },
+
+    { "type": "plugin", "name": "My Plugin" },
+    { "type": "plugin", "name": "Other Plugin", "url": "https://example.com/other" },
+    { "type": "plugin", "name": "Strict Plugin", "enforcement": "pluginAndVersion", "version": "1.2.0" },
+    { "type": "plugin", "name": "Optional Plugin", "enforcement": "none", "url": "https://example.com/opt" }
   ]
 }
 ```
 
 ```ts
+type ModRequirement = ModDependency | PluginDependency;
+
+/** A dependency on another installed mod. */
+interface ModDependency {
+  type: "mod";
+  /** Reverse-DNS id of the required mod (its manifest `id`). */
+  id: string;
+  /**
+   * Optional semver range. Recorded for tooling; the loader enforces presence
+   * (the mod is installed and load-ordered first), not the range, in v1.
+   */
+  version?: string;
+}
+
+/** A dependency on an Essentials plugin (installed under `<gameRoot>/Plugins/`). */
 interface PluginDependency {
+  type: "plugin";
   /** Plugin name as it appears in meta.txt's Name field. */
   name: string;
   /** URL where the plugin can be found/downloaded (shown in warnings). */
@@ -353,6 +465,14 @@ interface PluginDependency {
 ```
 
 **Behaviour at load time:**
+
+**Mod dependencies** (`type: "mod"`): the editor topologically sorts mods so each
+dependency loads before the mods that need it. If a required mod id isn't
+installed, the dependent mod is blocked with `missing dependency "<id>"`; a
+dependency cycle blocks every mod in the cycle. The `version` range is recorded
+but not enforced in v1 (presence is what's checked).
+
+**Plugin dependencies** (`type: "plugin"`):
 
 - **v21+ projects** (Plugins/ directory exists): the editor scans
   `Plugins/*/meta.txt` and checks each declared dependency according to its
