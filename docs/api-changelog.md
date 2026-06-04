@@ -16,6 +16,11 @@ First public API. Includes the full modding surface for the 1.0 release.
 
 ### Additions since initial release
 
+- **`ToastOptions.durationMs: 0` now means "sticky"** *(2026-06-04)* — passing `durationMs: 0` to
+  `ctx.ui.showToast` makes the toast stay until the user dismisses it (via its × button), instead of
+  being floored to a minimum auto-dismiss time as before. Any other value still auto-dismisses (floored
+  at 500 ms; default 3000 ms). The `ToastOptions` shape is unchanged, so this is backward-compatible — no
+  `apiVersion` bump. Toasts are now also hover-pausable, copyable, and have a manual close button.
 - **`MenuItemDef.shortcut` is now a functional, user-rebindable binding** *(2026-06-03)* — setting
   `shortcut` on an item registered via `ctx.menu.registerMenuItem(def)` now registers a real keyboard
   binding that fires the item's `handler`. Previously it was display-only (the key was shown next to the
