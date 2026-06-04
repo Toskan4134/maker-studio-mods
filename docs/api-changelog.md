@@ -16,6 +16,11 @@ First public API. Includes the full modding surface for the 1.0 release.
 
 ### Additions since initial release
 
+- **New built-in menu icon names** *(2026-06-04)* — `MenuItemDef.icon` (and the other `icon` surfaces)
+  now resolve more kebab-case names: `plus` (alias `add`), `settings` (`gear` / `cog`), `edit`
+  (`pencil` / `rename`), `trash` (`delete` / `remove`), `switch` (`swap` / `repeat`), and `versions`
+  (`git-branch` / `branch`). These are the glyphs used by the new Map Version Manager. Additive — no
+  `apiVersion` bump; existing names are unchanged.
 - **`ToastOptions.durationMs: 0` now means "sticky"** *(2026-06-04)* — passing `durationMs: 0` to
   `ctx.ui.showToast` makes the toast stay until the user dismisses it (via its × button), instead of
   being floored to a minimum auto-dismiss time as before. Any other value still auto-dismisses (floored

@@ -849,8 +849,12 @@ It accepts any of three forms, resolved in order:
    `save`, `save-all`, `grid`, `layers`, `undo`, `redo`, `cut`, `copy`,
    `paste`, `import`, `export`, `download`, `zoom-in`, `zoom-out`,
    `select-all`, `collision`, `events`, `dim`, `lock`, `unlock`, `info`,
-   `mods`, `keyboard`, `terminal`, `run`. (Aliases exist, e.g. `recent` /
-   `history`, `new` / `file-plus`, `scripts` / `code`, `dark-mode` / `moon`.)
+   `mods`, `keyboard`, `terminal`, `run`, `plus`, `settings`, `edit`,
+   `trash`, `switch`, `versions`. (Aliases exist, e.g. `recent` /
+   `history`, `new` / `file-plus`, `scripts` / `code`, `dark-mode` / `moon`,
+   `add` / `plus`, `gear` / `cog` / `settings`, `pencil` / `rename` / `edit`,
+   `delete` / `remove` / `trash`, `swap` / `repeat` / `switch`,
+   `git-branch` / `branch` / `versions`.)
 2. **Raw inline SVG markup** — any string containing a `<` is rendered as-is.
 3. **A single unicode glyph** — anything else (e.g. `"📊"`).
 

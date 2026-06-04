@@ -244,7 +244,8 @@ export interface MenuItemDef {
   isChecked?: () => boolean;
   /**
    * Optional icon, rendered in the same style as built-in menu items.
-   * Accepts a built-in icon name (e.g. "database", "code", "save", "grid"),
+   * Accepts a built-in icon name (e.g. "database", "code", "save", "grid",
+   * "plus", "settings", "edit", "trash", "switch", "versions"),
    * raw inline SVG markup, or a single unicode glyph.
    */
   icon?: string;
