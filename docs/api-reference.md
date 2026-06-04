@@ -850,7 +850,10 @@ It accepts any of three forms, resolved in order:
    `paste`, `import`, `export`, `download`, `zoom-in`, `zoom-out`,
    `select-all`, `collision`, `events`, `dim`, `lock`, `unlock`, `info`,
    `mods`, `keyboard`, `terminal`, `run`, `plus`, `settings`, `edit`,
-   `trash`, `switch`, `versions`. (Aliases exist, e.g. `recent` /
+   `trash`, `switch`, `versions`, `x`, `warning`, `star`, `refresh`,
+   `eye`, `eye-off`, `chevron-up`, `chevron-down`, `chevron-left`,
+   `chevron-right`, `arrow-up`, `arrow-down`, `arrow-left`, `arrow-right`,
+   `pause`, `stop`, `step`, `camera`, `video`, `clock`. (Aliases exist, e.g. `recent` /
    `history`, `new` / `file-plus`, `scripts` / `code`, `dark-mode` / `moon`,
    `add` / `plus`, `gear` / `cog` / `settings`, `pencil` / `rename` / `edit`,
    `delete` / `remove` / `trash`, `swap` / `repeat` / `switch`,
