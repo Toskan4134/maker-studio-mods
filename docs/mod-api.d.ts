@@ -300,7 +300,8 @@ export interface CustomDialogOptions {
 export interface ToastOptions {
   message: string;
   level?: "info" | "warn" | "error";
-  /** Auto-dismiss after N ms; default 3000. */
+  /** Auto-dismiss after N ms; default 3000 (floored at 500). Pass 0 for a
+   *  sticky toast that never auto-dismisses (the user closes it manually). */
   durationMs?: number;
 }
 
