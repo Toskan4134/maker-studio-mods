@@ -235,14 +235,14 @@ selectors.pickTileset(opts?): Promise<PublicTilesetInfo | null>
 
 // File-backed
 selectors.pickAudio("BGM"|"BGS"|"ME"|"SE", opts?: { initial?, title? }): Promise<AudioPickResult | null>
-selectors.pickGraphic(subfolder, opts?: { initial?, showHue?, title? }): Promise<GraphicPickResult | null>
+selectors.pickGraphic(subfolder, opts?: { initial?, fields?: GraphicField[], extraFields?: GraphicPickerField[], showGrid?, showHue?, title? }): Promise<GraphicPickResult | null>
 
 // Input
 selectors.pickKeyboardButton(opts?: { value? }): Promise<KeyboardButtonPickResult | null>
 ```
 
 `EntityPickResult` = `{ id, name }`. `AudioPickResult` = `{ name, volume, pitch }`.
-`GraphicPickResult` = `{ name, hue }`. `KeyboardButtonPickResult` = `{ code, label }`.
+`GraphicPickResult` = `{ name, hue, opacity?, blend?, direction?, pattern?, sheetCols?, sheetRows?, extra? }` — the optional props are present only when their `fields` entry was enabled (custom `extraFields` values come back under `extra`, keyed by field `key`). `KeyboardButtonPickResult` = `{ code, label }`.
 For RPG-record pickers, `opts.extras: SelectorExtra[]` lets you place synthetic rows
 above the real list (e.g. `{ id: 0, label: "Entire Party" }` for actor target params).
 For `pickEvent`, `includePlayer` adds id `-1` and `includeThisEvent` adds id `0`.
@@ -255,6 +255,15 @@ if (item) ctx.ui.showToast({ message: `You got ${item.name}!`, level: "info" });
 // Example — pick a graphic from Graphics/Pictures with hue slider
 const pic = await ctx.selectors.pickGraphic("Pictures", { showHue: true });
 if (pic) console.log(pic.name, pic.hue);
+
+// Example — pick a character sheet with the full property set + a custom field.
+// `fields` enables built-in controls; `extraFields` adds your own (returned in `.extra`).
+const ch = await ctx.selectors.pickGraphic("Characters", {
+  showGrid: true,
+  fields: ["hue", "opacity", "blend", "direction", "pattern", "sheetCols", "sheetRows"],
+  extraFields: [{ key: "zHeight", label: "Z Height", control: "number", min: 0, default: 0 }],
+});
+if (ch) console.log(ch.name, ch.direction, ch.pattern, ch.sheetCols, ch.extra?.zHeight);
 
 // Example — pick BGM with custom initial volume
 const bgm = await ctx.selectors.pickAudio("BGM", {

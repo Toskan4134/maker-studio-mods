@@ -1180,11 +1180,46 @@ export interface AudioPickResult {
   pitch: number;
 }
 
+/** Built-in optional property controls the graphic picker can show (`pickGraphic`
+ *  `fields`). Each maps to a field on {@link GraphicPickResult}. */
+export type GraphicField =
+  | "hue" | "opacity" | "blend" | "direction" | "pattern" | "sheetCols" | "sheetRows";
+
+/** A custom property control a mod can add to the graphic picker (`pickGraphic`
+ *  `extraFields`). Its value comes back in {@link GraphicPickResult.extra}. */
+export interface GraphicPickerField {
+  /** Key the value is returned under in `result.extra`. */
+  key: string;
+  label: string;
+  control: "number" | "range" | "select" | "checkbox";
+  min?: number;
+  max?: number;
+  step?: number;
+  /** Appended after the value readout for `range` (e.g. "°", "px"). */
+  suffix?: string;
+  /** Options for `select` (value is numeric). */
+  options?: { value: number; label: string }[];
+  default?: number;
+}
+
 export interface GraphicPickResult {
   /** Filename without extension. Empty string = (none). */
   name: string;
   /** 0-359 hue rotation degrees. */
   hue: number;
+  // The following are present only when their `fields` entry was enabled.
+  /** 0-255. */
+  opacity?: number;
+  /** 0 Normal / 1 Add / 2 Subtract. */
+  blend?: number;
+  /** RMXP direction (sheet row): `row*2` — 2 Down, 4 Left, 6 Right, 8 Up, 10+ for rows past 4. */
+  direction?: number;
+  /** Horizontal frame (column), 0-based. */
+  pattern?: number;
+  sheetCols?: number;
+  sheetRows?: number;
+  /** Values of any custom `extraFields`, keyed by field `key`. */
+  extra?: Record<string, number>;
 }
 
 export interface KeyboardButtonPickResult {
@@ -1239,7 +1274,18 @@ export interface SelectorsCtx {
   /** Pick an audio file from `<gameRoot>/Audio/<category>/`. Includes volume + pitch. */
   pickAudio(category: AudioCategory, opts?: { initial?: AudioPickResult; title?: string }): Promise<AudioPickResult | null>;
   /** Pick an image from `<gameRoot>/Graphics/<subfolder>/` with optional hue rotation. */
-  pickGraphic(subfolder: string, opts?: { initial?: GraphicPickResult; showHue?: boolean; title?: string }): Promise<GraphicPickResult | null>;
+  pickGraphic(subfolder: string, opts?: {
+    initial?: GraphicPickResult;
+    /** Built-in property controls to show. Default `["hue"]` when `showHue`, else none. */
+    fields?: GraphicField[];
+    /** Custom property controls; values return in `result.extra`. */
+    extraFields?: GraphicPickerField[];
+    /** Show the clickable character-sheet cell grid (pairs with `direction`/`pattern`). */
+    showGrid?: boolean;
+    /** Shorthand for `fields: ["hue"]`. Ignored when `fields` is given. */
+    showHue?: boolean;
+    title?: string;
+  }): Promise<GraphicPickResult | null>;
 
   // -- Input pickers --
   /** Pick an RMXP `Input.trigger?` button (directional, action, modifier, F-key). */
