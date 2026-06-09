@@ -108,6 +108,12 @@ First public API. Includes the full modding surface for the 1.0 release.
   files in the mod directory, builds a dependency graph, topo-sorts it, creates blob URLs bottom-up
   while rewriting relative imports, then imports the entry module. Single-file mods work unchanged;
   CommonJS mods remain single-file only. No manifest changes required.
+- **`pickGraphic` property fields** — `ctx.selectors.pickGraphic` gained `fields?: GraphicField[]`
+  (built-in `hue`/`opacity`/`blend`/`direction`/`pattern`/`sheetCols`/`sheetRows` controls),
+  `extraFields?: GraphicPickerField[]` (custom `number`/`range`/`select`/`checkbox` controls), and
+  `showGrid?` (clickable character-sheet cell grid). `GraphicPickResult` gained the matching optional
+  props (`opacity`, `blend`, `direction`, `pattern`, `sheetCols`, `sheetRows`) plus `extra` for custom
+  field values. Existing `{ showHue, title, initial }` calls are unchanged (default returns `{ name, hue }`).
 
 ### Core context
 
