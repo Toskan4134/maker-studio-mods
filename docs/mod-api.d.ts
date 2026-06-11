@@ -816,21 +816,62 @@ export interface PublicFogConfig {
   sx: number;
   sy: number;
   followPlayer: boolean;
+  /** Camera-follow factor when world-anchored: 1 = with the map (default),
+   *  0.5 = RMXP native panorama half-speed, 0 = screen-locked. */
+  parallax?: number;
 }
 
+/** Shared CRUD surface for one graphic layer group. `ctx.fog` operates on the
+ *  fog group (above tiles, priority 3000); `ctx.panorama` on the panorama
+ *  group (beneath tiles, priority -1000). Custom groups use ctx.layerGroups. */
 export interface FogCtx {
   list(mapId: number): { id: number; name: string; visible: boolean }[];
   setVisible(mapId: number, fogId: number, visible: boolean): void;
-  /** Get fog details including opacity and full config. */
+  /** Get layer details including opacity and full config. */
   info(mapId: number, fogId: number): { id: number; name: string; visible: boolean; opacity: number; config: PublicFogConfig } | null;
-  /** Create a new fog layer. Returns the new fog's id and name. */
+  /** Create a new layer. Returns the new layer's id and name. */
   create(mapId: number, name?: string): { id: number; name: string };
-  /** Delete a fog layer by id. */
+  /** Delete a layer by id. */
   delete(mapId: number, fogId: number): void;
-  /** Set opacity (0-255) for a fog layer. */
+  /** Set opacity (0-255) for a layer. */
   setOpacity(mapId: number, fogId: number, opacity: number): void;
-  /** Update fog config (graphicName, hue, blendType, zoom, sx, sy, followPlayer). */
+  /** Update layer config (graphicName, hue, blendType, zoom, sx, sy, followPlayer, parallax). */
   setConfig(mapId: number, fogId: number, config: Partial<PublicFogConfig>): void;
+}
+
+/** Descriptor for a mod-registered custom graphic layer group. `priority` is
+ *  the in-game Plane z: < 0 renders beneath the map tiles (panorama = -1000),
+ *  >= 0 above them (fog = 3000). `folder` is the Graphics/ subfolder its
+ *  graphics load from (single path component, e.g. "Pictures"). */
+export interface LayerGroupDef {
+  key: string;
+  name: string;
+  priority: number;
+  folder: string;
+}
+
+/** Mod-registered custom graphic layer groups. A group is persisted per map
+ *  inside `@extended_layers` (descriptor + layers), so the game-side plugin
+ *  renders it even when the mod is not installed. Layers share the fog shape
+ *  (graphic, hue, blend, zoom, scroll, camera-follow/parallax, opacity). */
+export interface LayerGroupsCtx {
+  /** Register (or update the descriptor of) a custom group on a map. Existing
+   *  layers are preserved when the key already exists. */
+  register(mapId: number, def: LayerGroupDef): void;
+  /** Remove a custom group (and its layers) from a map. */
+  remove(mapId: number, key: string): void;
+  /** List the custom groups present on a map. */
+  list(mapId: number): (LayerGroupDef & { layerCount: number })[];
+  /** Change a group's render priority (in-game Plane z). */
+  setPriority(mapId: number, key: string, priority: number): void;
+  /** List a group's layers. */
+  layers(mapId: number, key: string): { id: number; name: string; visible: boolean; opacity: number; config: PublicFogConfig }[];
+  /** Add a layer to a group. Returns the new layer's id and name. */
+  addLayer(mapId: number, key: string, opts?: { name?: string; opacity?: number; config?: Partial<PublicFogConfig> }): { id: number; name: string };
+  /** Delete a layer from a group. */
+  deleteLayer(mapId: number, key: string, layerId: number): void;
+  /** Patch a layer (name / visible / opacity / config). */
+  updateLayer(mapId: number, key: string, layerId: number, patch: { name?: string; visible?: boolean; opacity?: number; config?: Partial<PublicFogConfig> }): void;
 }
 
 export interface EventsCtx {
@@ -1399,6 +1440,10 @@ export interface ModContext {
   tileset: TilesetCtx;
   shadow: ShadowCtx;
   fog: FogCtx;
+  /** Panorama layers — same surface as `fog`, beneath the tiles. */
+  panorama: FogCtx;
+  /** Custom graphic layer groups with mod-defined priorities. */
+  layerGroups: LayerGroupsCtx;
   events: EventsCtx;
   tools: ToolsCtx;
   menu: MenuCtx;

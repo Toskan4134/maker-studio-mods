@@ -20,7 +20,9 @@ All mod capabilities are reached through it.
 | `map`        | `MapCtx`              | Read and write tiles, query layers. |
 | `tileset`    | `TilesetCtx`          | Tileset images and tile properties. |
 | `shadow`     | `ShadowCtx`           | Shadow layer queries. |
-| `fog`        | `FogCtx`              | Fog layer queries and config. |
+| `fog`        | `FogCtx`              | Fog layer queries and config (above-tile graphic layer group). |
+| `panorama`   | `FogCtx`              | Panorama layers — same surface as `fog`, beneath the tiles. |
+| `layerGroups`| `LayerGroupsCtx`      | Custom graphic layer groups with mod-defined priorities. |
 | `events`     | `EventsCtx`           | RMXP-style events on a map. |
 | `tools`      | `ToolsCtx`            | Register custom editing tools. |
 | `menu`       | `MenuCtx`             | Add menu items. |
@@ -589,6 +591,8 @@ with binary and file-management operations.
 | `list_autotile_files` | `gameRoot` | `string[]` | List autotile names in Graphics/Autotiles/ |
 | `list_tileset_files` | `gameRoot` | `string[]` | List tileset image names in Graphics/Tilesets/ |
 | `list_character_files` | `gameRoot` | `string[]` | List character sheet names |
+| `list_graphic_files` | `gameRoot, folder` | `string[]` | List image names (sans extension) in `Graphics/<folder>/` — `folder` must be a single path component (e.g. `"Pictures"`) |
+| `get_graphic_image` | `gameRoot, folder, name` | `number[]` (PNG) | Get an image from `Graphics/<folder>/` as PNG bytes (cached). Same folder validation as `list_graphic_files` |
 | `clear_image_cache` | — | `void` | Clear the Rust-side image cache |
 
 ### Tileset Management
@@ -648,6 +652,12 @@ shadow.generateFromTiles(
 
 ## `fog`
 
+`FogCtx` is the shared CRUD surface for one **graphic layer group** — a stack of
+image layers drawn above or beneath the map tiles. `ctx.fog` operates on the
+**fog** group (above tiles, in-game priority 3000); `ctx.panorama` exposes the
+exact same surface on the **panorama** group (beneath tiles, priority -1000);
+mod-registered groups go through `ctx.layerGroups` below.
+
 ```ts
 fog.list(mapId): { id, name, visible }[]
 fog.setVisible(mapId, fogId, visible): void
@@ -658,19 +668,75 @@ fog.setOpacity(mapId, fogId, opacity: number): void
 fog.setConfig(mapId, fogId, config: Partial<PublicFogConfig>): void
 ```
 
-`config` shape (`PublicFogConfig`): `{ graphicName, hue, blendType, zoom, sx, sy, followPlayer }`.
+`config` shape (`PublicFogConfig`): `{ graphicName, hue, blendType, zoom, sx, sy, followPlayer, parallax? }`.
 
 | Field           | Type      | Notes |
 |-----------------|-----------|-------|
-| `graphicName`   | `string`  | Filename in `Graphics/Fogs/` (no extension). |
+| `graphicName`   | `string`  | Filename in the group's graphics folder (no extension) — `Graphics/Fogs/` for fog, `Graphics/Panoramas/` for panorama. |
 | `hue`           | `number`  | 0-360. |
 | `blendType`     | `number`  | 0=normal, 1=add, 2=subtract, 3=multiply. |
 | `zoom`          | `number`  | Scale factor (0.1-8.0). |
 | `sx`            | `number`  | Horizontal scroll speed (px/frame). Positive = right. |
 | `sy`            | `number`  | Vertical scroll speed (px/frame). Positive = down. |
 | `followPlayer`  | `boolean` | `true` = screen-locked, `false` = world-anchored. |
+| `parallax`      | `number?` | Camera-follow factor when world-anchored (0..1, default 1): `1` = moves 1:1 with the map (classic fog), `0.5` = RMXP native panorama half-speed, `0` = screen-locked. Ignored while `followPlayer` is `true`. |
 
 `setConfig` merges partial config into the existing config. New fog layers default to opacity 51 (20%) and empty graphic.
+
+---
+
+## `panorama`
+
+```ts
+panorama.list(mapId): { id, name, visible }[]
+panorama.setVisible(mapId, layerId, visible): void
+panorama.info(mapId, layerId): { id, name, visible, opacity, config } | null
+panorama.create(mapId, name?): { id, name }
+panorama.delete(mapId, layerId): void
+panorama.setOpacity(mapId, layerId, opacity: number): void
+panorama.setConfig(mapId, layerId, config: Partial<PublicFogConfig>): void
+```
+
+Same `FogCtx` type as `ctx.fog`, operating on the map's **panorama layers**
+(drawn beneath the tiles; graphics from `Graphics/Panoramas/`). `create` defaults
+new layers to opacity 255 and `parallax: 0.5` (the classic RMXP panorama scroll
+speed). Panorama layers persist in the map file and render in-game via the
+MakerStudio plugin; a map that still shows its tileset's native panorama keeps
+it untouched until the panorama layers are first edited.
+
+---
+
+## `layerGroups`
+
+Register **custom graphic layer groups** — extra groups like the fog/panorama
+ones with a mod-defined render priority. A group is persisted per map inside
+`@extended_layers` (descriptor + layers), so the game renders it even when the
+mod is **not** installed.
+
+```ts
+layerGroups.register(mapId, def: LayerGroupDef): void
+layerGroups.remove(mapId, key): void
+layerGroups.list(mapId): (LayerGroupDef & { layerCount: number })[]
+layerGroups.setPriority(mapId, key, priority: number): void
+layerGroups.layers(mapId, key): { id, name, visible, opacity, config }[]
+layerGroups.addLayer(mapId, key, opts?: { name?, opacity?, config? }): { id, name }
+layerGroups.deleteLayer(mapId, key, layerId): void
+layerGroups.updateLayer(mapId, key, layerId, patch: { name?, visible?, opacity?, config? }): void
+```
+
+`LayerGroupDef`: `{ key, name, priority, folder }`.
+
+| Field      | Notes |
+|------------|-------|
+| `key`      | Unique group id. Must **not** be `"fog"` or `"panorama"` (those are the built-in groups). |
+| `name`     | Display name shown as the group row in the editor's Layer panel. |
+| `priority` | In-game Plane z. `< 0` renders **beneath** the map tiles (panorama is -1000), `>= 0` **above** them (fog is 3000). Groups on the same side render ascending by priority. |
+| `folder`   | The single `Graphics/` subfolder the group's graphics load from (one path component, e.g. `"Pictures"`). |
+
+`register` creates the group on the map or updates its descriptor — existing
+layers are preserved when the `key` already exists. Layers share the fog shape
+(`PublicFogConfig`, including `parallax`). Group rows appear in the Layer panel
+like Fog/Panorama Layers, so map makers can edit the layers you add.
 
 ---
 

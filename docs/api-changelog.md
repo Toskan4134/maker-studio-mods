@@ -14,6 +14,22 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 First public API. Includes the full modding surface for the 1.0 release.
 
+- **`ctx.panorama`** *(additive)* — multi-layer panoramas. Same `FogCtx` surface as `ctx.fog`
+  (`list` / `setVisible` / `info` / `create` / `delete` / `setOpacity` / `setConfig`), operating on the
+  **panorama** graphic layer group (drawn beneath the map tiles, in-game priority -1000; graphics from
+  `Graphics/Panoramas/`). `create` defaults to opacity 255 + `parallax: 0.5`.
+- **`ctx.layerGroups`** *(additive)* — mod-registered **custom graphic layer groups** with custom
+  priorities (`LayerGroupsCtx`): `register(mapId, { key, name, priority, folder })` (key must not be
+  `"fog"`/`"panorama"`; `folder` = a single `Graphics/` subfolder), `remove`, `list` (incl.
+  `layerCount`), `setPriority`, `layers`, `addLayer`, `deleteLayer`, `updateLayer`. `priority` is the
+  in-game Plane z — `< 0` renders beneath the tiles (panorama = -1000), `>= 0` above (fog = 3000).
+  Groups persist per map inside `@extended_layers` (descriptor + layers), so the game renders them even
+  without the mod installed, and they show as editable group rows in the editor's Layer panel.
+  `LayerGroupDef` / `LayerGroupsCtx` exported from `src/mod-api/types.ts`.
+- **`PublicFogConfig.parallax?: number`** *(additive)* — camera-follow factor for world-anchored layers
+  (0..1, default 1): `1` = moves 1:1 with the map (classic fog), `0.5` = RMXP native panorama
+  half-speed, `0` = screen-locked. Ignored while `followPlayer` is `true`. Honored by the editor
+  canvas, the simulator, and the game-side plugin. Applies to fog, panorama, and custom-group layers.
 - **`ctx.events.registerCommand(def): Disposable`** — register a custom RMXP event command. It
   appears on a dedicated puzzle-icon mod page (`🧩1`, `🧩2`, …; 24 per page) in the event-command
   picker and edits through a native declarative form (`ModCommandDef` / `ModCommandField` /
@@ -127,7 +143,9 @@ The `ctx` argument passed to `activate(ctx)` provides:
 | `map`        | Read and write tiles, query layers, selection, CRUD maps, undo grouping |
 | `tileset`    | Tileset images, tile properties, create/delete tilesets |
 | `shadow`     | Shadow layer list, visibility, CRUD, setOpacity, generateFromTiles |
-| `fog`        | Fog layer list, visibility, CRUD, setOpacity, setConfig |
+| `fog`        | Fog layer list, visibility, CRUD, setOpacity, setConfig (above-tile graphic layer group) |
+| `panorama`   | Panorama layers — same surface as `fog`, beneath the tiles |
+| `layerGroups`| Custom graphic layer groups with mod-defined priorities (register, remove, list, setPriority, layer CRUD) |
 | `events`     | RMXP-style events: list, get, getFull, create, delete, move, rename, update |
 | `tools`      | Register custom editing tools |
 | `menu`       | Add menu items (with isChecked, isEnabled) |
@@ -330,7 +348,7 @@ See [api-reference.md](./api-reference.md) for the full list.
 
 General-purpose Tauri commands callable via `window.__TAURI__.core.invoke`:
 
-`read_text_file`, `write_text_file`, `read_binary_file`, `write_binary_file`, `list_directory`, `file_exists`, `copy_file`, `rename_file`, `delete_file`, `get_image_dimensions`, `get_tileset_image`, `get_tileset_info`, `list_autotile_files`, `list_tileset_files`, `list_character_files`, `clear_image_cache`, `create_tileset`, `delete_tileset`, `update_tileset_name_graphic`, `save_tileset_properties`, `save_expanded_autotiles`, `plugin:dialog|open`, `plugin:dialog|save`, `discord_rpc_connect`, `discord_rpc_update`, `discord_rpc_clear`, `discord_rpc_disconnect`
+`read_text_file`, `write_text_file`, `read_binary_file`, `write_binary_file`, `list_directory`, `file_exists`, `copy_file`, `rename_file`, `delete_file`, `get_image_dimensions`, `get_tileset_image`, `get_tileset_info`, `list_autotile_files`, `list_tileset_files`, `list_character_files`, `list_graphic_files`, `get_graphic_image`, `clear_image_cache`, `create_tileset`, `delete_tileset`, `update_tileset_name_graphic`, `save_tileset_properties`, `save_expanded_autotiles`, `plugin:dialog|open`, `plugin:dialog|save`, `discord_rpc_connect`, `discord_rpc_update`, `discord_rpc_clear`, `discord_rpc_disconnect`
 
 ### Stability tests
 
