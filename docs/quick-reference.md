@@ -106,6 +106,25 @@ ctx.tileset.registerPriority({ id: 6, name: "Above 6" });
 // dispatcher — read it in-game via $game_map.terrain_tag(x, y) and branch on it.
 ```
 
+## Fog / panorama / custom layer groups
+
+```js
+// ctx.fog (above tiles) and ctx.panorama (beneath tiles) share one surface:
+const { id } = ctx.panorama.create(mapId, "Sky");        // panorama default: opacity 255, parallax 0.5
+ctx.panorama.setConfig(mapId, id, { graphicName: "Clouds", sx: 1, parallax: 0.5 });
+ctx.fog.setOpacity(mapId, fogId, 128);
+ctx.fog.info(mapId, fogId);   // { id, name, visible, opacity, config }
+// config: { graphicName, hue, blendType, zoom, sx, sy, followPlayer, parallax? }
+// parallax (0..1, world-anchored only): 1 = with the map, 0.5 = RMXP panorama, 0 = screen-locked
+
+// Custom group with your own draw priority (< 0 beneath tiles, >= 0 above):
+ctx.layerGroups.register(mapId, { key: "my-mod.glow", name: "Glow", priority: 500, folder: "Pictures" });
+const layer = ctx.layerGroups.addLayer(mapId, "my-mod.glow", { config: { graphicName: "halo" } });
+ctx.layerGroups.updateLayer(mapId, "my-mod.glow", layer.id, { opacity: 96 });
+// Groups persist inside the map file — they render in-game even without the mod.
+// key must not be "fog"/"panorama"; folder = single Graphics/ subfolder.
+```
+
 ## Register a custom tool
 
 ```js
