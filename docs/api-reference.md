@@ -34,6 +34,7 @@ All mod capabilities are reached through it.
 | `clipboard`  | `ClipboardCtx`        | OS text clipboard read/write (not the tile clipboard). |
 | `stats`      | `StatsCtx`            | Read editor usage statistics. |
 | `keybinds`   | `KeybindsCtx`         | Query and modify keyboard shortcuts. |
+| `i18n`       | `I18nCtx`             | Translate the mod's own strings, register whole app locales. |
 | `selectors`  | `SelectorsCtx`        | Modal pickers (actor, item, switch, map, tileset, audio, graphic, …). |
 | `projectData`| `ProjectDataCtx`      | Read-only RPG record lists (actors, items, switches, …). |
 | `mods`       | `ModsCtx`             | Query other installed mods (presence, status). |
@@ -928,11 +929,11 @@ It accepts any of three forms, resolved in order:
    `trash`, `switch`, `versions`, `x`, `warning`, `star`, `refresh`,
    `eye`, `eye-off`, `chevron-up`, `chevron-down`, `chevron-left`,
    `chevron-right`, `arrow-up`, `arrow-down`, `arrow-left`, `arrow-right`,
-   `pause`, `stop`, `step`, `camera`, `video`, `clock`. (Aliases exist, e.g. `recent` /
+   `pause`, `stop`, `step`, `camera`, `video`, `clock`, `language`. (Aliases exist, e.g. `recent` /
    `history`, `new` / `file-plus`, `scripts` / `code`, `dark-mode` / `moon`,
    `add` / `plus`, `gear` / `cog` / `settings`, `pencil` / `rename` / `edit`,
    `delete` / `remove` / `trash`, `swap` / `repeat` / `switch`,
-   `git-branch` / `branch` / `versions`.)
+   `git-branch` / `branch` / `versions`, `globe` / `translate` / `language`.)
 2. **Raw inline SVG markup** — any string containing a `<` is rendered as-is.
 3. **A single unicode glyph** — anything else (e.g. `"📊"`).
 
@@ -998,6 +999,16 @@ inside, or no framework. Return a cleanup function if you need it.
 `openPanel(panelId)` opens a previously registered panel. `closePanel` closes
 it. `isPanelOpen` checks visibility. `showInMenu: false` hides the auto-entry
 from the Mods menu (use with your own `registerMenuItem` instead).
+
+**Panel persistence**: mod panels keep their slot in the user's saved dock
+layout. When your mod is unloaded (hot reload, disable, uninstall), the panel
+is **not** closed — the editor shows a "Panel provided by mod … — not loaded"
+placeholder in its place and swaps your live content back in when the mod
+re-registers the panel. Exported layout configurations also record which mods
+provided which panels, so importing a layout on a machine missing your mod
+warns the user and keeps the slot as a placeholder. Don't try to close your
+panel on `deactivate` to "clean up" — leaving the slot is the intended
+behavior; only the user closes panels.
 
 `showInputDialog` shows a text input dialog — returns the entered string or
 null if cancelled. `showContextMenu` displays a native context menu at the
@@ -1227,6 +1238,62 @@ ctx.lifecycle.onTilesetChange(fn: (tilesetId, reason) => void): Disposable
 ```
 
 Convenience wrappers around `bus.on("undo")`, `bus.on("redo")`, `bus.on("brush.changed")`, `bus.on("tileset.changed")`.
+
+---
+
+## `i18n`
+
+Translations and locale control. Two tiers:
+
+- **Tier 1 — translate your own strings.** Register per-locale dictionaries for your mod's UI,
+  then resolve them with the scoped `i18n.t()`.
+- **Tier 2 — localize the whole app.** Register a complete new locale — it appears in
+  **View → Language** — or patch an existing one (including the built-in `en` / `es`).
+
+```ts
+i18n.addTranslations(locale: string, dict: Record<string, string>): Disposable
+i18n.t(source: string, vars?: Record<string, string | number>): string
+i18n.getLocale(): string
+i18n.locales(): LocaleInfo[]                 // [{ code, name }] — built-ins + mod locales
+i18n.setLocale(code: string): void
+i18n.registerLocale(loc: { code: string; name: string; dict: Record<string, string> }): Disposable
+i18n.onChanged(cb: (locale: string) => void): Disposable
+```
+
+```js
+// Tier 1 — your mod's own strings
+ctx.i18n.addTranslations("es", {
+  "Export finished": "Exportación completada",
+  "Exported {n} maps": "Se exportaron {n} mapas",
+});
+ctx.ui.showToast({ message: ctx.i18n.t("Exported {n} maps", { n: 3 }) });
+
+// Tier 2 — a whole new app locale (shows up in View → Language)
+ctx.i18n.registerLocale({ code: "fr", name: "Français", dict: frenchDict });
+
+// React to language switches
+ctx.i18n.onChanged((locale) => rerenderMyPanel(locale));
+```
+
+Details:
+
+- **Keys are English source strings** (gettext style), same convention as the app's own
+  dictionaries. `i18n.t()` looks up your mod's dict for the current locale, then the app
+  dictionary, then falls back to the source string itself — untranslated strings are never
+  broken, just English. `{name}` placeholders are substituted from `vars` **after** lookup,
+  so dictionary keys keep the literal braces.
+- `addTranslations` merges — calling it again for the same locale adds/overrides keys. The
+  returned `Disposable` removes exactly the keys that call added.
+- `registerLocale` overlays the **app's** `t()` for that locale and lists it in
+  **View → Language**. Reusing a built-in code (e.g. `"es"`) patches that locale's app
+  strings. Mod entries win over built-ins; among mods, the later registration wins.
+- If a user's saved language comes from your mod, it is restored automatically when your mod
+  (re)registers the locale — including across hot reloads. While the mod is unloaded the
+  editor falls back to its detected default.
+- Everything is auto-disposed on unload/hot-reload.
+- Locale switches fire the `"locale.changed"` bus event (`{ locale }`) —
+  `i18n.onChanged` is the convenience wrapper. See
+  [events-reference.md](./events-reference.md).
 
 ---
 

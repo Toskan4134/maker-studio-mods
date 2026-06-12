@@ -130,6 +130,24 @@ First public API. Includes the full modding surface for the 1.0 release.
   `showGrid?` (clickable character-sheet cell grid). `GraphicPickResult` gained the matching optional
   props (`opacity`, `blend`, `direction`, `pattern`, `sheetCols`, `sheetRows`) plus `extra` for custom
   field values. Existing `{ showHue, title, initial }` calls are unchanged (default returns `{ name, hue }`).
+- **`ctx.i18n`** *(additive)* — mod translations and runtime locale packs (`I18nCtx`). Tier 1:
+  `addTranslations(locale, dict): Disposable` registers/merges a per-mod dictionary and the scoped
+  `t(source, vars?)` resolves it (mod dict → app dict → source string; `{name}` substitution after
+  lookup). Tier 2: `registerLocale({ code, name, dict }): Disposable` adds a **whole-app locale** that
+  appears in View → Language (entries win over built-ins; later mod registrations win; reusing a
+  built-in code such as `"es"` patches it). Plus `getLocale()`, `locales(): LocaleInfo[]`
+  (`{ code, name }`), `setLocale(code)`, and `onChanged(cb): Disposable`. All registrations are
+  auto-disposed on unload/hot-reload; a saved language provided by a mod is restored automatically when
+  the mod re-registers it. New types: `I18nCtx`, `LocaleInfo`.
+- **`locale.changed` event** *(additive)* — new bus event fired when the active editor language
+  changes: `{ locale: string }`. The event bus now carries **26** stable events.
+- **Mod panel layout persistence** *(behavior)* — panels registered via `ctx.ui.registerPanel` now keep
+  their slot in the user's saved dock layout across mod unload / hot reload / disable / uninstall: the
+  editor shows a "not loaded" placeholder and swaps your content back in when the panel re-registers.
+  Exported layout configurations (`tile-editor-config.json` v2) record a `mods` manifest
+  (`{ id, name, version?, panelIds[] }[]`); importing a layout with missing mods warns the user and
+  keeps those panels as placeholders. v1 configs still import. No `PanelDef` change — don't close your
+  own panel on deactivate.
 
 ### Core context
 
@@ -159,6 +177,7 @@ The `ctx` argument passed to `activate(ctx)` provides:
 | `lifecycle`  | Activation hooks (onMapLoad, onSave, onActivate, onDeactivate, onToolChange, onLayerChange) |
 | `stats`      | Editor usage statistics (global + per-project), single-stat getters, custom stats (get/set/increment), combined snapshots |
 | `keybinds`   | Query and modify keyboard shortcuts, listen for changes |
+| `i18n`       | Mod translations (scoped `t`) + runtime locale packs for the whole app |
 | `selectors`  | Modal pickers (actor, class, skill, item, weapon, armor, enemy, troop, state, animation, common event, switch, variable, event, map, tileset, audio, graphic, keyboard button, coordinate) |
 | `projectData`| Read-only RPG record lists (actors, items, classes, …) plus switch/variable names and map info |
 | `mods`       | Query other installed mods (list, get, isInstalled, isActive) |
@@ -335,7 +354,7 @@ events.validateEvent(event: PublicEventFull): { valid: boolean; errors: string[]
 
 ### Events
 
-25 stable events. See [events-reference.md](./events-reference.md) for the full list.
+26 stable events. See [events-reference.md](./events-reference.md) for the full list.
 `save.before` and `paste.before` are cancellable.
 
 ### Direct Tauri access

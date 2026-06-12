@@ -66,6 +66,7 @@ Common problems and how to fix them.
 2. **Use `defaultPosition`** — set it to `"left"`, `"right"`, `"below"`, or `"above"`.
 3. **Check the console** — if `render(host)` throws, the panel content is empty but the tab should still appear.
 4. **Unique id required** — if another mod (or the same mod reloaded) registered the same panel id, the second registration is silently ignored.
+5. **"Panel provided by mod … — not loaded" placeholder** — the panel's slot persists in the user's layout while your mod is unloaded (hot reload, disabled, error). That placeholder is normal; your content swaps back in when the mod re-registers the panel. If it stays a placeholder, your mod failed to activate — check the Mod Manager log.
 
 ## Two mods conflict
 

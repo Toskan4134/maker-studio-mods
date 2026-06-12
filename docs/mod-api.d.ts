@@ -393,6 +393,8 @@ export interface EventMap {
   "stats.changed":      { global: GlobalStatsSnapshot; project: ProjectStatsSnapshot | null };
   /** Fired when a keybind is changed via the settings dialog or mod API. */
   "keybind.changed":    { actionId: string; oldKey: string; newKey: string };
+  /** Fired when the active editor locale changes (built-in or mod-provided). */
+  "locale.changed":     { locale: string };
 }
 
 export type EventName = keyof EventMap;
@@ -1148,6 +1150,83 @@ export interface KeybindsCtx {
 }
 
 // ============================================================================
+// Internationalization (i18n)
+// ============================================================================
+
+/** A runtime locale entry, as shown in View → Language. */
+export interface LocaleInfo {
+  /** Locale code (e.g. `"en"`, `"es"`, or a mod's `"fr"`). */
+  code: string;
+  /** Display name shown in the language menu (e.g. `"Français"`). */
+  name: string;
+}
+
+/**
+ * Translation + locale control for mods. Two tiers:
+ *
+ * - **Tier 1 — translate your own strings.** Register per-locale dictionaries
+ *   for your mod's UI with {@link addTranslations}, then resolve them with the
+ *   scoped {@link t}. Keys are your English source strings (same gettext
+ *   convention as the app). Lookup order: your mod's dict for the current
+ *   locale → the app dictionary → the source string.
+ *
+ * - **Tier 2 — localize the whole app.** {@link registerLocale} adds a complete
+ *   new locale (it appears in View → Language and overlays the app's `t()`), and
+ *   {@link addTranslations} on an existing code (or `registerLocale` reusing a
+ *   built-in code) patches/overrides that locale's app strings. Mod entries win
+ *   over built-ins for app strings; among mods, the later registration wins.
+ *
+ * Every registration is disposed on mod unload / hot-reload — after unload the
+ * mod's dictionaries are gone and, if the mod provided the active locale, the
+ * editor reverts to its detected default (and switches back automatically when
+ * the mod re-registers, e.g. across a hot reload).
+ */
+export interface I18nCtx {
+  /**
+   * Register/merge a dictionary for this mod (Tier 1 — the mod's own strings).
+   * Keys are the English source strings; values are the translations for
+   * `locale`. Calling again for the same locale merges. The returned
+   * {@link Disposable} removes exactly the keys this call added.
+   */
+  addTranslations(locale: string, dict: Record<string, string>): Disposable;
+
+  /**
+   * Translate `source` using this mod's own dicts for the current locale,
+   * falling back to the app dictionary, then to `source` itself. `{name}`
+   * placeholders in the result are substituted from `vars` after lookup.
+   */
+  t(source: string, vars?: Record<string, string | number>): string;
+
+  /** The active locale code. */
+  getLocale(): string;
+
+  /** The current runtime locale list (built-ins + mod-registered). */
+  locales(): LocaleInfo[];
+
+  /**
+   * Switch the active editor locale. Equivalent to choosing it in
+   * View → Language. No-op if already active.
+   */
+  setLocale(code: string): void;
+
+  /**
+   * Register a complete runtime locale (Tier 2 — whole-app translation). The
+   * locale appears in View → Language under `name` and its `dict` overlays the
+   * app's `t()` lookup. Reusing a built-in `code` overrides that locale's app
+   * strings. The returned {@link Disposable} removes the locale; if it was the
+   * active locale, the editor reverts to its detected default.
+   */
+  registerLocale(loc: { code: string; name: string; dict: Record<string, string> }): Disposable;
+
+  /**
+   * Re-render hook for the active locale. The callback fires after a switch
+   * with the new code. Mirrors the `"locale.changed"` bus event. Disposed on
+   * unload.
+   */
+  onChanged(cb: (locale: string) => void): Disposable;
+}
+
+// ============================================================================
 // Project data (read-only RPG record lists)
 // ============================================================================
 
@@ -1458,6 +1537,9 @@ export interface ModContext {
   lifecycle: LifecycleCtx;
   stats: StatsCtx;
   keybinds: KeybindsCtx;
+  /** Translations + locale control: translate the mod's own strings (Tier 1)
+   *  or register whole new locales for the entire app (Tier 2). */
+  i18n: I18nCtx;
   /** Modal pickers that mount the editor's stock selector dialogs. */
   selectors: SelectorsCtx;
   /** Read-only access to project-wide RPG record lists (actors, items, …). */
