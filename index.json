@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-06-12T21:30:52Z",
+  "updatedAt": "2026-06-13T00:00:00Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -13,9 +13,9 @@
         }
       ],
       "repo": "Toskan4134/msmod-discord-rich-presence",
-      "version": "1.0.1",
-      "assetName": "com.toskan4134.discord-rich-presence-1.0.1.zip",
-      "sha256": "8aac435fb07df40277d5034e3195bc70f0c799b28e7ef67fe43f0744b4c5e283",
+      "version": "1.1.0",
+      "assetName": "com.toskan4134.discord-rich-presence-1.1.0.zip",
+      "sha256": "7b23df6ca6dccb09513b3a22dbefabee9ec2a541c0577bc68134a2d1d3d6b000",
       "description": "Shows your current project, map, and elapsed time in Discord status.",
       "tags": [
         "discord",
@@ -37,9 +37,9 @@
         }
       ],
       "repo": "Toskan4134/msmod-image-to-tileset",
-      "version": "1.0.1",
-      "assetName": "com.toskan4134.image-to-tileset-1.0.1.zip",
-      "sha256": "33e47a171d88b989c8e9740eb5814c834ab6a45b7f90fb9cb09a6a6dd0f77af2",
+      "version": "1.1.0",
+      "assetName": "com.toskan4134.image-to-tileset-1.1.0.zip",
+      "sha256": "e7d869109c3edab3673d098f9fa4ad9791280781d3f724f64ae9f4b8ac12409d",
       "description": "Import any image as a new tileset. Pick an image, preview with grid overlay, and create a tileset entry in one click.",
       "tags": [
         "tileset",
