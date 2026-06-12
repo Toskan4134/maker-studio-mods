@@ -205,6 +205,26 @@ ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
 });
 ```
 
+## Translate your mod / add a language
+
+```js
+// Tier 1 — translate your own strings (keys = your English source strings)
+ctx.i18n.addTranslations("es", { "Export finished": "Exportación completada" });
+ctx.ui.showToast({ message: ctx.i18n.t("Export finished") });
+// t() lookup: your mod dict → app dict → the source string. {name} vars substituted after.
+
+// Tier 2 — register a whole app locale (appears in View → Language)
+ctx.i18n.registerLocale({ code: "fr", name: "Français", dict: frenchDict });
+// Reusing a built-in code (e.g. "es") patches that locale's app strings.
+
+ctx.i18n.getLocale();                 // active locale code
+ctx.i18n.locales();                   // [{ code, name }]
+ctx.i18n.setLocale("fr");
+ctx.i18n.onChanged((locale) => { /* re-render */ });   // = bus "locale.changed"
+// Everything auto-disposes on unload; a mod-provided active locale is restored
+// automatically when the mod re-registers (hot reload safe).
+```
+
 ## View options
 
 ```js

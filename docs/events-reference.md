@@ -33,6 +33,7 @@ The TypeScript source of truth is the `EventMap` interface in
 | `paste.before`       | `{ mapId, x, y, tileCount }`                                              | **yes**     |
 | `stats.changed`      | `{ global: GlobalStatsSnapshot, project: ProjectStatsSnapshot \| null }`  | no          |
 | `keybind.changed`    | `{ actionId: string, oldKey: string, newKey: string }`                   | no          |
+| `locale.changed`     | `{ locale: string }`                                                      | no          |
 
 ## When events fire
 
@@ -72,6 +73,7 @@ The TypeScript source of truth is the `EventMap` interface in
 - **`paste.before`** — fires before a paste operation is committed. **Cancellable** — return `{ cancel: true, reason: "..." }` to abort. `tileCount` is the number of tiles in the clipboard.
 - **`stats.changed`** — fires periodically (~60s) with updated editor statistics snapshots. `global` contains lifetime stats, `project` contains current project stats (or `null` if no project open).
 - **`keybind.changed`** — fires when a keybind is changed via the settings dialog or the `ctx.keybinds` API. `actionId` is the affected action, `oldKey` and `newKey` are the normalized combo strings (e.g. `"ctrl+s"`).
+- **`locale.changed`** — fires when the active editor language changes (View → Language, `ctx.i18n.setLocale`, or a mod-provided locale registering/unregistering). `locale` is the new locale code (e.g. `"en"`, `"es"`, or a mod-registered code). `ctx.i18n.onChanged(cb)` is the convenience wrapper.
 
 ## Cancellable handlers
 
