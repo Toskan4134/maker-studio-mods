@@ -1025,7 +1025,7 @@ export interface OverlayDef {
 
 export interface BusCtx {
   on<E extends EventName>(event: E, fn: (payload: EventMap[E]) => void | Promise<CancellableResult | void>): Disposable;
-  off<E extends EventName>(event: E, fn: Function): void;
+  off<E extends EventName>(event: E, fn: (payload: EventMap[E]) => void | Promise<CancellableResult | void>): void;
   emit<E extends EventName>(event: E, payload: EventMap[E]): void;
 }
 
