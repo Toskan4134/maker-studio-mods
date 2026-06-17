@@ -21,17 +21,16 @@ Open Maker Studio → **Mods** menu → **Mod Manager** → **Marketplace** tab.
 
 Want your mod listed here? Start with:
 
-- **[TUTORIAL.md](TUTORIAL.md)** — **first-timers start here.** Hands-on walkthrough: scaffold → write → test → release → submit. ~25 min the first time.
+- **[TUTORIAL.md](TUTORIAL.md)** — **first-timers start here.** Hands-on walkthrough: create → write → test → release → submit. ~25 min the first time.
 - **[docs/](docs/)** — Mod API reference, events list, getting-started, changelog, and `mod-api.d.ts` for IDE autocomplete.
 - **[examples/](examples/)** — every bundled example mod with annotated walkthroughs. Best way to learn the API in context.
-- **[`scripts/new-mod.ps1`](scripts/new-mod.ps1) / [`new-mod.sh`](scripts/new-mod.sh)** — scaffold a fresh mod folder (manifest + activate stub + README) in one prompt.
 - **[`templates/publish.yml`](templates/publish.yml)** — drop-in GitHub Actions workflow that builds the zip, computes the SHA-256, attaches both to a GitHub Release, and prints the exact registry-PR diff.
 - **[PUBLISHING.md](PUBLISHING.md)** — reference guide: release format, automation, registry PR, updates.
 - **[SUBMISSION.md](SUBMISSION.md)** — short rules and PR checklist.
 
 In short:
 
-1. Run `.\scripts\new-mod.ps1` (or `.sh`) → answers a couple prompts → gives you a starter mod folder.
+1. Create a mod folder — copy one from [`examples/`](examples/) or hand-write `manifest.json` + `index.js` + `README.md` (the [TUTORIAL](TUTORIAL.md) walks through it).
 2. Edit `index.js`, test locally.
 3. Push to a **public** GitHub repo, tag `vX.Y.Z`. The template Action attaches `<modId>-<version>.zip` to a Release and prints the SHA-256.
 4. Open a PR here adding your entry to `index.json` with `version`, `assetName`, and `sha256`. CI validates schema + checks release assets exist before merge.
