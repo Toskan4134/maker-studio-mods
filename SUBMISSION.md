@@ -27,7 +27,7 @@ Your mod must:
 
 ## How to submit
 
-First-timer? Follow the hands-on walkthrough in **[TUTORIAL.md](TUTORIAL.md)** — covers scaffolding the mod, releasing, and submitting from scratch.
+First-timer? Follow the hands-on walkthrough in **[TUTORIAL.md](TUTORIAL.md)** — covers creating the mod, releasing, and submitting from scratch.
 
 Otherwise the short version:
 

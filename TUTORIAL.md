@@ -16,7 +16,7 @@ You'll need:
 - Maker Studio installed locally (to test the mod).
 - Git on your machine. PowerShell on Windows, or bash on macOS/Linux.
 
-Clone the registry repo locally — you'll need its scaffold scripts and the workflow template:
+Clone the registry repo locally — you'll copy from its `examples/` and grab the workflow template:
 
 ```powershell
 gh repo clone Toskan4134/maker-studio-mods
@@ -27,58 +27,81 @@ cd maker-studio-mods
 
 ---
 
-## Step 1 — Scaffold your mod folder
+## Step 1 — Create your mod folder
 
-The registry ships a scaffold script that fills in `manifest.json` + an `activate(ctx)` skeleton + a starter `README.md`.
+A mod is a folder with three files: `manifest.json` (metadata), `index.js` (your code), and `README.md`. The fastest start is to copy one of the registry's [`examples/mods/`](examples/mods/) and edit it. Here we'll build it from scratch so you see every piece.
+
+Create the folder anywhere outside the registry clone — your mod needs its own repo. On your Desktop:
 
 ```powershell
-# Windows
-.\scripts\new-mod.ps1
-
-# macOS / Linux
-./scripts/new-mod.sh
+mkdir ms-hello-streak
+cd ms-hello-streak
 ```
 
-It asks four questions:
+Add the three files.
+
+### `manifest.json`
+
+```json
+{
+  "id": "com.alex.hello-streak",
+  "name": "Hello Streak",
+  "version": "1.0.0",
+  "author": "Alex",
+  "description": "Tracks how many days in a row you've opened the editor.",
+  "apiVersion": "1.0.0",
+  "main": "index.js",
+  "permissions": ["ui.toasts"]
+}
+```
+
+The `id` is reverse-DNS (must contain a `.`). `permissions` declares every API capability your code uses — reviewers check this against the code.
+
+### `index.js`
+
+A starter that logs, shows a toast, and adds a menu item:
+
+```js
+export function activate(ctx) {
+  ctx.log.info("Hello Streak activated");
+
+  ctx.ui.showToast({
+    message: "Hello from Hello Streak!",
+    level: "info",
+  });
+
+  ctx.menu.registerMenuItem({
+    menu: "Mods",
+    label: "Hello Streak — Say Hi",
+    handler: () => {
+      ctx.ui.showToast({ message: "Hi from Hello Streak!" });
+    },
+  });
+}
+
+export function deactivate() {
+  // Disposables registered through ctx are auto-cleaned. Nothing else to do.
+}
+```
+
+### `README.md`
+
+A short note for yourself — anything works. The build + release steps are covered later in this tutorial and in [PUBLISHING.md](../PUBLISHING.md).
+
+You should now have:
 
 ```
-Mod id (reverse-DNS, e.g. com.yourname.mymod): com.alex.hello-streak
-Display name (shown in Mod Manager): Hello Streak
-Author (your display name): Alex
-Description (one short sentence — optional): Tracks how many days in a row you've opened the editor.
-```
-
-You'll get a new `hello-streak/` folder with:
-
-```
-hello-streak/
+ms-hello-streak/
 ├── manifest.json
 ├── index.js
 └── README.md
-```
-
-Move it out of the registry clone — your mod needs its own repo. Drop it on your Desktop or anywhere you keep code:
-
-```powershell
-Move-Item .\hello-streak C:\Users\Alex\Desktop\ms-hello-streak
-cd C:\Users\Alex\Desktop\ms-hello-streak
 ```
 
 ---
 
 ## Step 2 — Write your mod logic
 
-Open `index.js`. The scaffold gives you:
-
-```js
-export function activate(ctx) {
-  ctx.log.info("Hello Streak activated");
-  ctx.ui.showToast({ message: "Hello from Hello Streak!", level: "info" });
-  // ...
-}
-```
-
-Replace it with your actual feature. For Hello Streak it might look like:
+Open `index.js` and replace the starter with your real feature. For Hello Streak it might look like:
 
 ```js
 const STORAGE_KEY = "streak";
@@ -322,4 +345,4 @@ That's the whole point of the SHA-256 pin: a new release on your repo doesn't re
 
 ## Where to ask for help
 
-Open a [discussion on the registry](https://github.com/Toskan4134/maker-studio-mods/discussions) for general questions, or file an [issue](https://github.com/Toskan4134/maker-studio-mods/issues) for a specific bug in the docs, scaffolder, or schema.
+Open a [discussion on the registry](https://github.com/Toskan4134/maker-studio-mods/discussions) for general questions, or file an [issue](https://github.com/Toskan4134/maker-studio-mods/issues) for a specific bug in the docs or schema.
