@@ -67,7 +67,7 @@ editor.setViewOptions(opts: Partial<{...}>): void
 ```
 
 Read/write access to editor state. `version()` returns the running editor's
-version (e.g. `"0.1.1"`) — the same value the in-app updater compares against;
+version (e.g. `"1.0.0"`) — the same value the in-app updater compares against;
 handy for gating features behind a `minStudioVersion`. `setTool` accepts both
 built-in ids (`"brush"`, `"eraser"`, ...) and ids of mod-registered tools.
 
