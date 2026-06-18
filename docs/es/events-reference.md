@@ -2,7 +2,7 @@
 
 Todos los nombres de evento y formas de payload. Escucha vía `ctx.bus.on(name, fn)`. Emite vía `ctx.bus.emit(name, payload)` (rara vez necesario — la mayoría de los mods solo escuchan).
 
-La fuente de verdad en TypeScript es la interfaz `EventMap` en [`mod-api.d.ts`](/mod-api.d.ts).
+La fuente de verdad en TypeScript es la interfaz `EventMap` en [`mod-api.d.ts`](../mod-api.d.ts).
 
 | Evento               | Payload                                                                  | Cancelable |
 |----------------------|---------------------------------------------------------------------------|-------------|

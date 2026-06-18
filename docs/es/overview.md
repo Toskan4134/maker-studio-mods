@@ -12,7 +12,7 @@ Documentación de referencia de todo lo que puede hacer un mod. Espejo de la doc
 | **[quick-reference](quick-reference.md)** | Chuleta de una página para las llamadas comunes de la API |
 | **[api-changelog](api-changelog.md)** | Qué cambió en cada versión de la API |
 | **[troubleshooting](troubleshooting.md)** | Problemas comunes y cómo arreglarlos |
-| **[mod-api.d.ts](/mod-api.d.ts)** | Definiciones de tipo TypeScript — colócalas en tu proyecto para autocompletado en el IDE |
+| **[mod-api.d.ts](../mod-api.d.ts)** | Definiciones de tipo TypeScript — colócalas en tu proyecto para autocompletado en el IDE |
 
 ¿Publicas tu mod a través del Marketplace? Consulta **[PUBLISHING.md](https://github.com/Toskan4134/maker-studio-mods/blob/main/PUBLISHING.md)** en la raíz del repositorio.
 
