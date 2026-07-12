@@ -2,6 +2,9 @@
 
 This repository is the curated index for the Maker Studio mod marketplace. The editor fetches `index.json` from this repo to populate the in-app Marketplace.
 
+Looking for the editor itself? Download it and follow the installation guide in the main
+[**Toskan4134/maker-studio**](https://github.com/Toskan4134/maker-studio#maker-studio) repo.
+
 ## How install is secured
 
 The registry pins each mod to an exact `version` (semver tag) and the SHA-256 of its release zip. The editor:
@@ -15,7 +18,7 @@ That means every new release a mod author publishes goes through a registry PR b
 
 ## For users
 
-Open Maker Studio → **Mods** menu → **Mod Manager** → **Marketplace** tab. The editor reads this `index.json` directly — no separate install step is needed.
+Open Maker Studio → **Mods** menu → **Mod Manager** → **Marketplace** tab. The editor reads this `index.json` directly — no separate install step is needed. Don't have the editor yet? Get it from the [main repo](https://github.com/Toskan4134/maker-studio#maker-studio) (download buttons + [installation guide](https://github.com/Toskan4134/maker-studio/blob/main/docs/getting-started.md#installation)).
 
 ## For mod authors
 
