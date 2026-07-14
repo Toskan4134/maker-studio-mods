@@ -181,6 +181,12 @@ export interface PublicEventPage {
     variable_valid: boolean; variable_id: number; variable_value: number;
     self_switch_valid: boolean; self_switch_ch: string;
   };
+  /** The page's event commands. Always present on pages returned by
+   *  `events.getFull()`; optional when passing pages to `events.update()`
+   *  (omit to leave the page's existing commands untouched). Build entries
+   *  with `events.createCommand()`. The trailing code-0 terminator is added
+   *  on write if missing. */
+  list?: PublicEventCommand[];
 }
 
 export interface PublicEventFull {

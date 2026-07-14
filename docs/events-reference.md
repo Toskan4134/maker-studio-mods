@@ -107,3 +107,21 @@ Each mod command is saved as a standard RMXP Script command (code 355) whose
 (e.g. `pbCameraScrollTo(0, -4)`). This keeps the map's `.rxdata` round-tripping
 unchanged, passes `validateEvent` (355 is a known code), and runs in-game like
 any other event script — there is no runtime dispatcher or handler to register.
+
+## Editing an event's commands (not bus events)
+
+Also distinct from the bus: a mod can read and rewrite the command list of an
+**existing** event page. `events.getFull()` returns every page with its `list`
+of commands; assign a new `list` and call `events.update()` to write it back
+(one undoable change):
+
+```js
+const ev = ctx.events.getFull(mapId, eventId);
+ev.pages[0].list = [ctx.events.createCommand(101, ["Hello"])];
+ctx.events.update(mapId, ev);
+```
+
+`update()` appends the RMXP code-0 page terminator if your list lacks one, and
+leaves a page's commands untouched if you omit its `list`. Full rules — appending
+to an existing list, `validateEvent`, and command indent — are in
+[api-reference.md](./api-reference.md) (`events`).

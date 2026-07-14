@@ -282,6 +282,26 @@ ctx.commands.register("my-mod.do-thing", async (arg) => {
 const result = await ctx.commands.execute("other-mod.do-thing", arg);
 ```
 
+## Read / write an event's commands
+
+```js
+const ev = ctx.events.getFull(mapId, eventId);   // pages[].list is always present
+
+// Replace page 1's commands (Show Text "Hello")
+ev.pages[0].list = [ctx.events.createCommand(101, ["Hello"])];
+
+// ...or append to what's there (drop the trailing code-0 terminator first)
+const list = (ev.pages[0].list ?? []).filter((c) => c.code !== 0);
+list.push(ctx.events.createCommand(101, ["One more line"]));
+ev.pages[0].list = list;
+
+const check = ctx.events.validateEvent(ev);      // { valid, errors: ["Unknown command code …"] }
+if (check.valid) ctx.events.update(mapId, ev);   // undoable
+// update() re-adds the code-0 terminator if missing — you don't have to.
+// Omit a page's `list` entirely to leave that page's commands untouched.
+// createCommand() returns indent: 0 — set `indent` yourself inside branches/loops.
+```
+
 ## Register a custom event command
 
 ```js

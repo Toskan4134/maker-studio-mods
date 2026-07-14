@@ -10,6 +10,20 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ---
 
+## Fixes since 1.0.0
+
+- **Event command lists are now readable and writable** (`ctx.events`). `PublicEventPage`
+  carries `list?: PublicEventCommand[]`. `events.getFull()` returns each page's commands
+  (it used to drop them, so mods could never read what an event does), and `events.update()`
+  writes back the `list` you set on a page (it used to ignore it, so commands could not be
+  written at all). Omit a page's `list` to leave its existing commands untouched; `update()`
+  appends the RMXP code-0 page terminator when your list lacks one, so mod-built lists don't
+  need it. This makes `events.createCommand()` usable — it previously produced command structs
+  with nowhere to put them — and fixes `events.validateEvent()`, which never saw a command list
+  and so reported `{ valid: true, errors: [] }` for every event, including ones with unknown
+  command codes. Additive: mods written against 1.0.0 keep working unchanged. See
+  [api-reference.md](./api-reference.md) (`events`).
+
 ## v1.0.0 — Initial Release
 
 First public mod API, shipping with Maker Studio 1.0. A stable `ctx` surface lets

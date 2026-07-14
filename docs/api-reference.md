@@ -761,18 +761,74 @@ page count. `trigger` is the first page trigger type (0=action, 1=player_touch,
 `create` adds a new event at the given position, returns the event ID.
 `delete`, `move`, and `rename` modify existing events. All changes are undoable.
 
+`getFull` / `update` carry the whole event, pages included:
+
+```ts
+PublicEventFull = { id, name, x, y, pages: PublicEventPage[] }
+PublicEventCommand = { code: number; indent: number; parameters: unknown[] }
+```
+
+Each `PublicEventPage` holds the page's settings (trigger, graphic, movement,
+condition) plus its command list:
+
+```ts
+page.list?: PublicEventCommand[]
+```
+
+`list` is **always present** on pages returned by `getFull()`, and **optional**
+when you pass pages back to `update()` — omit it to leave that page's existing
+commands untouched, set it to replace them.
+
+### Reading and writing event commands
+
 ```ts
 events.commandSchemas(): PublicCommandSchema[]
 events.getCommandSchema(code: number): PublicCommandSchema | null
-events.createCommand(code: number, params?: unknown[]): { code, indent, parameters }
+events.createCommand(code: number, params?: unknown[]): PublicEventCommand
 events.validateEvent(event: PublicEventFull): { valid: boolean; errors: string[] }
 events.registerCommand(def: ModCommandDef): Disposable
 ```
 
 `commandSchemas()` returns all known RMXP event command schemas (code, name, category, defaultParams).
 `getCommandSchema(code)` looks up a single schema by code (returns `null` for unknown codes).
-`createCommand(code)` builds a valid command struct with default parameters — use when inserting commands into event pages.
-`validateEvent` checks that all command codes in an event's pages are known. Use before calling `events.update`.
+`createCommand(code, params?)` builds a valid command struct — with the schema's default parameters when you omit `params`.
+`validateEvent` checks that every command code in the event's pages is a known code, and returns the unknown ones in `errors`. Run it before `events.update`.
+
+The full read / modify / write round trip:
+
+```ts
+const ev = ctx.events.getFull(mapId, eventId);
+if (ev) {
+  // Replace page 1's commands with a "Show Text" line.
+  ev.pages[0].list = [ctx.events.createCommand(101, ["Hello"])];
+
+  const check = ctx.events.validateEvent(ev);
+  if (!check.valid) {
+    ctx.log.error(check.errors.join("\n"));
+  } else {
+    ctx.events.update(mapId, ev); // undoable, like every other event change
+  }
+}
+```
+
+To **append** instead of replace, start from what `getFull` gave you — but drop
+the trailing terminator command first (see below):
+
+```ts
+const list = (ev.pages[0].list ?? []).filter((c) => c.code !== 0);
+list.push(ctx.events.createCommand(101, ["One more line"]));
+ev.pages[0].list = list;
+```
+
+**Terminator**: an RMXP page's command list always ends with a `{ code: 0, indent: 0, parameters: [] }`
+terminator, which the in-game interpreter and the built-in simulator both rely
+on. You do **not** need to add it — `update()` appends it on write when the list
+doesn't already end with a code-0 command. It *is* present in the lists `getFull()`
+returns, so filter it out when you append to an existing list.
+
+**Indent**: `createCommand` returns `indent: 0`. Commands inside a conditional
+branch / loop body must carry the enclosing block's indent — set `indent`
+yourself when you build nested lists.
 
 ### `events.registerCommand(def)` — custom event commands
 
