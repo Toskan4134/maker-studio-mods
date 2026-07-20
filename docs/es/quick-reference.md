@@ -308,6 +308,8 @@ if (check.valid) ctx.events.update(mapId, ev);   // se puede deshacer
 ctx.events.registerCommand({
   id: "cameraScrollTo",
   name: "Camera Scroll To",
+  page: "Camera",                 // tu propia pestaña del selector (por defecto el id del mod)
+  pageDescription: "Camera moves.",
   fields: [
     { type: "coordinate", key: "target", label: "Target tile", showMapSelector: true },
     { type: "checkbox", key: "useSpeed", label: "Set speed" },
@@ -324,8 +326,8 @@ ctx.events.registerCommand({
 // Tipos de campo: number, text, select, checkbox, switch, variable,
 //   coordinate (fuente Direct/Variables de Transfer-Player), record (recordKind),
 //   event, graphic (subcarpeta), audio (categoría). Cualquier campo: disabled/hidden(params).
-// Aparece en una página de mod con icono de puzle (🧩1, 🧩2, …) en el picker; se guarda como
-// comando Script código-355 que corre el texto literal — sin dispatcher de runtime.
+// Aparece en tu propia pestaña con nombre (desde `page`) con icono de puzle en el picker; se
+// guarda como comando Script código-355 que corre el texto literal — sin dispatcher de runtime.
 ```
 
 ## Llamar comandos Tauri directamente

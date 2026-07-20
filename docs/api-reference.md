@@ -833,8 +833,8 @@ yourself when you build nested lists.
 ### `events.registerCommand(def)` — custom event commands
 
 Register a brand-new event command that map makers can insert from the
-event-command picker. Your command appears on a dedicated **mod page** in the
-picker (puzzle-icon tabs `🧩1`, `🧩2`, … after the built-in `1 2 3`, 24 commands per page) and
+event-command picker. Your command appears on its own **named tab** in the
+picker (a puzzle-icon tab after the built-in ones — see `page` below) and
 edits through a native declarative form. The form is a **builder for a Script
 command**: filling it in generates plain Ruby that the engine runs directly —
 there is no runtime dispatcher.
@@ -847,7 +847,8 @@ events.registerCommand(def: ModCommandDef): Disposable
 interface ModCommandDef {
   id: string;                              // unique within your mod, e.g. "cameraScrollTo"
   name: string;                            // shown in the picker + command list
-  page?: string;                           // reserved (per-mod page titles)
+  page?: string;                           // picker tab title (commands sharing it group together; falls back to the mod id)
+  pageDescription?: string;                // one-line strip shown beneath the active tab
   fields?: ModCommandField[];              // omit → freeform script textarea (params.script)
   script?: (params: ModCommandParams) => string;  // the Ruby stored & run in-game
   parse?: (scriptText: string) => ModCommandParams | null;  // recover params to re-edit
@@ -858,6 +859,13 @@ interface ModCommandDef {
 The registry key is `"<modId>:<id>"`. Duplicate keys are skipped (first wins).
 The returned `Disposable` unregisters the command; it is also auto-removed when
 your mod unloads.
+
+**Your own picker tab.** Every command you register shows on a puzzle-icon tab
+after the built-in categories. Set `page` to give that tab a title; commands
+that share the same `page` string collect under one tab, and `pageDescription`
+fills the one-line strip shown beneath it while the tab is active (the first
+command in the group that sets a description wins). Omit `page` and your
+commands group under a tab labelled with your mod id.
 
 **Declarative fields** (`def.fields`) render with the editor's own controls and
 selectors, so the dialog matches the built-in command dialogs. Each field's
@@ -886,6 +894,8 @@ script textarea bound to `params.script`.
 const off = ctx.events.registerCommand({
   id: "cameraScrollTo",
   name: "Camera Scroll To",
+  page: "Camera",                          // groups this + other "Camera" commands under one tab
+  pageDescription: "Scroll and shake the camera.",
   fields: [
     { type: "coordinate", key: "target", label: "Target tile", showMapSelector: true },
     { type: "checkbox", key: "useSpeed", label: "Set speed" },
