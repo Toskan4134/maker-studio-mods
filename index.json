@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-07-15T11:04:08Z",
+  "updatedAt": "2026-07-27T14:58:06Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -113,6 +113,31 @@
       "version": "1.0.0",
       "assetName": "com.Miolthor.Town-map-editor-1.0.0.zip",
       "sha256": "199b646962b145907d14b2d217552e9ed7c0447f3a31a46610e8ffe32cca1be2"
+    },
+    {
+      "id": "com.c14.custom-terrain-tags",
+      "name": "Custom Terrain Tags",
+      "authors": [
+        {
+          "name": "C14"
+        }
+      ],
+      "repo": "diamond-paz-martin/Custom-Terrain-Tags",
+      "version": "1.0.0",
+      "assetName": "com.c14.custom-terrain-tags-1.0.0.zip",
+      "sha256": "4ab35ec965f1a3a6be3766542919b5529ee01497255527833e4e3fff30779bd1",
+      "description": "Añade y gestiona Terrain Tags personalizadas (18+).",
+      "tags": [
+        "tools",
+        "editor",
+        "terrain-tags"
+      ],
+      "homepage": "https://github.com/diamond-paz-martin/Custom-Terrain-Tags",
+      "apiVersion": "1.0.0",
+      "permissions": [
+        "fs.project",
+        "fs.write.project"
+      ]
     }
   ]
 }
