@@ -10,6 +10,17 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ---
 
+## Adiciones desde 1.0.0
+
+- **Pestañas de comandos de mod** (`ModCommandDef`, `ctx.events.registerCommand`). `page` ahora
+  es funcional: titula la pestaña propia del comando en el selector de comandos de evento, y los
+  comandos que comparten la misma cadena `page` se agrupan en una sola pestaña con nombre (omítelo y
+  se agrupan bajo el id del mod). El nuevo `pageDescription` opcional rellena la franja de una línea
+  que se muestra bajo esa pestaña mientras está activa — entre los comandos que comparten una página,
+  gana el primero que lo define. Aditivo: los mods existentes siguen funcionando; un comando sin
+  `page` simplemente obtiene una pestaña con el nombre de su mod. Consulta
+  [api-reference.md](api-reference.md) (`events.registerCommand`).
+
 ## Arreglos desde 1.0.0
 
 - **Las listas de comandos de evento ahora son legibles y escribibles** (`ctx.events`). `PublicEventPage`

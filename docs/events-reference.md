@@ -100,7 +100,9 @@ where the bus would be awkward.
 Distinct from the editor event **bus** above, a mod can also register a custom
 **RMXP event command** that map makers insert into event pages — see
 [`events.registerCommand`](./api-reference.md). These are not emitted on the bus;
-they are stored on the map and run in-game.
+they are stored on the map and run in-game. Each registered command appears on
+its own named tab in the command picker; set `page` to title that tab (commands
+sharing a `page` collect under it) and `pageDescription` for its one-line strip.
 
 Each mod command is saved as a standard RMXP Script command (code 355) whose
 `parameters[0]` is the literal Ruby that the command's `script(params)` returns

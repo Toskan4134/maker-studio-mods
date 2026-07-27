@@ -672,8 +672,12 @@ export interface ModCommandDef {
   id: string;
   /** Display name in the picker and the command list. */
   name: string;
-  /** Optional grouping label (reserved for future per-mod page titles). */
+  /** Tab title in the command picker. Commands sharing the same `page` group
+   *  under one named tab; omit it and the commands group under the mod id. */
   page?: string;
+  /** One-line description shown beneath the tab when it is active. Among
+   *  commands sharing a page, the first one that sets this wins. */
+  pageDescription?: string;
   /** Declarative parameter fields. Omit for a freeform script command. */
   fields?: ModCommandField[];
   /** Build the Script command text from the params. Stored verbatim and run

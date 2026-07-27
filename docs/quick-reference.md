@@ -308,6 +308,8 @@ if (check.valid) ctx.events.update(mapId, ev);   // undoable
 ctx.events.registerCommand({
   id: "cameraScrollTo",
   name: "Camera Scroll To",
+  page: "Camera",                 // your own picker tab (falls back to the mod id)
+  pageDescription: "Camera moves.",
   fields: [
     { type: "coordinate", key: "target", label: "Target tile", showMapSelector: true },
     { type: "checkbox", key: "useSpeed", label: "Set speed" },
@@ -324,8 +326,8 @@ ctx.events.registerCommand({
 // Field types: number, text, select, checkbox, switch, variable,
 //   coordinate (Transfer-Player Direct/Variables source), record (recordKind),
 //   event, graphic (subfolder), audio (category). Any field: disabled/hidden(params).
-// Appears on a puzzle-icon mod page (🧩1, 🧩2, …) in the picker; stored as code-355
-// Script command running the literal text — no runtime dispatcher.
+// Appears on your own named puzzle-icon tab (from `page`) in the picker; stored
+// as a code-355 Script command running the literal text — no runtime dispatcher.
 ```
 
 ## Call Tauri commands directly

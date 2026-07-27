@@ -839,8 +839,8 @@ construyas listas anidadas.
 ### `events.registerCommand(def)` — comandos de evento personalizados
 
 Registra un comando de evento totalmente nuevo que los map makers pueden insertar desde el selector
-de comandos de evento. Tu comando aparece en una **página de mod** dedicada del selector
-(pestañas de icono de puzzle `🧩1`, `🧩2`, … detrás de las incluidas `1 2 3`, 24 comandos por página) y
+de comandos de evento. Tu comando aparece en su propia **pestaña con nombre** del selector
+(una pestaña con icono de puzzle detrás de las incluidas — ver `page` más abajo) y
 se edita mediante un formulario declarativo nativo. El formulario es un **builder para un comando
 Script**: rellenarlo genera Ruby plano que el motor ejecuta directamente — no hay runtime dispatcher.
 
@@ -852,7 +852,8 @@ events.registerCommand(def: ModCommandDef): Disposable
 interface ModCommandDef {
   id: string;                              // único dentro de tu mod, p. ej. "cameraScrollTo"
   name: string;                            // se muestra en el selector + lista de comandos
-  page?: string;                           // reservado (títulos de página por mod)
+  page?: string;                           // título de la pestaña del selector (los comandos que lo comparten se agrupan; por defecto el id del mod)
+  pageDescription?: string;                // franja de una línea bajo la pestaña activa
   fields?: ModCommandField[];              // omitir → textarea de script libre (params.script)
   script?: (params: ModCommandParams) => string;  // el Ruby almacenado y ejecutado en el juego
   parse?: (scriptText: string) => ModCommandParams | null;  // recupera params para reeditar
@@ -863,6 +864,13 @@ interface ModCommandDef {
 La clave de registro es `"<modId>:<id>"`. Las claves duplicadas se saltan (gana la primera).
 El `Disposable` devuelto desregistra el comando; también se elimina automáticamente cuando tu mod se
 descarga.
+
+**Tu propia pestaña del selector.** Cada comando que registras aparece en una pestaña con icono de
+puzzle detrás de las categorías incluidas. Define `page` para darle un título a esa pestaña; los
+comandos que comparten la misma cadena `page` se agrupan en una sola pestaña, y `pageDescription`
+rellena la franja de una línea que se muestra bajo ella mientras la pestaña está activa (gana el
+primer comando del grupo que define una descripción). Omite `page` y tus comandos se agrupan en una
+pestaña con el nombre del id de tu mod.
 
 **Campos declarativos** (`def.fields`) se renderizan con los propios controles y selectors del
 editor, de modo que el diálogo coincide con los diálogos de comando incluidos. El `key` de cada
@@ -891,6 +899,8 @@ a `params.script`.
 const off = ctx.events.registerCommand({
   id: "cameraScrollTo",
   name: "Camera Scroll To",
+  page: "Camera",                          // agrupa este y otros comandos "Camera" en una pestaña
+  pageDescription: "Scroll and shake the camera.",
   fields: [
     { type: "coordinate", key: "target", label: "Target tile", showMapSelector: true },
     { type: "checkbox", key: "useSpeed", label: "Set speed" },

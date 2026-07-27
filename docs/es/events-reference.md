@@ -76,7 +76,7 @@ Los mods pueden emitir y escuchar los eventos estándar libremente. No hay sandb
 
 ## Comandos de evento personalizados (no eventos del bus)
 
-A diferencia del **bus** de eventos del editor de arriba, un mod también puede registrar un **comando de evento RMXP** personalizado que los map makers insertan en las páginas de evento — consulta [`events.registerCommand`](api-reference.md). Estos no se emiten en el bus; se guardan en el mapa y corren en el juego.
+A diferencia del **bus** de eventos del editor de arriba, un mod también puede registrar un **comando de evento RMXP** personalizado que los map makers insertan en las páginas de evento — consulta [`events.registerCommand`](api-reference.md). Estos no se emiten en el bus; se guardan en el mapa y corren en el juego. Cada comando registrado aparece en su propia pestaña con nombre del selector de comandos; define `page` para titular esa pestaña (los comandos que comparten `page` se agrupan en ella) y `pageDescription` para su franja de una línea.
 
 Cada comando de mod se guarda como un comando Script estándar de RMXP (código 355) cuyo `parameters[0]` es el Ruby literal que devuelve el `script(params)` del comando (p. ej. `pbCameraScrollTo(0, -4)`). Esto mantiene el round-trip del `.rxdata` del mapa sin cambios, pasa `validateEvent` (355 es un código conocido) y corre en el juego como cualquier otro script de evento — no hay dispatcher ni handler de runtime que registrar.
 

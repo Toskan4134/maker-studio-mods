@@ -10,6 +10,16 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ---
 
+## Additions since 1.0.0
+
+- **Mod command tabs** (`ModCommandDef`, `ctx.events.registerCommand`). `page` is now
+  functional: it titles the command's own tab in the event-command picker, and commands
+  sharing the same `page` string collect under one named tab (omit it and they group under
+  the mod id). New optional `pageDescription` fills the one-line description strip shown
+  beneath that tab while it is active — among commands sharing a page, the first one that
+  sets it wins. Additive: existing mods keep working; a command with no `page` simply gets a
+  tab named after its mod. See [api-reference.md](./api-reference.md) (`events.registerCommand`).
+
 ## Fixes since 1.0.0
 
 - **Event command lists are now readable and writable** (`ctx.events`). `PublicEventPage`
