@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-07-27T20:14:50Z",
+  "updatedAt": "2026-07-29T23:03:01Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -168,7 +168,29 @@
         "fs.project",
         "fs.write.project",
         "ui.dialogs"
-        ]
+      ]
+    },
+    {
+      "id": "com.mellow.transparencies",
+      "name": "[MDLN] Transparencies",
+      "authors": [
+        {
+          "name": "MellowB1",
+          "url": "https://github.com/MellowB1"
+        }
+      ],
+      "repo": "MellowB1/Maker-Studio-Transparecies",
+      "version": "1.2.3",
+      "assetName": "com.mellow.transparencies-1.2.3.zip",
+      "sha256": "1b9c5bd08da6b38ee47cf508d4f91b1f1133b85bf9335f448e03cd3140b5b3a2",
+      "description": "Registers Priority 666 (Transparencies) in the tileset properties dropdown for [MDLN] Building Transparency, and hides gap options in the priority list.",
+      "tags": [
+        "tilesets",
+        "mapping",
+        "tools"
+      ],
+      "homepage": "https://github.com/MellowB1/Maker-Studio-Transparecies",
+      "apiVersion": "1.0.0"
     }
   ]
 }
