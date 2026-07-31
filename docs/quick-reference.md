@@ -452,5 +452,13 @@ ctx.theme.current();                                   // active id or null
 ctx.theme.list();                                      // every registered theme
 ```
 
-Scoped to `:root[data-ms-theme="<id>"]`; pick it in **View → Theme**. Style regions with
+```js
+// Both variants: one theme, two looks, follows the Dark Mode toggle.
+ctx.theme.register({ id, name, base: "dark", dark: { vars: darkVars }, light: { vars: lightVars } });
+// Only one: that scheme is forced and the toggle is locked.
+ctx.theme.register({ id, name, base: "dark", dark: { vars: darkVars } });
+```
+
+Scoped to `:root[data-ms-theme="<id>"]` (and `[data-theme="dark|light"]` for a variant); pick it in
+**View → Theme**. Style regions with
 `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.

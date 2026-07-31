@@ -1572,10 +1572,15 @@ export async function activate(ctx) {
 | `list()` | Every registered theme, including other mods' |
 | `assetUrl(relPath)` | A file in your mod folder as a `data:` URI — use it for `canvas.image`, `background-image`, `@font-face` |
 
-**How a theme is applied.** `data-theme` stays on the theme's `base`, so anything you don't override
-still resolves, and `data-ms-theme="<your id>"` is added — every rule you supply is scoped to it. You
-do not need `!important`, and you do not need to keep re-appending a `<style>` tag: the editor owns
-the stylesheet and its order.
+**How a theme is applied.** `data-ms-theme="<your id>"` is added to the root and **every rule you
+supply is rewritten to sit under it** — your `css` included, so a registered theme changes nothing
+until the user picks it. Anything you don't override still resolves against `base`. You do not need
+`!important`, and you do not need to keep re-appending a `<style>` tag: the editor owns the
+stylesheet and its order.
+
+Write `css` as if it applied to the whole app (`[data-ms-part="toolbar"] { … }`); the scope is added
+for you. A rule aimed at `:root` or `html` becomes the theme scope itself, `@media`/`@supports` are
+recursed into, and `@keyframes`/`@font-face` are passed through untouched.
 
 **Named parts.** Style regions through `data-ms-part` rather than internal class names, which are
 not API and do change: `menubar`, `toolbar`, `statusbar`, `panel-header`, `dialog`, `canvas`.
@@ -1584,6 +1589,30 @@ not API and do change: `menubar`, `toolbar`, `statusbar`, `panel-header`, `dialo
 and the renderer paints it over the cleared canvas and under the map. Don't try to do this by making
 `--canvas-bg` transparent: the canvas then stops clearing between frames and the map smears when
 panning.
+
+**Light, dark, or both.** What you declare decides how the theme answers the editor's **Dark Mode**
+toggle:
+
+| Declared | Result |
+|----------|--------|
+| `dark` **and** `light` | One entry in the list, two looks — it follows the toggle |
+| only `dark` (or only `light`) | That scheme is forced and the toggle is **locked** while the theme is active |
+| neither | `base` is forced, same lock |
+
+```js
+ctx.theme.register({
+  id: "com.example.dusk",
+  name: "Dusk",
+  base: "dark",                                   // palette behind whatever you don't set
+  vars: { "--radius": "10px" },                   // both schemes
+  dark:  { vars: { "--accent": "#61afef" } },
+  light: { vars: { "--accent": "#4078f2" } },
+});
+```
+
+A locked theme moves the Dark Mode setting rather than fighting it, and the menu item says
+*Dark Mode (set by theme)* and is disabled — so the switch never looks broken. The user's own
+preference is untouched and comes back when they pick another theme.
 
 **Only one theme is active at a time**, so two theme mods no longer fight over the cascade — the user
 picks one in View → Theme.

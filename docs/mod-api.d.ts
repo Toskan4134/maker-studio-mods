@@ -1529,12 +1529,23 @@ export interface PluginsCtx {
  * (`toolbar`, `menubar`, `statusbar`, `panel-header`, `dialog`, `canvas`) — a
  * theme can select those directly instead of app class names.
  */
+/** The half of a theme that changes with the editor's Dark Mode toggle. */
+export interface ModThemeVariant {
+  vars?: Record<string, string>;
+  css?: string;
+  canvas?: ModThemeDef["canvas"];
+}
+
 export interface ModThemeDef {
   /** Unique across all mods; namespace it with your mod id. */
   id: string;
   /** Shown in View > Theme. */
   name: string;
-  /** Built-in palette everything not overridden falls back to. */
+  /**
+   * Built-in palette everything not overridden falls back to. A theme that also
+   * declares `dark` / `light` follows the Dark Mode toggle; one that doesn't
+   * moves the toggle to `base` when it is applied.
+   */
   base: "dark" | "light";
   /** CSS custom properties, with or without the leading `--`. */
   vars?: Record<string, string>;
@@ -1555,6 +1566,21 @@ export interface ModThemeDef {
     /** 0-1, applied to the image only. Default 1. */
     opacity?: number;
   };
+  /**
+   * Per-scheme overrides on top of `vars` / `css` / `canvas`. What you declare
+   * decides how the theme answers the editor's Dark Mode toggle:
+   *
+   * | Declared | Result |
+   * |----------|--------|
+   * | `dark` **and** `light` | one entry, two looks — follows the toggle |
+   * | only one of them | that scheme is forced and the toggle is locked |
+   * | neither | `base` is forced, same lock |
+   *
+   * A theme that only works in one scheme should say so, rather than let the
+   * user flip to a half-styled counterpart.
+   */
+  dark?: ModThemeVariant;
+  light?: ModThemeVariant;
 }
 
 export interface ThemeCtx {

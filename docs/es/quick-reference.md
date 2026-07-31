@@ -451,5 +451,13 @@ ctx.theme.current();                                   // id activo o null
 ctx.theme.list();                                      // todos los temas registrados
 ```
 
-Acotado a `:root[data-ms-theme="<id>"]`; se elige en **Ver → Tema**. Estiliza zonas con
+```js
+// Ambas variantes: un tema, dos aspectos, sigue el interruptor de Modo oscuro.
+ctx.theme.register({ id, name, base: "dark", dark: { vars: varsOscuro }, light: { vars: varsClaro } });
+// Solo una: ese esquema se fuerza y el interruptor queda bloqueado.
+ctx.theme.register({ id, name, base: "dark", dark: { vars: varsOscuro } });
+```
+
+Acotado a `:root[data-ms-theme="<id>"]` (y `[data-theme="dark|light"]` para una variante); se elige
+en **Ver → Tema**. Estiliza zonas con
 `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.

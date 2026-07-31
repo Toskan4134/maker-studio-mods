@@ -1575,10 +1575,15 @@ export async function activate(ctx) {
 | `list()` | Todos los temas registrados, incluidos los de otros mods |
 | `assetUrl(ruta)` | Un fichero de tu carpeta como `data:` URI — para `canvas.image`, `background-image`, `@font-face` |
 
-**Cómo se aplica.** `data-theme` se queda en el `base` del tema, así que todo lo que no
-sobrescribas sigue resolviéndose, y se añade `data-ms-theme="<tu id>"`: cada regla que aportes está
-acotada a él. No necesitas `!important` ni reañadir una etiqueta `<style>` — la hoja de estilos y su
-orden los gestiona el editor.
+**Cómo se aplica.** Se añade `data-ms-theme="<tu id>"` a la raíz y **cada regla que aportas se
+reescribe para colgar de él** — tu `css` incluido, así que un tema registrado no cambia nada hasta
+que el usuario lo elige. Lo que no sobrescribas sigue resolviéndose contra `base`. No necesitas
+`!important` ni reañadir una etiqueta `<style>`: la hoja de estilos y su orden los gestiona el
+editor.
+
+Escribe el `css` como si aplicara a toda la app (`[data-ms-part="toolbar"] { … }`); el acotado lo
+pone el editor. Una regla dirigida a `:root` o `html` pasa a ser el propio ámbito del tema, se entra
+en `@media`/`@supports`, y `@keyframes`/`@font-face` se dejan intactos.
 
 **Zonas con nombre.** Estiliza mediante `data-ms-part` en vez de nombres de clase internos, que no
 son API y cambian: `menubar`, `toolbar`, `statusbar`, `panel-header`, `dialog`, `canvas`.
@@ -1587,6 +1592,30 @@ son API y cambian: `menubar`, `toolbar`, `statusbar`, `panel-header`, `dialog`, 
 `canvas.image` y el render la pinta sobre el canvas ya limpiado y por debajo del mapa. No lo intentes
 poniendo `--canvas-bg` transparente: entonces el canvas deja de limpiarse entre frames y el mapa
 deja estelas al moverlo.
+
+**Claro, oscuro o ambos.** Lo que declares decide cómo responde el tema al interruptor **Modo
+oscuro** del editor:
+
+| Declarado | Resultado |
+|-----------|-----------|
+| `dark` **y** `light` | Una entrada en la lista, dos aspectos — sigue el interruptor |
+| solo `dark` (o solo `light`) | Ese esquema se fuerza y el interruptor queda **bloqueado** mientras el tema esté activo |
+| ninguno | Se fuerza `base`, con el mismo bloqueo |
+
+```js
+ctx.theme.register({
+  id: "com.ejemplo.dusk",
+  name: "Dusk",
+  base: "dark",                                   // paleta detrás de lo que no definas
+  vars: { "--radius": "10px" },                   // en ambos esquemas
+  dark:  { vars: { "--accent": "#61afef" } },
+  light: { vars: { "--accent": "#4078f2" } },
+});
+```
+
+Un tema bloqueado mueve el ajuste de Modo oscuro en vez de pelearse con él, y la entrada del menú
+pasa a *Modo oscuro (lo fija el tema)* y se deshabilita — así el interruptor nunca parece roto. La
+preferencia del usuario no se toca y vuelve al elegir otro tema.
 
 **Solo hay un tema activo**, así que dos mods de temas ya no pelean por la cascada — el usuario elige
 uno en Ver → Tema.

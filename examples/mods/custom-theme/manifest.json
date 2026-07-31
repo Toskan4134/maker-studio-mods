@@ -1,0 +1,18 @@
+{
+  "id": "com.toskan4134.custom-theme",
+  "name": "Custom Theme",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Toskan4134",
+      "url": "https://x.com/Toskan4134"
+    }
+  ],
+  "description": "A custom editor theme: VS Code's One Dark Pro, with a light half. Demonstrates ctx.theme.",
+  "apiVersion": "1.0.0",
+  "main": "index.js",
+  "tags": [
+    "theme",
+    "ui"
+  ]
+}

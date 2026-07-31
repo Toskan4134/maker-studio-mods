@@ -98,4 +98,4 @@ to re-scan its files without restarting the editor.
 - Add a Dockview panel via `ctx.ui.registerPanel({ id, title, render })`.
 - Call any Tauri command directly via `window.__TAURI__.core.invoke("command_name", args)` — see the [Available Tauri Commands](./api-reference.md#available-tauri-commands-for-mods) section.
 - Check the [API Changelog](./api-changelog.md) for what's new in each version.
-- Look at [examples/mods/](../examples/mods/) for nine bundled mods with annotated walkthroughs.
+- Look at [examples/mods/](../examples/mods/) for twelve bundled mods with annotated walkthroughs, including `custom-theme` — a whole editor theme in one `ctx.theme.register` call.

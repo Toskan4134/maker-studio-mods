@@ -19,6 +19,9 @@ When a major bump happens, this file gets a section with the new shape and a lin
   until it is applied, and unloading your mod removes it. `canvas.image` is painted by the map
   renderer itself, under the map — no transparent `--canvas-bg` and no z-ordered overlay. Stable
   hooks for the CSS: `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
+  A theme declares `dark` / `light` variants to follow the editor's Dark Mode toggle (one entry in
+  View → Theme, two looks); declaring only one of them — or neither — forces that scheme and locks
+  the toggle while the theme is active.
 - **`ctx.fs.readModFileBytes(relPath)`**. Raw bytes from your own mod folder, for images and fonts.
 
 - **Mod command tabs** (`ModCommandDef`, `ctx.events.registerCommand`). `page` is now

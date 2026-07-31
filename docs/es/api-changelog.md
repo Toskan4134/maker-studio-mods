@@ -20,6 +20,9 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
   propio render del mapa, por debajo del mapa — sin `--canvas-bg` transparente ni overlays con
   z-order. Puntos estables para el CSS:
   `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
+  Un tema declara variantes `dark` / `light` para seguir el interruptor de Modo oscuro del editor
+  (una entrada en Ver → Tema, dos aspectos); declarar solo una de ellas — o ninguna — fuerza ese
+  esquema y bloquea el interruptor mientras el tema esté activo.
 - **`ctx.fs.readModFileBytes(rutaRelativa)`**. Bytes en crudo de la carpeta de tu propio mod, para
   imágenes y fuentes.
 

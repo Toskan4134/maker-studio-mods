@@ -90,4 +90,4 @@ Mientras desarrollas, haz clic en **Reload** en la fila de tu mod en el Mod Mana
 - Añade un panel de Dockview vía `ctx.ui.registerPanel({ id, title, render })`.
 - Llama a cualquier comando Tauri directamente vía `window.__TAURI__.core.invoke("command_name", args)` — consulta la sección [Available Tauri Commands](api-reference.md#available-tauri-commands-for-mods).
 - Revisa el [API Changelog](api-changelog.md) para ver las novedades de cada versión.
-- Mira [examples/mods/](https://github.com/Toskan4134/maker-studio-mods/tree/main/examples/mods) para nueve mods incluidos con recorridos anotados.
+- Mira [examples/mods/](https://github.com/Toskan4134/maker-studio-mods/tree/main/examples/mods) para doce mods incluidos con recorridos anotados, entre ellos `custom-theme` — un tema entero del editor en una sola llamada a `ctx.theme.register`.
