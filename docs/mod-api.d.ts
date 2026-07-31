@@ -1042,6 +1042,8 @@ export interface BusCtx {
 export interface FsCtx {
   /** Read a file inside the mod's own folder. */
   readModFile(relPath: string): Promise<string>;
+  /** Read a file inside the mod's own folder as raw bytes (images, fonts). */
+  readModFileBytes(relPath: string): Promise<Uint8Array>;
   /** Write a file inside the mod's own folder. Permission: fs.mod. */
   writeModFile(relPath: string, content: string): Promise<void>;
   /** Read a project asset by path relative to gameRoot. Permission: fs.project. */
@@ -1518,6 +1520,61 @@ export interface PluginsCtx {
 // ModContext — the root facade passed to activate(ctx).
 // ============================================================================
 
+/**
+ * A theme is CSS variables layered over one of the two built-in bases, plus
+ * optional free-form CSS. Rules are scoped to the theme, so registering one
+ * changes nothing until it is applied, and unloading the mod removes it.
+ *
+ * Beyond the variables, the app tags stable regions with `data-ms-part`
+ * (`toolbar`, `menubar`, `statusbar`, `panel-header`, `dialog`, `canvas`) — a
+ * theme can select those directly instead of app class names.
+ */
+export interface ModThemeDef {
+  /** Unique across all mods; namespace it with your mod id. */
+  id: string;
+  /** Shown in View > Theme. */
+  name: string;
+  /** Built-in palette everything not overridden falls back to. */
+  base: "dark" | "light";
+  /** CSS custom properties, with or without the leading `--`. */
+  vars?: Record<string, string>;
+  /** Extra CSS. A block with no selector of its own is folded into the theme's
+   *  own `:root` scope. */
+  css?: string;
+  /**
+   * Wallpaper for the map canvas. The renderer paints it itself, over the
+   * cleared canvas and under the map — a theme does not have to make
+   * `--canvas-bg` transparent (which stops the canvas clearing and smears on
+   * pan) or register a z-ordered overlay to get a background behind the map.
+   */
+  canvas?: {
+    /** Image URL or data URI. `ctx.theme.assetUrl()` turns a mod file into one. */
+    image?: string;
+    /** `cover` scales to fill; `tile` repeats at natural size. Default `cover`. */
+    fit?: "cover" | "tile";
+    /** 0-1, applied to the image only. Default 1. */
+    opacity?: number;
+  };
+}
+
+export interface ThemeCtx {
+  /** Add a theme to View > Theme. Returns a disposer; also removed on unload. */
+  register(theme: ModThemeDef): () => void;
+  /** Switch to a registered theme, or null for the built-in dark/light. */
+  apply(id: string | null): void;
+  /** Currently applied mod theme id, or null when a built-in one is active. */
+  current(): string | null;
+  /** Every registered mod theme, this mod's included. */
+  list(): ModThemeDef[];
+  /**
+   * A file inside the mod folder as a `data:` URI, usable straight from theme
+   * CSS or `canvas.image`. Themes cannot reference mod files by path — the app
+   * page has no access to the project folder — so this is how a wallpaper or a
+   * font gets in without hand-encoding it into the source.
+   */
+  assetUrl(relativePath: string): Promise<string>;
+}
+
 export interface ModContext {
   /** API version this context implements. */
   readonly apiVersion: string;
@@ -1538,6 +1595,8 @@ export interface ModContext {
   menu: MenuCtx;
   commands: CommandsCtx;
   ui: UiCtx;
+  /** Editor themes contributed by this mod. */
+  theme: ThemeCtx;
   bus: BusCtx;
   fs: FsCtx;
   storage: StorageCtx;

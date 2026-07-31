@@ -441,3 +441,16 @@ manifest `requires` array below instead.
 // v21+ projects: enforcement controls blocking (see above).
 // v16 projects (no Plugins/ folder): console warning, mod loads anyway.
 ```
+
+## Themes
+
+```js
+const url = await ctx.theme.assetUrl("bg.png");        // mod file → data: URI
+ctx.theme.register({ id, name, base: "dark", vars, css, canvas: { image: url } });
+ctx.theme.apply(id);                                   // null = built-in dark/light
+ctx.theme.current();                                   // active id or null
+ctx.theme.list();                                      // every registered theme
+```
+
+Scoped to `:root[data-ms-theme="<id>"]`; pick it in **View → Theme**. Style regions with
+`data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.

@@ -12,6 +12,17 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ## Adiciones desde 1.0.0
 
+- **`ctx.theme`** (`ThemeCtx`). Registra temas del editor: `register({ id, name, base, vars?, css?, canvas? })`,
+  `apply(id | null)`, `current()`, `list()` y `assetUrl(rutaRelativa)` para convertir un fichero de la
+  carpeta de tu mod en un `data:` URI. Solo hay un tema activo a la vez, se elige en **Ver → Tema** y
+  se recuerda entre sesiones; las reglas de un tema están acotadas a él, así que registrarlo no
+  cambia nada hasta que se aplica, y al descargar tu mod desaparece. `canvas.image` lo pinta el
+  propio render del mapa, por debajo del mapa — sin `--canvas-bg` transparente ni overlays con
+  z-order. Puntos estables para el CSS:
+  `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
+- **`ctx.fs.readModFileBytes(rutaRelativa)`**. Bytes en crudo de la carpeta de tu propio mod, para
+  imágenes y fuentes.
+
 - **Pestañas de comandos de mod** (`ModCommandDef`, `ctx.events.registerCommand`). `page` ahora
   es funcional: titula la pestaña propia del comando en el selector de comandos de evento, y los
   comandos que comparten la misma cadena `page` se agrupan en una sola pestaña con nombre (omítelo y

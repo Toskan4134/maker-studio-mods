@@ -1539,3 +1539,51 @@ ctx.stats.onStatsChanged((global, project) => {
   // Fires ~every 60s with fresh snapshots
 });
 ```
+
+## `ctx.theme` — editor themes
+
+```js
+export async function activate(ctx) {
+  const wallpaper = await ctx.theme.assetUrl("bg.png");
+
+  ctx.theme.register({
+    id: "com.example.dusk",
+    name: "Dusk",
+    base: "dark",
+    vars: {
+      "--accent": "#ffc50b",
+      "--bg-primary": "#0e0e0f",
+      "--bg-secondary": "#141414",
+    },
+    css: `
+      [data-ms-part="toolbar"] { border-bottom: 1px solid var(--accent); }
+      [data-ms-part="dialog"]  { border-radius: 14px; }
+    `,
+    canvas: { image: wallpaper, fit: "cover", opacity: 0.9 },
+  });
+}
+```
+
+| Member | Purpose |
+|--------|---------|
+| `register(theme)` | Adds it to **View → Theme**. Returns a disposer; it is also removed when your mod unloads |
+| `apply(id \| null)` | Switch to a theme, or `null` for the built-in dark/light |
+| `current()` | Active mod theme id, or `null` |
+| `list()` | Every registered theme, including other mods' |
+| `assetUrl(relPath)` | A file in your mod folder as a `data:` URI — use it for `canvas.image`, `background-image`, `@font-face` |
+
+**How a theme is applied.** `data-theme` stays on the theme's `base`, so anything you don't override
+still resolves, and `data-ms-theme="<your id>"` is added — every rule you supply is scoped to it. You
+do not need `!important`, and you do not need to keep re-appending a `<style>` tag: the editor owns
+the stylesheet and its order.
+
+**Named parts.** Style regions through `data-ms-part` rather than internal class names, which are
+not API and do change: `menubar`, `toolbar`, `statusbar`, `panel-header`, `dialog`, `canvas`.
+
+**The map canvas.** It is a `<canvas>`, so CSS cannot reach inside it. Give `canvas.image` an image
+and the renderer paints it over the cleared canvas and under the map. Don't try to do this by making
+`--canvas-bg` transparent: the canvas then stops clearing between frames and the map smears when
+panning.
+
+**Only one theme is active at a time**, so two theme mods no longer fight over the cascade — the user
+picks one in View → Theme.

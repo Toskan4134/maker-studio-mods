@@ -12,6 +12,15 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ## Additions since 1.0.0
 
+- **`ctx.theme`** (`ThemeCtx`). Register editor themes: `register({ id, name, base, vars?, css?, canvas? })`,
+  `apply(id | null)`, `current()`, `list()`, and `assetUrl(relPath)` for turning a file in your mod
+  folder into a `data:` URI. One theme is active at a time, chosen in **View → Theme** and
+  remembered between sessions; a theme's rules are scoped to it, so registering one changes nothing
+  until it is applied, and unloading your mod removes it. `canvas.image` is painted by the map
+  renderer itself, under the map — no transparent `--canvas-bg` and no z-ordered overlay. Stable
+  hooks for the CSS: `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
+- **`ctx.fs.readModFileBytes(relPath)`**. Raw bytes from your own mod folder, for images and fonts.
+
 - **Mod command tabs** (`ModCommandDef`, `ctx.events.registerCommand`). `page` is now
   functional: it titles the command's own tab in the event-command picker, and commands
   sharing the same `page` string collect under one named tab (omit it and they group under

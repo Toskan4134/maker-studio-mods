@@ -1542,3 +1542,51 @@ ctx.stats.onStatsChanged((global, project) => {
   // Se dispara ~cada 60s con snapshots frescas
 });
 ```
+
+## `ctx.theme` — temas del editor
+
+```js
+export async function activate(ctx) {
+  const fondo = await ctx.theme.assetUrl("bg.png");
+
+  ctx.theme.register({
+    id: "com.ejemplo.dusk",
+    name: "Dusk",
+    base: "dark",
+    vars: {
+      "--accent": "#ffc50b",
+      "--bg-primary": "#0e0e0f",
+      "--bg-secondary": "#141414",
+    },
+    css: `
+      [data-ms-part="toolbar"] { border-bottom: 1px solid var(--accent); }
+      [data-ms-part="dialog"]  { border-radius: 14px; }
+    `,
+    canvas: { image: fondo, fit: "cover", opacity: 0.9 },
+  });
+}
+```
+
+| Miembro | Para qué |
+|---------|----------|
+| `register(tema)` | Lo añade a **Ver → Tema**. Devuelve un disposer; también se quita al descargar el mod |
+| `apply(id \| null)` | Cambia de tema, o `null` para el dark/light integrado |
+| `current()` | Id del tema de mod activo, o `null` |
+| `list()` | Todos los temas registrados, incluidos los de otros mods |
+| `assetUrl(ruta)` | Un fichero de tu carpeta como `data:` URI — para `canvas.image`, `background-image`, `@font-face` |
+
+**Cómo se aplica.** `data-theme` se queda en el `base` del tema, así que todo lo que no
+sobrescribas sigue resolviéndose, y se añade `data-ms-theme="<tu id>"`: cada regla que aportes está
+acotada a él. No necesitas `!important` ni reañadir una etiqueta `<style>` — la hoja de estilos y su
+orden los gestiona el editor.
+
+**Zonas con nombre.** Estiliza mediante `data-ms-part` en vez de nombres de clase internos, que no
+son API y cambian: `menubar`, `toolbar`, `statusbar`, `panel-header`, `dialog`, `canvas`.
+
+**El canvas del mapa.** Es un `<canvas>`, así que el CSS no puede entrar dentro. Dale una imagen a
+`canvas.image` y el render la pinta sobre el canvas ya limpiado y por debajo del mapa. No lo intentes
+poniendo `--canvas-bg` transparente: entonces el canvas deja de limpiarse entre frames y el mapa
+deja estelas al moverlo.
+
+**Solo hay un tema activo**, así que dos mods de temas ya no pelean por la cascada — el usuario elige
+uno en Ver → Tema.

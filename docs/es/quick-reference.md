@@ -440,3 +440,16 @@ Para dependencias *duras* que deban impedir que tu mod cargue, usa el array `req
 // proyectos v21+: enforcement controla el bloqueo (ver arriba).
 // proyectos v16 (sin carpeta Plugins/): advertencia en consola, el mod carga igual.
 ```
+
+## Temas
+
+```js
+const url = await ctx.theme.assetUrl("bg.png");        // fichero del mod → data: URI
+ctx.theme.register({ id, name, base: "dark", vars, css, canvas: { image: url } });
+ctx.theme.apply(id);                                   // null = dark/light integrado
+ctx.theme.current();                                   // id activo o null
+ctx.theme.list();                                      // todos los temas registrados
+```
+
+Acotado a `:root[data-ms-theme="<id>"]`; se elige en **Ver → Tema**. Estiliza zonas con
+`data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
