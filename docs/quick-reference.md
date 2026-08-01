@@ -101,9 +101,20 @@ const props = ctx.tileset.getTileProperties(tilesetId, tileId);
 // Appear (named) in the Tileset Editor's Terrain Tag / Priority dropdowns.
 // Built-in ids: terrain tags 0-17, priorities 0-5 — use 18+ / 6+ for custom.
 ctx.tileset.registerTerrainTag({ id: 18, name: "Lava" });
-ctx.tileset.registerPriority({ id: 6, name: "Above 6" });
+ctx.tileset.registerPriority({ id: 6, name: "Above 6", color: "#00e5ff" }); // color optional
 // The chosen id is written verbatim to @terrain_tags / @priorities. No runtime
 // dispatcher — read it in-game via $game_map.terrain_tag(x, y) and branch on it.
+
+// Restyle the Tileset Editor's tile markers (every field optional, merged over
+// the defaults; later mod wins per field; disposed on unload):
+ctx.tileset.setGlyphStyle({
+  priority: ["#ffcc00", "#ff8a3d", "#ff5c8a"], // levels 1..n, cycles past the end
+  passageOpen: "#66ff66", passageBlocked: "#ff4444", passagePartial: "#ffcc00",
+  bush: "#66ff66", counter: "#66aaff", terrain: "#ff66aa",
+  neutral: "rgba(255,255,255,0.5)",            // priority 0 / flags off
+  shadowColor: "rgba(0,0,0,0.9)", shadowBlur: 1 / 11, // blur = fraction of cell size, 0 = off
+  strokeWidth: 1 / 14,                         // fraction of cell size
+});
 ```
 
 ## Fog / panorama / custom layer groups

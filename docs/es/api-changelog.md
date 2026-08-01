@@ -35,6 +35,19 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
   `page` simplemente obtiene una pestaña con el nombre de su mod. Consulta
   [api-reference.md](api-reference.md) (`events.registerCommand`).
 
+- **Estilo de las marcas del Tileset Editor** (`ctx.tileset`). `registerPriority` acepta un
+  `color` opcional (cualquier color CSS) que pinta la marca de ese nivel sobre el tile y su
+  cuadrito en el desplegable Priority; sin él sigue el ciclo de cinco colores incluido, así que
+  el id 6 continúa reutilizando el color del 1. El nuevo **`setGlyphStyle(style)`** recolorea
+  todas las marcas que dibuja el Tileset Editor — `passageOpen` / `passageBlocked` /
+  `passagePartial`, `bush`, `counter`, `terrain`, la lista cíclica `priority`, `neutral`
+  (prioridad 0 y flags apagados), además de `shadowColor`, `shadowBlur` y `strokeWidth` (estos
+  dos últimos como fracciones del tamaño de celda del tile; `shadowBlur: 0` quita la sombra).
+  Todos los campos son opcionales y se fusionan sobre los valores por defecto, gana el último
+  registro campo a campo, y el `Disposable` devuelto restaura los valores por defecto al
+  descargar el mod. Aditivo: los mods que no lo llamen no notan ningún cambio. Consulta
+  [api-reference.md](api-reference.md) (`tileset`).
+
 ## Arreglos desde 1.0.0
 
 - **Las listas de comandos de evento ahora son legibles y escribibles** (`ctx.events`). `PublicEventPage`

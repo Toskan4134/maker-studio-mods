@@ -186,7 +186,7 @@ tileset.resolveTileProperties(tileId, tilesetId?): { passage, priority, terrainT
 
 ```ts
 tileset.registerTerrainTag({ id, name }): Disposable
-tileset.registerPriority({ id, name }): Disposable
+tileset.registerPriority({ id, name, color? }): Disposable
 ```
 
 `registerTerrainTag` / `registerPriority` añaden una entrada con nombre a los desplegables **Terrain
@@ -197,11 +197,55 @@ priorities (0 = suelo, 1–5 = tiles por encima), de modo que usa **18+** / **6+
 personalizadas y no pisarlos. Los ids duplicados se ignoran (gana el primer registro). Ambos
 devuelven un `Disposable` y se eliminan automáticamente al descargar el mod.
 
+El modo Priority va coloreado por nivel: el editor recorre una lista de cinco colores (amarillo /
+naranja / rosa / morado / azul) desde la prioridad 1 en adelante, así que una priority registrada por
+encima de 5 continúa el ciclo — el id 6 reutiliza el color del 1, y así sucesivamente. Pasa
+**`color`** (cualquier color CSS) para darle a tu nivel uno propio. En ambos casos el color pinta la
+marca dibujada sobre el tile y el cuadrito junto al valor en el desplegable. Los terrain tags no
+tienen color.
+
 El editor solo aporta la etiqueta del picker + el rango seleccionable — **no hay runtime dispatcher**.
 Para darle a un tag un comportamiento en el juego, léelo de vuelta en tus scripts de juego
 (`$game_map.terrain_tag(x, y)` — un Integer plano en RMXP/BES/LBDS; resuelto a través de
 `PBTerrain` / `GameData::TerrainTag` en Pokemon Essentials) y ramifica según el valor. Consulta el
 mod de ejemplo `custom-tile-properties`.
+
+```ts
+tileset.setGlyphStyle(style: Partial<TilesetGlyphStyle>): Disposable
+```
+
+`setGlyphStyle` recolorea las marcas que el Tileset Editor dibuja sobre cada tile — el punto/aspa de
+passage, la estrella de prioridad, la **B** de bush, el número de terrain tag. Todos los campos son
+opcionales y se fusionan sobre los valores por defecto, así que un mod que solo quiere otros colores
+de prioridad pasa únicamente `priority`:
+
+```js
+ctx.tileset.setGlyphStyle({
+  priority: ["#ffcc00", "#ff8a3d", "#ff5c8a"], // niveles 1..n, cicla al pasarse del final
+  passageBlocked: "#ff0000",
+  shadowBlur: 0,                               // sin sombra
+});
+```
+
+| Campo | Tipo | Por defecto | Marca |
+|---|---|---|---|
+| `passageOpen` | color CSS | `#66ff66` | passage totalmente abierto |
+| `passageBlocked` | color CSS | `#ff4444` | passage totalmente bloqueado |
+| `passagePartial` | color CSS | `#ffcc00` | algunas direcciones bloqueadas |
+| `bush` | color CSS | `#66ff66` | flag de bush |
+| `counter` | color CSS | `#66aaff` | flag de counter |
+| `terrain` | color CSS | `#ff66aa` | número de terrain tag |
+| `priority` | color CSS[] | `["#ffcc00","#ff8a3d","#ff5c8a","#b48cff","#4fc3f7"]` | niveles de prioridad 1..n — **cicla** al pasarse del final de la lista |
+| `neutral` | color CSS | `rgba(255,255,255,0.5)` | «aquí no hay nada»: prioridad 0, bush/counter apagados, terrain 0 |
+| `shadowColor` | color CSS | `rgba(0,0,0,0.9)` | sombra que sigue el contorno de la marca |
+| `shadowBlur` | número | `1/11` | desenfoque de la sombra como **fracción del tamaño de celda** del tile; `0` la desactiva |
+| `strokeWidth` | número | `1/14` | grosor del trazo de la marca como fracción del tamaño de celda |
+
+Una priority registrada con su propio `color` sigue ganando a la lista `priority` para ese nivel
+concreto. Una lista `priority` vacía se ignora (el ciclo necesita al menos un color). Cuando varios
+mods definen un estilo, **gana el último registro campo a campo**, así que dos mods pueden ocuparse
+cada uno de una parte del aspecto. Devuelve un `Disposable` y se elimina automáticamente al descargar
+el mod, restaurando los valores por defecto.
 
 ---
 

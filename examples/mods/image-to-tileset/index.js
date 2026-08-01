@@ -33,7 +33,7 @@ export function activate(ctx) {
       }
       .its-btn:hover { background:var(--bg-hover,#3a3a3a); }
       .its-btn-primary {
-        background:var(--accent,#4f9cff);color:#fff;
+        background:var(--accent,#4f9cff);color: var(--accent-text, #fff);
         border-color:var(--accent,#4f9cff);font-weight:600;
       }
       .its-btn-primary:hover { opacity:0.9; }

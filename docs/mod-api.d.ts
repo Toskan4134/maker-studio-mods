@@ -793,8 +793,51 @@ export interface TilesetCtx {
    * Editor's **Priority** dropdown. `id` is the integer written to
    * `@priorities`; built-in ids are 0–5 (0 = ground, 1–5 = tiles overhead), so
    * use 6+ for custom priorities. Duplicate ids ignored. Auto-removed on unload.
+   *
+   * `color` (any CSS colour) paints that level's marker on the tile and its
+   * chip in the picker. Without one the built-in five-colour cycle continues,
+   * so id 6 reuses id 1's colour.
    */
-  registerPriority?(def: { id: number; name: string }): Disposable;
+  registerPriority?(def: { id: number; name: string; color?: string }): Disposable;
+
+  /**
+   * Restyle the markers the Tileset Editor draws over each tile — the passage
+   * dot/cross, the priority star, the bush "B", the terrain number.
+   *
+   * Every field is optional and merged over the defaults, so a mod that only
+   * wants different priority colours passes only `priority`. When several mods
+   * set a style, later registrations win per field. Auto-removed on unload.
+   *
+   * ```js
+   * ctx.tileset.setGlyphStyle({
+   *   priority: ["#ffcc00", "#ff8a3d", "#ff5c8a"], // cycles past the end
+   *   passageBlocked: "#ff0000",
+   *   shadowBlur: 0,                               // no drop shadow
+   * });
+   * ```
+   */
+  setGlyphStyle?(style: Partial<TilesetGlyphStyle>): Disposable;
+}
+
+/** Colours and stroke/shadow weights of the Tileset Editor's tile markers. */
+export interface TilesetGlyphStyle {
+  /** Passage: fully open / fully blocked / some directions blocked. */
+  passageOpen: string;
+  passageBlocked: string;
+  passagePartial: string;
+  bush: string;
+  counter: string;
+  terrain: string;
+  /** Priority levels 1..n. Cycles when a level runs past the end of the list. */
+  priority: string[];
+  /** "Nothing set here": priority 0, bush/counter off, terrain 0. */
+  neutral: string;
+  /** Drop shadow hugging the marker's own outline. */
+  shadowColor: string;
+  /** Shadow blur as a fraction of the tile cell size. 0 disables it. */
+  shadowBlur: number;
+  /** Marker stroke width as a fraction of the tile cell size. */
+  strokeWidth: number;
 }
 
 export interface ShadowCtx {

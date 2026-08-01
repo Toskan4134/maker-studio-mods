@@ -186,7 +186,7 @@ tileset.resolveTileProperties(tileId, tilesetId?): { passage, priority, terrainT
 
 ```ts
 tileset.registerTerrainTag({ id, name }): Disposable
-tileset.registerPriority({ id, name }): Disposable
+tileset.registerPriority({ id, name, color? }): Disposable
 ```
 
 `registerTerrainTag` / `registerPriority` add a named entry to the Tileset
@@ -198,11 +198,55 @@ overhead), so use **18+** / **6+** for custom entries to avoid clobbering them.
 Duplicate ids are ignored (first registration wins). Both return a `Disposable`
 and are auto-removed when the mod unloads.
 
+Priority mode is colour-coded per level: the editor cycles a five-colour list
+(yellow / orange / pink / purple / blue) for priority 1 and up, so a registered
+priority past 5 continues the cycle — id 6 reuses the colour of 1, and so on.
+Pass **`color`** (any CSS colour) to give your level its own instead. Either way
+the colour paints the marker drawn on the tile and the chip beside the value in
+the dropdown. Terrain tags have no colour.
+
 The editor only contributes the picker label + selectable range — there is **no
 runtime dispatcher**. To give a tag in-game behavior, read it back in your game
 scripts (`$game_map.terrain_tag(x, y)` — a plain Integer in RMXP/BES/LBDS; resolved
 through `PBTerrain` / `GameData::TerrainTag` in Pokemon Essentials) and branch on
 the value. See the `custom-tile-properties` example mod.
+
+```ts
+tileset.setGlyphStyle(style: Partial<TilesetGlyphStyle>): Disposable
+```
+
+`setGlyphStyle` restyles the markers the Tileset Editor draws over each tile —
+the passage dot/cross, the priority star, the bush **B**, the terrain number.
+Every field is optional and merged over the defaults, so a mod that only wants
+different priority colours passes only `priority`:
+
+```js
+ctx.tileset.setGlyphStyle({
+  priority: ["#ffcc00", "#ff8a3d", "#ff5c8a"], // levels 1..n, cycles past the end
+  passageBlocked: "#ff0000",
+  shadowBlur: 0,                               // no drop shadow
+});
+```
+
+| Field | Type | Default | Marks |
+|---|---|---|---|
+| `passageOpen` | CSS colour | `#66ff66` | passage fully open |
+| `passageBlocked` | CSS colour | `#ff4444` | passage fully blocked |
+| `passagePartial` | CSS colour | `#ffcc00` | some directions blocked |
+| `bush` | CSS colour | `#66ff66` | bush flag |
+| `counter` | CSS colour | `#66aaff` | counter flag |
+| `terrain` | CSS colour | `#ff66aa` | terrain tag number |
+| `priority` | CSS colour[] | `["#ffcc00","#ff8a3d","#ff5c8a","#b48cff","#4fc3f7"]` | priority levels 1..n — **cycles** past the end of the list |
+| `neutral` | CSS colour | `rgba(255,255,255,0.5)` | "nothing set here": priority 0, bush/counter off, terrain 0 |
+| `shadowColor` | CSS colour | `rgba(0,0,0,0.9)` | drop shadow hugging the marker's outline |
+| `shadowBlur` | number | `1/11` | shadow blur as a **fraction of the tile cell size**; `0` disables it |
+| `strokeWidth` | number | `1/14` | marker stroke width as a fraction of the cell size |
+
+A priority registered with its own `color` still wins over the `priority` list
+for that one level. An empty `priority` array is ignored (the cycle needs at
+least one colour). When several mods set a style, **later registrations win per
+field**, so two mods can each own a different part of the look. Returns a
+`Disposable` and is auto-removed when the mod unloads, restoring the defaults.
 
 ---
 

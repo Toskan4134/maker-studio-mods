@@ -32,6 +32,18 @@ When a major bump happens, this file gets a section with the new shape and a lin
   sets it wins. Additive: existing mods keep working; a command with no `page` simply gets a
   tab named after its mod. See [api-reference.md](./api-reference.md) (`events.registerCommand`).
 
+- **Tileset Editor glyph styling** (`ctx.tileset`). `registerPriority` takes an optional
+  `color` (any CSS colour) that paints that level's marker on the tile and its chip in the
+  Priority dropdown; without one the built-in five-colour cycle continues, so id 6 still
+  reuses id 1's colour. New **`setGlyphStyle(style)`** restyles every marker the Tileset
+  Editor draws — `passageOpen` / `passageBlocked` / `passagePartial`, `bush`, `counter`,
+  `terrain`, the cycling `priority` list, `neutral` (priority 0 and flags-off), plus
+  `shadowColor`, `shadowBlur` and `strokeWidth` (the last two as fractions of the tile cell
+  size; `shadowBlur: 0` turns the shadow off). Every field is optional and merged over the
+  defaults, later registrations win per field, and the returned `Disposable` restores the
+  defaults on unload. Additive: mods that never call it see no change. See
+  [api-reference.md](./api-reference.md) (`tileset`).
+
 ## Fixes since 1.0.0
 
 - **Event command lists are now readable and writable** (`ctx.events`). `PublicEventPage`
