@@ -42,7 +42,7 @@ Campos requeridos:
 | `apiVersion`  | Versión de la API del editor a la que apunta tu mod (semver). |
 | `main`        | Ruta al entry JS, relativa a la carpeta del mod. |
 
-Opcionales: `authors` (array de `{name, url?}` — admite varios autores), `description`, `homepage`, `requires` (dependencias unificadas de mod + plugin — consulta la referencia de la API), `permissions`.
+Opcionales: `authors` (array de `{name, url?}` — admite varios autores), `description`, `homepage`, `tags` (tags de búsqueda del Marketplace — consulta [publicar](publishing.md)), `requires` (dependencias unificadas de mod + plugin — consulta la referencia de la API), `permissions`.
 
 ## 3. Escribe el mod
 

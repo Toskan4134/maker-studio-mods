@@ -26,6 +26,12 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 - **`ctx.fs.readModFileBytes(rutaRelativa)`**. Bytes en crudo de la carpeta de tu propio mod, para
   imágenes y fuentes.
 
+- **`manifest.tags`** (`ModManifest`). `string[]` opcional con los tags de búsqueda y filtrado del
+  Marketplace, p. ej. `["tilesets", "ui"]`. El editor los registra; el workflow de publicación los
+  copia a tu entrada de `index.json` normalizando cada uno al `^[a-z0-9-]+$` del registro (así
+  `"Terrain Tags"` pasa a `terrain-tags`) y quedándose con los 8 primeros. Aditivo: si lo omites
+  nada cambia — los tags los elige quien mantiene el registro al revisar, como hasta ahora.
+
 - **Pestañas de comandos de mod** (`ModCommandDef`, `ctx.events.registerCommand`). `page` ahora
   es funcional: titula la pestaña propia del comando en el selector de comandos de evento, y los
   comandos que comparten la misma cadena `page` se agrupan en una sola pestaña con nombre (omítelo y

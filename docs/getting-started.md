@@ -46,7 +46,7 @@ Required fields:
 | `apiVersion`  | Editor API version your mod targets (semver). |
 | `main`        | Path to the JS entry, relative to the mod folder. |
 
-Optional: `authors` (array of `{name, url?}` — supports multiple authors), `description`, `homepage`, `requires` (unified mod + plugin dependencies — see the API reference), `permissions`.
+Optional: `authors` (array of `{name, url?}` — supports multiple authors), `description`, `homepage`, `tags` (Marketplace search tags — see [publishing](./publishing.md)), `requires` (unified mod + plugin dependencies — see the API reference), `permissions`.
 
 ## 3. Write the mod
 

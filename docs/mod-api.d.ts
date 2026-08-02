@@ -43,6 +43,12 @@ export interface ModManifest {
   authors?: ModAuthor[];
   description?: string;
   homepage?: string;
+  /**
+   * Marketplace search/filter tags, e.g. `["tilesets", "ui"]`. Registry metadata:
+   * the editor records them, the publishing workflow copies them into the mod's
+   * `index.json` entry. Lowercase `a-z0-9-`, up to 8.
+   */
+  tags?: string[];
   /** Editor API version this mod targets (semver). */
   apiVersion: string;
   /** Path to the JS entry file, relative to the mod folder. */

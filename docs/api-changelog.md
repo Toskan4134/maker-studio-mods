@@ -24,6 +24,12 @@ When a major bump happens, this file gets a section with the new shape and a lin
   the toggle while the theme is active.
 - **`ctx.fs.readModFileBytes(relPath)`**. Raw bytes from your own mod folder, for images and fonts.
 
+- **`manifest.tags`** (`ModManifest`). Optional `string[]` of Marketplace search/filter tags,
+  e.g. `["tilesets", "ui"]`. The editor records them; the publishing workflow copies them into
+  your `index.json` entry, slugging each one to the registry's `^[a-z0-9-]+$` (so `"Terrain
+  Tags"` becomes `terrain-tags`) and keeping the first 8. Additive: omit it and nothing changes
+  — the registry maintainer picks your tags on review, as before.
+
 - **Mod command tabs** (`ModCommandDef`, `ctx.events.registerCommand`). `page` is now
   functional: it titles the command's own tab in the event-command picker, and commands
   sharing the same `page` string collect under one named tab (omit it and they group under
