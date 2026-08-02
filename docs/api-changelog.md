@@ -12,6 +12,17 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ## Additions since 1.0.0
 
+- **`ctx.selectors.pickGraphic(..., { allowTileSelect: true })`**. Offers **tile picking**, but only
+  once the chosen graphic is a **tileset** (one living in `Graphics/Tilesets`): the preview then
+  gains a tile grid, click picks one tile and drag picks a block. Any other graphic is unaffected,
+  so the option is safe to leave on. The selection comes back on `GraphicPickResult.srcRect` as
+  `{ x, y, w, h }` in source-image pixels — always a whole number of 32px tiles — with `w`/`h` of 0
+  meaning the whole image (which is also what you get without the option), so existing code reads
+  unchanged. The editor treats the selection as if it *were* the whole image: the sheet grid divides
+  it and `direction`/`pattern` index inside it, and picking tiles sets `sheetCols`/`sheetRows` to
+  match. In-game it needs the MakerStudio plugin — the editor's own event/picture graphics carry the
+  same field, so a project that has the plugin honours what you picked.
+
 - **`ctx.theme`** (`ThemeCtx`). Register editor themes: `register({ id, name, base, vars?, css?, canvas? })`,
   `apply(id | null)`, `current()`, `list()`, and `assetUrl(relPath)` for turning a file in your mod
   folder into a `data:` URI. One theme is active at a time, chosen in **View → Theme** and

@@ -1393,6 +1393,10 @@ export interface GraphicPickResult {
   pattern?: number;
   sheetCols?: number;
   sheetRows?: number;
+  /** The picked tiles as a sub-rectangle in source pixels — present only when
+   *  `allowTileSelect` was passed AND the chosen graphic was a tileset.
+   *  `w`/`h` of 0 means the whole image. Always a whole number of 32px tiles. */
+  srcRect?: { x: number; y: number; w: number; h: number };
   /** Values of any custom `extraFields`, keyed by field `key`. */
   extra?: Record<string, number>;
 }
@@ -1457,6 +1461,11 @@ export interface SelectorsCtx {
     extraFields?: GraphicPickerField[];
     /** Show the clickable character-sheet cell grid (pairs with `direction`/`pattern`). */
     showGrid?: boolean;
+    /** Offer tile picking. It only engages once the chosen graphic is a TILESET
+     *  (lives in `Graphics/Tilesets`): the preview then gains a tile grid and
+     *  click/drag selects whole tiles, returned as `srcRect`. Any other graphic is
+     *  unaffected. Needs the MakerStudio plugin in-game to have effect. */
+    allowTileSelect?: boolean;
     /** Shorthand for `fields: ["hue"]`. Ignored when `fields` is given. */
     showHue?: boolean;
     title?: string;

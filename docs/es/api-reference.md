@@ -280,14 +280,14 @@ selectors.pickTileset(opts?): Promise<PublicTilesetInfo | null>
 
 // Respaldados por archivo
 selectors.pickAudio("BGM"|"BGS"|"ME"|"SE", opts?: { initial?, title? }): Promise<AudioPickResult | null>
-selectors.pickGraphic(subfolder, opts?: { initial?, fields?: GraphicField[], extraFields?: GraphicPickerField[], showGrid?, showHue?, title? }): Promise<GraphicPickResult | null>
+selectors.pickGraphic(subfolder, opts?: { initial?, fields?: GraphicField[], extraFields?: GraphicPickerField[], showGrid?, allowTileSelect?, showHue?, title? }): Promise<GraphicPickResult | null>
 
 // Input
 selectors.pickKeyboardButton(opts?: { value? }): Promise<KeyboardButtonPickResult | null>
 ```
 
 `EntityPickResult` = `{ id, name }`. `AudioPickResult` = `{ name, volume, pitch }`.
-`GraphicPickResult` = `{ name, hue, opacity?, blend?, direction?, pattern?, sheetCols?, sheetRows?, extra? }` — las props opcionales solo aparecen cuando su entrada de `fields` estaba habilitada (los valores `extraFields` personalizados vuelven bajo `extra`, con clave el `key` del campo). `KeyboardButtonPickResult` = `{ code, label }`.
+`GraphicPickResult` = `{ name, hue, opacity?, blend?, direction?, pattern?, sheetCols?, sheetRows?, srcRect?, extra? }` — las props opcionales solo aparecen cuando su entrada de `fields` estaba habilitada (los valores `extraFields` personalizados vuelven bajo `extra`, con clave el `key` del campo). `srcRect` (`{ x, y, w, h }`) solo aparece con `allowTileSelect`, y solo si el usuario eligió un **tileset**: son los tiles que seleccionó, expresados en píxeles de la imagen original (siempre un número entero de tiles de 32px). `w`/`h` a 0 significa la imagen completa. `KeyboardButtonPickResult` = `{ code, label }`.
 Para los pickers de registros RPG, `opts.extras: SelectorExtra[]` permite colocar filas sintéticas
 por encima de la lista real (p. ej. `{ id: 0, label: "Entire Party" }` para parámetros de actor objetivo).
 Para `pickEvent`, `includePlayer` añade el id `-1` y `includeThisEvent` añade el id `0`.
@@ -309,6 +309,15 @@ const ch = await ctx.selectors.pickGraphic("Characters", {
   extraFields: [{ key: "zHeight", label: "Z Height", control: "number", min: 0, default: 0 }],
 });
 if (ch) console.log(ch.name, ch.direction, ch.pattern, ch.sheetCols, ch.extra?.zHeight);
+
+// Ejemplo — deja que el usuario elija tiles de un tileset. La cuadrícula aparece
+// porque el gráfico elegido es un tileset; al elegir se ajustan sheetCols/sheetRows.
+// Necesita el plugin MakerStudio en el juego para que se respete allí.
+const tile = await ctx.selectors.pickGraphic("Tilesets", {
+  allowTileSelect: true,
+  fields: ["sheetCols", "sheetRows"],
+});
+if (tile?.srcRect?.w) console.log(tile.name, tile.srcRect); // { x, y, w, h } en píxeles
 
 // Ejemplo — elige BGM con volumen inicial personalizado
 const bgm = await ctx.selectors.pickAudio("BGM", {
