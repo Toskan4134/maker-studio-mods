@@ -817,7 +817,12 @@ condition) plus its command list:
 
 ```ts
 page.list?: PublicEventCommand[]
+page.always_on_bottom: boolean   // Maker Studio: draw the event below every character
 ```
+
+`always_on_bottom` is Maker Studio's mirror of RPG Maker XP's `always_on_top`
+and takes effect in-game only with the MakerStudio plugin installed
+(`always_on_top` wins when both are set).
 
 `list` is **always present** on pages returned by `getFull()`, and **optional**
 when you pass pages back to `update()` — omit it to leave that page's existing

@@ -311,6 +311,9 @@ if (check.valid) ctx.events.update(mapId, ev);   // undoable
 // update() re-adds the code-0 terminator if missing — you don't have to.
 // Omit a page's `list` entirely to leave that page's commands untouched.
 // createCommand() returns indent: 0 — set `indent` yourself inside branches/loops.
+
+// Maker Studio's Options flag: draw this page below every character.
+ev.pages[0].always_on_bottom = true;             // always_on_top wins if both are set
 ```
 
 ## Register a custom event command

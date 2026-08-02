@@ -175,6 +175,8 @@ export interface PublicEventPage {
   direction_fix: boolean;
   through: boolean;
   always_on_top: boolean;
+  /** Maker Studio extension: draw the event below every character. */
+  always_on_bottom: boolean;
   condition: {
     switch1_valid: boolean; switch1_id: number;
     switch2_valid: boolean; switch2_id: number;

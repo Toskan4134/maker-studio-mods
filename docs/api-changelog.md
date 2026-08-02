@@ -58,6 +58,13 @@ When a major bump happens, this file gets a section with the new shape and a lin
   command codes. Additive: mods written against 1.0.0 keep working unchanged. See
   [api-reference.md](./api-reference.md) (`events`).
 
+- **`PublicEventPage.always_on_bottom`** (`ctx.events`). Maker Studio's mirror of RPG Maker XP's
+  `always_on_top`: the event draws **below** every character. `getFull()` reports it and
+  `update()` writes it, like every other page field. `always_on_top` wins when both are set, and
+  the flag only takes effect in-game with the MakerStudio plugin installed. Additive: mods that
+  never touch the field keep working unchanged. See
+  [api-reference.md](./api-reference.md) (`events`).
+
 ## v1.0.0 — Initial Release
 
 First public mod API, shipping with Maker Studio 1.0. A stable `ctx` surface lets
