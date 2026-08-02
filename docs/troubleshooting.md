@@ -26,7 +26,7 @@ Common problems and how to fix them.
 **Symptom**: Mod appears in the list but its status is red/errored.
 
 1. **Open the Mod Manager**, click on the mod row to expand its log. The error message is there.
-2. **Check the browser console** (`Ctrl+Shift+I` in the editor window) for the full stack trace.
+2. **Check the browser console** (`F12` in the editor window) for the full stack trace.
 3. **Common causes**:
    - Syntax error in `index.js` — validate with a linter.
    - Missing `export function activate(ctx) { ... }` — this is required.

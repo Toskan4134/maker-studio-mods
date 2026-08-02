@@ -26,7 +26,7 @@ Problemas comunes y cómo arreglarlos.
 **Síntoma**: el mod aparece en la lista pero su estado es rojo/con error.
 
 1. **Abre el Mod Manager**, haz clic en la fila del mod para expandir su log. El mensaje de error está ahí.
-2. **Revisa la consola del navegador** (`Ctrl+Shift+I` en la ventana del editor) para el stack trace completo.
+2. **Revisa la consola del navegador** (`F12` en la ventana del editor) para el stack trace completo.
 3. **Causas comunes**:
    - Error de sintaxis en `index.js` — valídalo con un linter.
    - Falta `export function activate(ctx) { ... }` — es obligatorio.
