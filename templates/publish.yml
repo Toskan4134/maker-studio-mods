@@ -14,8 +14,9 @@
 # releases on your own repo.
 #
 # Optional automation: see the commented `registry-pr` job at the bottom — it will open the
-# registry PR for you automatically if you set a `REGISTRY_PAT` secret (Personal Access Token
-# with `repo` scope) and adjust `FORK_OWNER` to your GitHub handle.
+# registry PR for you automatically (adding your entry the first time, bumping it after that)
+# if you set a `REGISTRY_PAT` secret (Personal Access Token with `repo` scope) and adjust
+# `FORK_OWNER` to your GitHub handle.
 
 name: Publish mod release
 
@@ -36,9 +37,10 @@ jobs:
       asset-name: ${{ steps.meta.outputs.asset-name }}
       authors: ${{ steps.meta.outputs.authors }}
       sha256: ${{ steps.hash.outputs.sha256 }}
+      entry: ${{ steps.hash.outputs.entry }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Read manifest + validate tag
         id: meta
@@ -52,8 +54,14 @@ jobs:
             exit 1
           fi
           ASSET="${MOD_ID}-${MANIFEST_VER}.zip"
-          # Compact one-line JSON array — same shape index.json#authors expects.
-          AUTHORS=$(jq -c '.authors' manifest.json)
+          # Normalize whatever the manifest uses — `authors: [{name, url?}]`, `authors: ["name"]`
+          # or a plain `author: "name"` — into the one-line array index.json#authors expects.
+          AUTHORS=$(jq -c '[ (.authors // [.author])[] | select(. != null)
+                             | if type == "string" then {name: .} else . end ]' manifest.json)
+          if [ "$AUTHORS" = "[]" ]; then
+            echo '::error::manifest.json needs an author: either "author": "you" or "authors": [{"name": "you"}]'
+            exit 1
+          fi
           echo "mod-id=$MOD_ID" >> "$GITHUB_OUTPUT"
           echo "version=$MANIFEST_VER" >> "$GITHUB_OUTPUT"
           echo "asset-name=$ASSET" >> "$GITHUB_OUTPUT"
@@ -75,6 +83,28 @@ jobs:
           SHA=$(sha256sum "${{ steps.meta.outputs.asset-name }}" | awk '{print $1}')
           echo "sha256=$SHA" >> "$GITHUB_OUTPUT"
           echo "$SHA  ${{ steps.meta.outputs.asset-name }}" > SHA256SUMS.txt
+          # Whole registry entry, in index.json field order, for the registry-pr job below.
+          # Tags are slugged to the registry's `^[a-z0-9-]+$` (so "Terrain Tags" and "19.1"
+          # become "terrain-tags" and "19-1"), deduped, capped at the 8 the schema allows.
+          ENTRY=$(jq -c --argjson authors '${{ steps.meta.outputs.authors }}' \
+                        --arg repo "$GITHUB_REPOSITORY" \
+                        --arg asset "${{ steps.meta.outputs.asset-name }}" \
+                        --arg sha "$SHA" \
+                        '{ id, name, authors: $authors, repo: $repo,
+                           version, assetName: $asset, sha256: $sha,
+                           description,
+                           tags: ([ (.tags // [])[] | select(type == "string") | ascii_downcase
+                                    | gsub("[àáâãäå]";"a";"i") | gsub("[èéêë]";"e";"i")
+                                    | gsub("[ìíîï]";"i";"i")   | gsub("[òóôõö]";"o";"i")
+                                    | gsub("[ùúûü]";"u";"i")   | gsub("ñ";"n";"i") | gsub("ç";"c";"i")
+                                    | gsub("[^a-z0-9]+"; "-") | gsub("^-+|-+$"; "") | .[0:24]
+                                    | select(length > 0) ]
+                                  | reduce .[] as $t ([]; if any(.[]; . == $t) then . else . + [$t] end)
+                                  | .[0:8]),
+                           homepage: (.homepage // "https://github.com/\($repo)"),
+                           apiVersion, permissions }
+                         | with_entries(select(.value != null and .value != []))' manifest.json)
+          echo "entry=$ENTRY" >> "$GITHUB_OUTPUT"
 
       - name: Publish release assets
         uses: softprops/action-gh-release@v2
@@ -109,7 +139,9 @@ jobs:
           EOF
 
   # ----------------------------------------------------------------------------------
-  # OPTIONAL: auto-open the registry PR.
+  # OPTIONAL: auto-open the registry PR for this release — it adds your mod's entry the first
+  # time and bumps it on every release after that. A maintainer still reviews and merges it.
+  #
   # Enable by:
   #   1. Forking https://github.com/Toskan4134/maker-studio-mods under your GitHub account.
   #   2. Creating a PAT with `repo` scope on that account.
@@ -123,35 +155,49 @@ jobs:
   #   env:
   #     FORK_OWNER: your-github-handle
   #   steps:
-  #     - name: Checkout fork
-  #       uses: actions/checkout@v4
+  #     # Check out the registry itself, not your fork: create-pull-request reads the base repo
+  #     # from this checkout and pushes the branch to `push-to-fork`. Checking out the fork here
+  #     # opens the PR fork -> fork, which never reaches the registry.
+  #     - name: Checkout registry
+  #       uses: actions/checkout@v5
   #       with:
-  #         repository: ${{ env.FORK_OWNER }}/maker-studio-mods
+  #         repository: Toskan4134/maker-studio-mods
   #         token: ${{ secrets.REGISTRY_PAT }}
   #         path: registry
   #
   #     - name: Update index.json
+  #       id: registry
   #       working-directory: registry
   #       run: |
   #         MOD_ID="${{ needs.build-and-release.outputs.mod-id }}"
-  #         VERSION="${{ needs.build-and-release.outputs.version }}"
-  #         ASSET="${{ needs.build-and-release.outputs.asset-name }}"
-  #         SHA="${{ needs.build-and-release.outputs.sha256 }}"
-  #         AUTHORS='${{ needs.build-and-release.outputs.authors }}'
+  #         ENTRY='${{ needs.build-and-release.outputs.entry }}'
   #         UPDATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  #         jq --arg id "$MOD_ID" --arg v "$VERSION" --arg a "$ASSET" --arg s "$SHA" --arg t "$UPDATED_AT" --argjson authors "$AUTHORS" \
-  #           '.updatedAt = $t | (.mods[] | select(.id == $id)) |= (.version = $v | .assetName = $a | .sha256 = $s | .authors = $authors)' \
-  #           index.json > index.json.tmp && mv index.json.tmp index.json
+  #         if jq -e --arg id "$MOD_ID" 'any(.mods[]; .id == $id)' index.json > /dev/null; then
+  #           echo "action=bump" >> "$GITHUB_OUTPUT"
+  #         else
+  #           echo "action=add" >> "$GITHUB_OUTPUT"
+  #         fi
+  #         # New mod: append the whole entry. Already listed: touch only the release fields, so
+  #         # anything the maintainer curated (description, tags, verified) survives the bump.
+  #         jq --argjson e "$ENTRY" --arg t "$UPDATED_AT" '
+  #           .updatedAt = $t
+  #           | if any(.mods[]; .id == $e.id)
+  #             then .mods |= map(if .id == $e.id
+  #                               then .version = $e.version | .assetName = $e.assetName
+  #                                  | .sha256 = $e.sha256 | .authors = $e.authors
+  #                               else . end)
+  #             else .mods += [$e]
+  #             end' index.json > index.json.tmp && mv index.json.tmp index.json
   #
   #     - name: Create PR
-  #       uses: peter-evans/create-pull-request@v6
+  #       uses: peter-evans/create-pull-request@v7
   #       with:
   #         path: registry
   #         token: ${{ secrets.REGISTRY_PAT }}
   #         push-to-fork: ${{ env.FORK_OWNER }}/maker-studio-mods
-  #         branch: bump-${{ needs.build-and-release.outputs.mod-id }}-${{ needs.build-and-release.outputs.version }}
-  #         commit-message: "bump ${{ needs.build-and-release.outputs.mod-id }} to v${{ needs.build-and-release.outputs.version }}"
-  #         title: "bump ${{ needs.build-and-release.outputs.mod-id }} to v${{ needs.build-and-release.outputs.version }}"
+  #         branch: ${{ steps.registry.outputs.action }}-${{ needs.build-and-release.outputs.mod-id }}-${{ needs.build-and-release.outputs.version }}
+  #         commit-message: "${{ steps.registry.outputs.action }} ${{ needs.build-and-release.outputs.mod-id }} v${{ needs.build-and-release.outputs.version }}"
+  #         title: "${{ steps.registry.outputs.action }} ${{ needs.build-and-release.outputs.mod-id }} v${{ needs.build-and-release.outputs.version }}"
   #         body: |
   #           Automated PR from `${{ github.repository }}` on release of v${{ needs.build-and-release.outputs.version }}.
   #

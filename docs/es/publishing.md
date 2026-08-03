@@ -49,15 +49,18 @@ Añade los tres archivos.
   "id": "com.TU_USUARIO.TU_MOD",
   "name": "TU_MOD",
   "version": "1.0.0",
-  "author": "TU_USUARIO",
+  "authors": [{ "name": "TU_USUARIO", "url": "https://github.com/TU_USUARIO" }],
   "description": "Tracks how many days in a row you've opened the editor.",
+  "tags": ["tools", "ui"],
   "apiVersion": "1.0.0",
   "main": "index.js",
   "permissions": ["ui.toasts"]
 }
 ```
 
-El `id` es reverse-DNS (debe contener un `.`). `permissions` declara cada capacidad de la API que usa tu código — los revisores lo cotejan con el código.
+El `id` es reverse-DNS (debe contener un `.`). `permissions` declara cada capacidad de la API que usa tu código — los revisores lo cotejan con el código. En `authors`, `url` es opcional, y también vale un `"author": "TU_USUARIO"` a secas.
+
+Los `tags` son las palabras de búsqueda y filtrado del Marketplace, y los eliges tú — hasta 8. Escríbelos como mejor se lean (`"Terrain Tags"`, `"Essentials 19.1"`); al publicar se normalizan al `^[a-z0-9-]+$` que guarda el registro (`terrain-tags`, `essentials-19-1`). Si omites el campo, los tags los elige quien mantiene el registro al revisar.
 
 ### `index.js`
 
@@ -504,7 +507,7 @@ El registro trae un workflow listo para usar en [`templates/publish.yml`](../../
 5. Crea el GitHub Release para el tag y sube ambos archivos como assets.
 6. Imprime el bloque exacto de 3 líneas (`"version"`, `"assetName"`, `"sha256"`) que pegas en el PR de tu entrada del registro.
 
-El `GITHUB_TOKEN` por defecto basta — no hay secrets extra que configurar. Hay un job de seguimiento opcional comentado en el template que abre automáticamente el PR al registro si configuras un secret `REGISTRY_PAT`.
+El `GITHUB_TOKEN` por defecto basta — no hay secrets extra que configurar. Hay un job de seguimiento opcional comentado en el template que abre automáticamente el PR al registro si configuras un secret `REGISTRY_PAT` — ver el paso 4.
 
 ## 4 — Listarse en el registro
 
@@ -532,8 +535,9 @@ Luego abre un PR que añada una entrada al array `mods` en [`index.json`](../../
 
 Omite `icon`, `homepage`, `minStudioVersion`, `tags` si no aplican. `id`, `name`, `authors`, `repo`, `version`, `assetName`, `sha256` son obligatorios — el editor no instalará sin ellos.
 
-Dos formas de abrir el PR:
+Tres formas de abrir el PR:
 
+- **Automática:** activa el job `registry-pr` del Action de plantilla (forkea el registro, añade un secret `REGISTRY_PAT` y pon tu `FORK_OWNER`). A partir de ahí cada release abre el PR por ti — añadiendo esta entrada la primera vez y actualizando `version`/`assetName`/`sha256` después. Rellena todos los campos desde tu `manifest.json`, incluidos los `tags`; `icon` y `minStudioVersion` los añadimos nosotros al revisar.
 - **La más fácil (sin git local):** abre [`index.json`](../../index.json) en github.com → icono de lápiz → pega tu entrada en el array `mods` (incluyendo `version`, `sha256` y `assetName` de tu release) → **Propose changes** → PR cross-repo. Actualiza también `updatedAt` al timestamp ISO-8601 actual.
 - **Fork local (power users / varios mods):**
 

@@ -34,6 +34,8 @@ The TypeScript source of truth is the `EventMap` interface in
 | `stats.changed`      | `{ global: GlobalStatsSnapshot, project: ProjectStatsSnapshot \| null }`  | no          |
 | `keybind.changed`    | `{ actionId: string, oldKey: string, newKey: string }`                   | no          |
 | `locale.changed`     | `{ locale: string }`                                                      | no          |
+| `game.launch`        | `{ gameRoot: string }`                                                    | no          |
+| `keybind.triggered`  | `{ actionId: string }`                                                    | no          |
 
 ## When events fire
 
@@ -74,6 +76,8 @@ The TypeScript source of truth is the `EventMap` interface in
 - **`stats.changed`** — fires periodically (~60s) with updated editor statistics snapshots. `global` contains lifetime stats, `project` contains current project stats (or `null` if no project open).
 - **`keybind.changed`** — fires when a keybind is changed via the settings dialog or the `ctx.keybinds` API. `actionId` is the affected action, `oldKey` and `newKey` are the normalized combo strings (e.g. `"ctrl+s"`).
 - **`locale.changed`** — fires when the active editor language changes (View → Language, `ctx.i18n.setLocale`, or a mod-provided locale registering/unregistering). `locale` is the new locale code (e.g. `"en"`, `"es"`, or a mod-registered code). `ctx.i18n.onChanged(cb)` is the convenience wrapper.
+- **`game.launch`** — fires once per Run Game invocation (toolbar button, menu item, or the `app.runGame` shortcut), right after the game-root check passes — before dirty maps are saved and the game actually launches. Fires regardless of outcome (launched, already running, a Proton prefix prompt shown/cancelled on Linux, or a launch error), so it's a reliable "the user asked to run the game" signal rather than a "game started" one.
+- **`keybind.triggered`** — fires when the global shortcut dispatcher resolves a keydown to a built-in `actionId` and is about to run its handler. This is the *only* reliable way for a mod to know "the keyboard was just used for X": the dispatcher calls `e.stopImmediatePropagation()` right after resolving, and it's mounted on `window` in the capture phase before any mod loads — so a mod's own `keydown` listener, on whatever target or phase, never sees the event for a shortcut that actually fired. Does **not** cover mod-registered shortcuts (`ctx.menu.registerMenuItem`'s `shortcut`, `ctx.ui.registerShortcut`) — those resolve on a separate path.
 
 ## Cancellable handlers
 

@@ -35,6 +35,17 @@ Se descubren todos los archivos `.js` del directorio del mod (incluidos subdirec
 ```js
 ctx.ui.showToast({ message: "Done!", level: "info" });
 // level: "info" | "warn" | "error"
+
+// Hasta dos botones: secondaryAction se renderiza a la izquierda de action. Al
+// hacer click en cualquiera de los dos se cierra el toast y luego corre onClick.
+ctx.ui.showToast({
+  message: "Esta acción todavía no tiene atajo asignado.",
+  durationMs: 0, // fijo hasta que el usuario elige un botón
+  action: { label: "Asignar atajo", onClick: () => ctx.ui.openKeyboardShortcuts("edit.save") },
+  secondaryAction: { label: "No volver a mostrar", onClick: () => { /* silenciarlo */ } },
+});
+// openKeyboardShortcuts(actionId?) abre el diálogo de Atajos de Teclado de Ayuda; con
+// un actionId se abre ya scrolleado y escuchando una tecla en esa fila.
 ```
 
 ## Añadir un elemento de menú
@@ -157,11 +168,14 @@ ctx.ui.registerPanel({
   id: "my-mod.my-panel",
   title: "My Panel",
   defaultPosition: "right",
+  defaultSize: { width: 640, height: 460 }, // tamaño flotante inicial, por defecto 480×360
   render(host) {
     host.innerHTML = "<p>Hello from my mod!</p>";
     return () => { /* limpieza al cerrar el panel */ };
   },
 });
+// showInMenu: false oculta la entrada automática del menú Mods — usalo si registrás tu
+// propio ítem de menú que abre el mismo panel, o vas a terminar con dos entradas.
 ```
 
 ## Igualar el tema del editor
@@ -240,7 +254,7 @@ ctx.i18n.onChanged((locale) => { /* re-renderizar */ });   // = bus "locale.chan
 
 ```js
 const opts = ctx.editor.viewOptions();
-// { showGrid, showCollision, showEvents, showDim, darkMode }
+// { showGrid, showCollision, showEvents, showEventCells, showDim, darkMode }
 ctx.editor.setViewOptions({ showGrid: false }); // actualización parcial
 ```
 

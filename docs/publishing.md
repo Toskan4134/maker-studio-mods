@@ -49,15 +49,18 @@ Add the three files.
   "id": "com.YOUR_USERNAME.YOUR_MOD",
   "name": "YOUR_MOD",
   "version": "1.0.0",
-  "author": "YOUR_USERNAME",
+  "authors": [{ "name": "YOUR_USERNAME", "url": "https://github.com/YOUR_USERNAME" }],
   "description": "Tracks how many days in a row you've opened the editor.",
+  "tags": ["tools", "ui"],
   "apiVersion": "1.0.0",
   "main": "index.js",
   "permissions": ["ui.toasts"]
 }
 ```
 
-The `id` is reverse-DNS (must contain a `.`). `permissions` declares every API capability your code uses — reviewers check this against the code.
+The `id` is reverse-DNS (must contain a `.`). `permissions` declares every API capability your code uses — reviewers check this against the code. In `authors`, `url` is optional, and a plain `"author": "YOUR_USERNAME"` string works too.
+
+`tags` are the Marketplace's search and filter keywords, and they are yours to choose — up to 8. Write them however reads best (`"Terrain Tags"`, `"Essentials 19.1"`); publishing slugs them to the `^[a-z0-9-]+$` the registry stores (`terrain-tags`, `essentials-19-1`). Omit the field and the registry maintainer picks tags for you on review.
 
 ### `index.js`
 
@@ -504,7 +507,7 @@ The registry ships a ready-to-use workflow at [`templates/publish.yml`](../templ
 5. Creates the GitHub Release for the tag and uploads both files as assets.
 6. Prints the exact 3-line block (`"version"`, `"assetName"`, `"sha256"`) you paste into your registry entry's PR.
 
-The default `GITHUB_TOKEN` is enough — no extra secrets to configure. There's an optional commented-out follow-up job in the template that auto-opens the registry PR for you if you set a `REGISTRY_PAT` secret.
+The default `GITHUB_TOKEN` is enough — no extra secrets to configure. There's an optional commented-out follow-up job in the template that auto-opens the registry PR for you if you set a `REGISTRY_PAT` secret — see step 4.
 
 ## 4 — Get Listed in the Registry
 
@@ -532,8 +535,9 @@ Then open a PR that adds an entry to the `mods` array in [`index.json`](../index
 
 Drop `icon`, `homepage`, `minStudioVersion`, `tags` if not applicable. `id`, `name`, `authors`, `repo`, `version`, `assetName`, `sha256` are mandatory — the editor will not install otherwise.
 
-Two ways to open the PR:
+Three ways to open the PR:
 
+- **Automatic:** enable the `registry-pr` job in the template Action (fork the registry, add a `REGISTRY_PAT` secret, set `FORK_OWNER`). Every release then opens the PR for you — adding this entry the first time, bumping `version`/`assetName`/`sha256` after that. It fills every field from your `manifest.json`, including `tags`; `icon` and `minStudioVersion` are ours to add on review.
 - **Easiest (no local git):** open [`index.json`](../index.json) on github.com → pencil icon → paste your entry into the `mods` array (including the `version`, `sha256`, and `assetName` from your release) → **Propose changes** → cross-repo PR. Also update `updatedAt` to the current ISO-8601 timestamp.
 - **Local fork (power users / multiple mods):**
 
