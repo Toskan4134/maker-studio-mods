@@ -36,6 +36,17 @@ Only `./` and `../` relative imports are rewritten. CommonJS mods stay single-fi
 ```js
 ctx.ui.showToast({ message: "Done!", level: "info" });
 // level: "info" | "warn" | "error"
+
+// Up to two buttons: secondaryAction renders left of action. Clicking either
+// dismisses the toast, then runs onClick.
+ctx.ui.showToast({
+  message: "No shortcut assigned to this yet.",
+  durationMs: 0, // sticky until the user picks a button
+  action: { label: "Assign shortcut", onClick: () => ctx.ui.openKeyboardShortcuts("edit.save") },
+  secondaryAction: { label: "Don't show again", onClick: () => { /* mute it */ } },
+});
+// openKeyboardShortcuts(actionId?) opens Help's Keyboard Shortcuts dialog; with an
+// actionId it's pre-scrolled and already listening for a keypress on that row.
 ```
 
 ## Add a menu item
@@ -158,11 +169,14 @@ ctx.ui.registerPanel({
   id: "my-mod.my-panel",
   title: "My Panel",
   defaultPosition: "right",
+  defaultSize: { width: 640, height: 460 }, // first-open floating size, default 480×360
   render(host) {
     host.innerHTML = "<p>Hello from my mod!</p>";
     return () => { /* cleanup on panel close */ };
   },
 });
+// showInMenu: false hides the auto Mods-menu entry — set it if you register
+// your own menu item that opens the same panel, or you'll get two of them.
 ```
 
 ## Match the editor's theme
@@ -240,7 +254,7 @@ ctx.i18n.onChanged((locale) => { /* re-render */ });   // = bus "locale.changed"
 
 ```js
 const opts = ctx.editor.viewOptions();
-// { showGrid, showCollision, showEvents, showDim, darkMode }
+// { showGrid, showCollision, showEvents, showEventCells, showDim, darkMode }
 ctx.editor.setViewOptions({ showGrid: false }); // partial update
 ```
 

@@ -32,6 +32,8 @@ La fuente de verdad en TypeScript es la interfaz `EventMap` en [`mod-api.d.ts`](
 | `stats.changed`      | `{ global: GlobalStatsSnapshot, project: ProjectStatsSnapshot \| null }`  | no          |
 | `keybind.changed`    | `{ actionId: string, oldKey: string, newKey: string }`                   | no          |
 | `locale.changed`     | `{ locale: string }`                                                      | no          |
+| `game.launch`        | `{ gameRoot: string }`                                                    | no          |
+| `keybind.triggered`  | `{ actionId: string }`                                                    | no          |
 
 ## Cuándo se disparan los eventos
 
@@ -58,6 +60,8 @@ La fuente de verdad en TypeScript es la interfaz `EventMap` en [`mod-api.d.ts`](
 - **`stats.changed`** — se dispara periódicamente (~60s) con capturas de estadísticas del editor actualizadas. `global` contiene estadísticas de por vida, `project` contiene las del proyecto actual (o `null` si no hay proyecto abierto).
 - **`keybind.changed`** — se dispara cuando se cambia un keybind vía el diálogo de ajustes o la API `ctx.keybinds`. `actionId` es la acción afectada, `oldKey` y `newKey` son las cadenas de combo normalizadas (p. ej. `"ctrl+s"`).
 - **`locale.changed`** — se dispara cuando cambia el idioma activo del editor (View → Language, `ctx.i18n.setLocale`, o un locale aportado por un mod que se registra/desregistra). `locale` es el nuevo código de locale (p. ej. `"en"`, `"es"`, o un código registrado por un mod). `ctx.i18n.onChanged(cb)` es el wrapper de conveniencia.
+- **`game.launch`** — se dispara una vez por cada invocación de Run Game (botón de toolbar, ítem de menú, o el atajo `app.runGame`), justo después de que pasa la verificación de game root — antes de guardar mapas sin guardar y de lanzar el juego. Se dispara sin importar el resultado (lanzado, ya corriendo, prompt de prefijo Proton mostrado/cancelado en Linux, o error de lanzamiento), así que es una señal confiable de "el usuario pidió correr el juego", no de "el juego arrancó".
+- **`keybind.triggered`** — se dispara cuando el dispatcher global de shortcuts resuelve un keydown a un `actionId` nativo y está por ejecutar su handler. Es la **única** forma confiable de que un mod sepa "recién se usó el teclado para X": el dispatcher llama `e.stopImmediatePropagation()` justo después de resolver, y está montado en `window` en fase de captura antes de que cargue cualquier mod — así que un listener de `keydown` propio de un mod, en cualquier target o fase, nunca ve el evento de un shortcut que efectivamente se disparó. **No** cubre shortcuts registrados por mods (`shortcut` de `ctx.menu.registerMenuItem`, `ctx.ui.registerShortcut`) — esos se resuelven por otro camino.
 
 ## Handlers cancelables
 

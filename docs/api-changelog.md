@@ -12,6 +12,39 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ## Additions since 1.0.0
 
+- **`PanelDef.defaultSize`**: `{ width, height }` (px), sets the floating window's size the
+  very first time a panel opens — before it has a dock position or the user has resized it.
+  Default unchanged (`{ width: 480, height: 360 }`). Additive: mods that don't set it see no
+  change. See [api-reference.md](./api-reference.md) (`ui.registerPanel`).
+- **New bus event `keybind.triggered`**: `{ actionId: string }`, fires when the global
+  shortcut dispatcher resolves a keydown to a built-in action, right before it calls
+  `e.stopImmediatePropagation()`. That call is why a mod's own `keydown` listener — on
+  `window` or `document`, any phase — never sees the event for a shortcut that actually
+  fired: the dispatcher is mounted on `window` in the capture phase before any mod loads,
+  so it always runs first. This event is the only reliable way to know "the keyboard was
+  just used for X"; don't try to reconstruct it by listening for raw `keydown` yourself.
+  Doesn't cover mod-registered shortcuts (`registerMenuItem`'s `shortcut`,
+  `ui.registerShortcut`) — those resolve on a separate path. See
+  [events-reference.md](./events-reference.md).
+- **`ctx.editor.viewOptions()` / `setViewOptions()` gain `showEventCells`**, matching the
+  editor's "Toggle Event Cells" view option (`view.toggleEventCells` keybind) — previously
+  unreadable and unwritable by mods. Additive: existing destructuring of the returned object
+  keeps working. See [api-reference.md](./api-reference.md) (`editor`).
+- **New bus event `game.launch`**: `{ gameRoot: string }`, fires once per Run Game invocation
+  (toolbar button, menu item, or the `app.runGame` shortcut) regardless of outcome — a
+  reliable "the user asked to run the game" signal, since there's no other way to observe
+  that action (it's momentary, not a toggleable state). See
+  [events-reference.md](./events-reference.md).
+- **Toast action buttons** (`ctx.ui.showToast`). `ToastOptions` gains optional
+  `action` and `secondaryAction`, each `{ label, onClick }` — up to two clickable
+  buttons on a toast, secondary rendered left of primary. Clicking either dismisses
+  the toast, then runs `onClick`. Also new: **`ctx.ui.openKeyboardShortcuts(actionId?)`**
+  opens the editor's native Keyboard Shortcuts dialog (same as Help → Keyboard
+  Shortcuts…); pass a built-in `actionId` and it opens pre-scrolled to that row,
+  already listening for a keypress — pair it with a toast button to send the user
+  straight into rebinding a specific action. Additive: mods that never set
+  `action`/`secondaryAction` see no change. See [api-reference.md](./api-reference.md) (`ui`).
+
 - **`ctx.theme`** (`ThemeCtx`). Register editor themes: `register({ id, name, base, vars?, css?, canvas? })`,
   `apply(id | null)`, `current()`, `list()`, and `assetUrl(relPath)` for turning a file in your mod
   folder into a `data:` URI. One theme is active at a time, chosen in **View → Theme** and

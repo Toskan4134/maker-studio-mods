@@ -62,7 +62,7 @@ editor.setBrushTileProperties(props: Partial<{...}>): void
 editor.hoverTile(): { x, y } | null
 editor.viewport(): { x, y, zoom }
 editor.setViewport(viewport: { x?, y?, zoom? }): void
-editor.viewOptions(): { showGrid, showCollision, showEvents, showDim, darkMode }
+editor.viewOptions(): { showGrid, showCollision, showEvents, showEventCells, showDim, darkMode }
 editor.setViewOptions(opts: Partial<{...}>): void
 ```
 
@@ -1075,6 +1075,7 @@ ctx.ui.registerPanel({
   defaultPosition: "right",
   showInMenu: true,    // por defecto true; pon false para ocultar del menú Mods
   icon: "📊",          // opcional: markup SVG o glifo unicode
+  defaultSize: { width: 640, height: 460 }, // opcional: tamaño flotante inicial, por defecto 480×360
   render(host) {
     host.innerHTML = "<h2>Hello panel</h2>";
     return () => { /* cleanup opcional */ };
@@ -1110,7 +1111,14 @@ dentro, o ninguno. Devuelve una función de cleanup si la necesitas.
 
 `openPanel(panelId)` abre un panel registrado previamente. `closePanel` lo cierra.
 `isPanelOpen` comprueba la visibilidad. `showInMenu: false` oculta la entrada automática
-del menú Mods (úsalo con tu propio `registerMenuItem` en su lugar).
+del menú Mods (úsalo con tu propio `registerMenuItem` en su lugar — si no, terminás con
+dos entradas que abren el mismo panel).
+
+`defaultSize` fija el ancho/alto (px) de la ventana flotante la primera vez que un panel
+se abre — antes de tener posición de dock o de que el usuario lo redimensione. Por
+defecto `{ width: 480, height: 360 }`; subilo si el contenido de tu panel necesita más
+espacio de entrada. No tiene efecto en aperturas siguientes una vez que el panel está
+dockeado o redimensionado — de ahí en más es el layout del usuario.
 
 **Persistencia de paneles**: los paneles de mod conservan su slot en el layout de dock guardado del
 usuario. Cuando tu mod se descarga (hot reload, disable, uninstall), el panel **no** se cierra — el
@@ -1124,6 +1132,25 @@ paneles.
 `showInputDialog` muestra un diálogo de input de texto — devuelve la cadena introducida o
 null si se cancela. `showContextMenu` muestra un menú contextual nativo en las coordenadas de
 pantalla dadas, con etiquetas, acciones, separadores y submenús.
+
+### Botones de acción en toasts
+
+```js
+ctx.ui.showToast({
+  message: "Esta acción todavía no tiene atajo.",
+  level: "info",
+  durationMs: 0, // fijo — permanece hasta que el usuario hace click en un botón
+  action: { label: "Asignar atajo", onClick: () => ctx.ui.openKeyboardShortcuts("edit.save") },
+  secondaryAction: { label: "No volver a mostrar", onClick: () => recordarDescartado() },
+});
+```
+
+`ToastOptions.action` / `.secondaryAction` toman cada uno `{ label, onClick }` y se
+renderizan como botones en el toast — `secondaryAction` a la izquierda de `action`, ambos
+a la izquierda de los botones nativos de copiar/cerrar. Al hacer click en cualquiera de
+los dos se cierra el toast y luego se llama a `onClick`; un error lanzado dentro de
+`onClick` se captura y se registra en el log, no rompe el editor. Omite ambos para un
+toast de solo mensaje (el comportamiento anterior, sin cambios).
 
 ### Theming y variables CSS
 
@@ -1318,6 +1345,21 @@ await ctx.ui.openUrl("https://example.com");
 ```
 
 Abre una URL en el navegador por defecto del usuario. El editor muestra primero un diálogo de confirmación (con la URL en una caja monoespaciada) — el usuario debe pulsar "Open Link" para continuar. Devuelve inmediatamente si se cancela.
+
+### Abrir el diálogo de Atajos de Teclado
+
+```ts
+ctx.ui.openKeyboardShortcuts?.(actionId?: string);
+```
+
+Abre el diálogo nativo de Atajos de Teclado del editor — el mismo que hay detrás de
+Ayuda → Atajos de Teclado…. Llamado sin argumento abre la lista completa sin filtrar.
+Pasá un `actionId` (uno de los ids nativos de [`keybinds`](#keybinds) más abajo) y el
+diálogo se abre ya scrolleado a esa fila y **escuchando una tecla**, exactamente como
+si el usuario hubiera hecho click ahí — combina bien con un [botón de acción de
+toast](#botones-de-acción-en-toasts) que ofrezca "Asignar atajo" para una acción que
+todavía no tiene uno. Solo funciona con los ids nativos que conoce `ctx.keybinds` —
+no puede apuntar a un atajo registrado por otro mod.
 
 ---
 

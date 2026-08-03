@@ -274,6 +274,10 @@ export interface PanelDef {
   showInMenu?: boolean;
   /** Optional icon string (SVG markup or unicode glyph). */
   icon?: string;
+  /** Initial size (px) the very first time the panel opens as a floating
+   *  window. Default: `{ width: 480, height: 360 }`. Has no effect once the
+   *  panel has a saved dock position or the user has resized it. */
+  defaultSize?: { width: number; height: number };
 }
 
 export interface DialogOptions {
@@ -304,12 +308,24 @@ export interface CustomDialogOptions {
   render(body: HTMLElement): (() => void) | void;
 }
 
+/** A clickable button rendered on a toast. Clicking any action button
+ *  dismisses the toast (before `onClick` fires). */
+export interface ToastAction {
+  label: string;
+  onClick: () => void;
+}
+
 export interface ToastOptions {
   message: string;
   level?: "info" | "warn" | "error";
   /** Auto-dismiss after N ms; default 3000 (floored at 500). Pass 0 for a
    *  sticky toast that never auto-dismisses (the user closes it manually). */
   durationMs?: number;
+  /** Primary action button, rendered rightmost (before the close button). */
+  action?: ToastAction;
+  /** Secondary action button, rendered left of the primary action. Use for
+   *  two-choice prompts (e.g. "Assign shortcut" / "Don't show again"). */
+  secondaryAction?: ToastAction;
 }
 
 // ============================================================================
@@ -401,6 +417,21 @@ export interface EventMap {
   "keybind.changed":    { actionId: string; oldKey: string; newKey: string };
   /** Fired when the active editor locale changes (built-in or mod-provided). */
   "locale.changed":     { locale: string };
+  /** Fired when Run Game is invoked (toolbar button, menu item, or shortcut) —
+   *  right after the game-root check passes, before saving dirty maps and
+   *  launching. Fires once per invocation regardless of outcome (launched,
+   *  already running, cancelled from a Proton prompt, or failed). */
+  "game.launch":        { gameRoot: string };
+  /** Fired when a built-in keybind fires its action via the keyboard —
+   *  i.e. the global shortcut dispatcher resolved a keydown to `actionId` and
+   *  is about to run its handler. This is the *only* reliable "the user just
+   *  used this shortcut" signal for mods: the dispatcher calls
+   *  `e.stopImmediatePropagation()` right after, so a mod's own `keydown`
+   *  listener (on `window` or `document`) never sees the event for a
+   *  successfully-resolved shortcut. Not fired for mod-registered shortcuts
+   *  (`ctx.menu.registerMenuItem`'s `shortcut`, `ctx.ui.registerShortcut`) —
+   *  those are handled on a separate path before this point. */
+  "keybind.triggered":  { actionId: string };
 }
 
 export type EventName = keyof EventMap;
@@ -457,9 +488,9 @@ export interface EditorCtx {
   /** Set viewport for the active map. */
   setViewport(viewport: { x?: number; y?: number; zoom?: number }): void;
   /** Read current view toggles. */
-  viewOptions(): { showGrid: boolean; showCollision: boolean; showEvents: boolean; showDim: boolean; darkMode: boolean };
+  viewOptions(): { showGrid: boolean; showCollision: boolean; showEvents: boolean; showEventCells: boolean; showDim: boolean; darkMode: boolean };
   /** Set view toggles (partial update). */
-  setViewOptions(opts: Partial<{ showGrid: boolean; showCollision: boolean; showEvents: boolean; showDim: boolean; darkMode: boolean }>): void;
+  setViewOptions(opts: Partial<{ showGrid: boolean; showCollision: boolean; showEvents: boolean; showEventCells: boolean; showDim: boolean; darkMode: boolean }>): void;
 
   /** Current theme. Shorthand for `viewOptions().darkMode ? "dark" : "light"`. */
   theme?(): "dark" | "light";
@@ -989,6 +1020,7 @@ export interface UiCtx {
   /** Show a custom dialog with the editor's standard shell (overlay, draggable header, close button).
    *  The mod provides a render callback that receives the body element. Returns a close function. */
   showCustomDialog(opts: CustomDialogOptions): { close: () => void };
+  /** `opts.action` / `opts.secondaryAction` add up to two clickable buttons. */
   showToast(opts: ToastOptions): void;
   /** Convenience — equivalent to showToast({message, level:"info"}). */
   log(message: string): void;
@@ -1017,6 +1049,11 @@ export interface UiCtx {
   registerToolbarButton?(def: ToolbarButtonDef): Disposable;
   /** Open a URL in the user's default browser. */
   openUrl(url: string): Promise<void>;
+  /** Open the editor's native Keyboard Shortcuts dialog (Help → Keyboard Shortcuts…).
+   *  Pass an `actionId` (see `KeybindsCtx`) to open already scrolled to that row and
+   *  listening for a keypress, as if the user had clicked it — e.g. from a toast's
+   *  "Assign shortcut" button. Omit it to just open the plain list. */
+  openKeyboardShortcuts?(actionId?: string): void;
 }
 
 export interface ContextMenuItemDef {

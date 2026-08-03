@@ -62,7 +62,7 @@ editor.setBrushTileProperties(props: Partial<{...}>): void
 editor.hoverTile(): { x, y } | null
 editor.viewport(): { x, y, zoom }
 editor.setViewport(viewport: { x?, y?, zoom? }): void
-editor.viewOptions(): { showGrid, showCollision, showEvents, showDim, darkMode }
+editor.viewOptions(): { showGrid, showCollision, showEvents, showEventCells, showDim, darkMode }
 editor.setViewOptions(opts: Partial<{...}>): void
 ```
 
@@ -1073,6 +1073,7 @@ ctx.ui.registerPanel({
   defaultPosition: "right",
   showInMenu: true,    // default true; set false to hide from Mods menu
   icon: "📊",          // optional: SVG markup or unicode glyph
+  defaultSize: { width: 640, height: 460 }, // optional: first-open floating size, default 480×360
   render(host) {
     host.innerHTML = "<h2>Hello panel</h2>";
     return () => { /* optional cleanup */ };
@@ -1108,7 +1109,14 @@ inside, or no framework. Return a cleanup function if you need it.
 
 `openPanel(panelId)` opens a previously registered panel. `closePanel` closes
 it. `isPanelOpen` checks visibility. `showInMenu: false` hides the auto-entry
-from the Mods menu (use with your own `registerMenuItem` instead).
+from the Mods menu (use with your own `registerMenuItem` instead — otherwise
+you'll end up with two entries that both open the same panel).
+
+`defaultSize` sets the floating window's width/height (px) the very first
+time a panel opens — before it has a dock position or the user has resized
+it. Default `{ width: 480, height: 360 }`; bump it if your panel's content
+needs more room out of the box. Has no effect on subsequent opens once the
+panel is docked or resized — that's the user's layout from then on.
 
 **Panel persistence**: mod panels keep their slot in the user's saved dock
 layout. When your mod is unloaded (hot reload, disable, uninstall), the panel
@@ -1123,6 +1131,24 @@ behavior; only the user closes panels.
 `showInputDialog` shows a text input dialog — returns the entered string or
 null if cancelled. `showContextMenu` displays a native context menu at the
 given screen coordinates with labels, actions, separators, and submenus.
+
+### Toast action buttons
+
+```js
+ctx.ui.showToast({
+  message: "This action has no shortcut yet.",
+  level: "info",
+  durationMs: 0, // sticky — stays until the user clicks a button
+  action: { label: "Assign shortcut", onClick: () => ctx.ui.openKeyboardShortcuts("edit.save") },
+  secondaryAction: { label: "Don't show again", onClick: () => rememberDismissed() },
+});
+```
+
+`ToastOptions.action` / `.secondaryAction` each take `{ label, onClick }` and render as
+buttons on the toast — `secondaryAction` to the left of `action`, both left of the
+built-in copy/close buttons. Clicking either one dismisses the toast and then calls
+`onClick`; an error thrown from `onClick` is caught and logged, it won't crash the
+editor. Omit both for a plain message-only toast (the previous behavior, unchanged).
 
 ### Theming & CSS variables
 
@@ -1317,6 +1343,20 @@ await ctx.ui.openUrl("https://example.com");
 ```
 
 Opens a URL in the user's default browser. The editor shows a confirmation dialog first (with the URL displayed in a monospace box) — the user must click "Open Link" to proceed. Returns immediately if cancelled.
+
+### Opening the Keyboard Shortcuts dialog
+
+```ts
+ctx.ui.openKeyboardShortcuts?.(actionId?: string);
+```
+
+Opens the editor's native Keyboard Shortcuts dialog — the same one behind Help → Keyboard
+Shortcuts…. Called with no argument it opens to the plain, unfiltered list. Pass an
+`actionId` (one of the built-in ids from [`keybinds`](#keybinds) below) and the dialog opens
+already scrolled to that row and **listening for a keypress**, exactly as if the user had
+clicked it — pairs well with a toast [action button](#toast-action-buttons) offering
+"Assign shortcut" for an action that doesn't have one yet. Only matches the built-in action
+ids `ctx.keybinds` knows about — it can't target a mod-registered menu shortcut.
 
 ---
 

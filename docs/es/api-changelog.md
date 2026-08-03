@@ -12,6 +12,41 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ## Adiciones desde 1.0.0
 
+- **`PanelDef.defaultSize`**: `{ width, height }` (px), fija el tamaño de la ventana flotante
+  la primera vez que un panel se abre — antes de tener posición de dock o de que el usuario
+  lo redimensione. El valor por defecto no cambia (`{ width: 480, height: 360 }`). Aditivo:
+  los mods que no lo configuran no ven ningún cambio. Ver [api-reference.md](./api-reference.md)
+  (`ui.registerPanel`).
+- **Nuevo evento de bus `keybind.triggered`**: `{ actionId: string }`, se dispara cuando el
+  dispatcher global de shortcuts resuelve un keydown a una acción nativa, justo antes de
+  llamar `e.stopImmediatePropagation()`. Ese llamado es la razón por la que un listener de
+  `keydown` propio de un mod — en `window` o `document`, cualquier fase — nunca ve el evento
+  de un shortcut que efectivamente se disparó: el dispatcher está montado en `window` en fase
+  de captura antes de que cargue cualquier mod, así que siempre corre primero. Este evento es
+  la única forma confiable de saber "recién se usó el teclado para X"; no intentes
+  reconstruirlo escuchando `keydown` crudo vos mismo. No cubre shortcuts registrados por mods
+  (`shortcut` de `registerMenuItem`, `ui.registerShortcut`) — esos se resuelven por otro
+  camino. Ver [events-reference.md](./events-reference.md).
+- **`ctx.editor.viewOptions()` / `setViewOptions()` ganan `showEventCells`**, reflejando la
+  opción de vista "Toggle Event Cells" del editor (keybind `view.toggleEventCells`) — antes
+  ilegible e imposible de escribir desde un mod. Aditivo: el destructuring existente del
+  objeto devuelto sigue funcionando. Ver [api-reference.md](./api-reference.md) (`editor`).
+- **Nuevo evento de bus `game.launch`**: `{ gameRoot: string }`, se dispara una vez por cada
+  invocación de Run Game (botón de toolbar, ítem de menú, o el atajo `app.runGame`) sin
+  importar el resultado — una señal confiable de "el usuario pidió correr el juego", ya que
+  no hay otra forma de observar esa acción (es momentánea, no un estado que se pueda alternar).
+  Ver [events-reference.md](./events-reference.md).
+- **Botones de acción en toasts** (`ctx.ui.showToast`). `ToastOptions` gana los campos
+  opcionales `action` y `secondaryAction`, cada uno `{ label, onClick }` — hasta dos
+  botones clicables en un toast, el secundario se renderiza a la izquierda del
+  primario. Al hacer click en cualquiera de los dos se cierra el toast y luego se
+  ejecuta `onClick`. También nuevo: **`ctx.ui.openKeyboardShortcuts(actionId?)`** abre
+  el diálogo nativo de Atajos de Teclado del editor (igual que Ayuda → Atajos de
+  Teclado…); pasando un `actionId` nativo se abre ya scrolleado a esa fila y
+  escuchando una tecla — combinalo con un botón de toast para mandar al usuario
+  directo a reasignar una acción puntual. Aditivo: los mods que nunca configuran
+  `action`/`secondaryAction` no ven ningún cambio. Ver [api-reference.md](./api-reference.md) (`ui`).
+
 - **`ctx.theme`** (`ThemeCtx`). Registra temas del editor: `register({ id, name, base, vars?, css?, canvas? })`,
   `apply(id | null)`, `current()`, `list()` y `assetUrl(rutaRelativa)` para convertir un fichero de la
   carpeta de tu mod en un `data:` URI. Solo hay un tema activo a la vez, se elige en **Ver → Tema** y
