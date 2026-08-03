@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-07-29T23:03:01Z",
+  "updatedAt": "2026-08-03T20:48:00Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -191,6 +191,33 @@
       ],
       "homepage": "https://github.com/MellowB1/Maker-Studio-Transparecies",
       "apiVersion": "1.0.0"
+    },
+    {
+      "id": "com.dpertierra.key-prompter",
+      "name": "Key Prompter",
+      "authors": [
+        {
+          "name": "DPertierra",
+          "url": "https://github.com/dpertierra"
+        }
+      ],
+      "repo": "dpertierra/msmod-key-prompter",
+      "version": "1.0.1",
+      "assetName": "com.dpertierra.key-prompter-1.0.1.zip",
+      "sha256": "21e36e677d74148ebc5e4678bda1e1516b96e7a27021c73dc83acb4eeac1574f",
+      "description": "Nudges you toward keyboard shortcuts when you perform an action with the mouse that already has one — inspired by JetBrains' Key Promoter X.",
+      "tags": [
+        "productivity",
+        "keyboard",
+        "shortcuts",
+        "ui"
+      ],
+      "homepage": "https://github.com/dpertierra/msmod-key-prompter",
+      "apiVersion": "1.0.0",
+      "permissions": [
+        "ui.toasts",
+        "ui.dialogs"
+      ]
     }
   ]
 }
