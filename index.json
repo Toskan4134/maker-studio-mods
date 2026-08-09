@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-08-03T20:48:00Z",
+  "updatedAt": "2026-08-10T08:23:45Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -218,6 +218,19 @@
         "ui.toasts",
         "ui.dialogs"
       ]
+    },
+    {
+      "id": "com.bird.zh-cn",
+      "name": "Simplified Chinese translation",
+      "authors": [{ "name": "南小鸟" }],
+      "repo": "Bird-South/ms-zh-cn",
+      "version": "1.0.0",
+      "assetName": "com.bird.zh-cn-1.0.0.zip",
+      "sha256": "71FD1CCE565128A4C1DD64CA3A2F8798FFC7D93C2555822794FE649242CD1A0B",
+      "description": "Add Simplified Chinese support for Maker Studio, along with the Chinese localization of the PBS Editor Mod (1.5.0).",
+      "tags": ["ui", "translation", "i18n"],
+      "homepage": "https://github.com/Bird-South/ms-zh-cn",
+      "apiVersion": "1.0.0"
     }
   ]
 }
