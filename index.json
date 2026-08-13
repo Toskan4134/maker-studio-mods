@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-08-13T00:35:03Z",
+  "updatedAt": "2026-08-13T16:11:07Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -72,9 +72,9 @@
         }
       ],
       "repo": "Toskan4134/msmod-pbs-editor",
-      "version": "1.5.0",
-      "assetName": "com.toskan4134.pbs-editor-1.5.0.zip",
-      "sha256": "865735c8b802b7c2e5554966a860a70ab193df998283c95e1e42c09e74def35f",
+      "version": "1.6.0",
+      "assetName": "com.toskan4134.pbs-editor-1.6.0.zip",
+      "sha256": "574759e27d8660c5ddc8d9adabea7f0a081b1faf71e2a6acbb6bd168f10791c6",
       "description": "Edit Pokémon Essentials PBS files directly from the editor. Supports v16, v17, and v21 formats.",
       "tags": [
         "pbs",
@@ -222,30 +222,53 @@
     {
       "id": "com.bird.zh-cn",
       "name": "Simplified Chinese translation",
-      "authors": [{ "name": "南小鸟" }],
+      "authors": [
+        {
+          "name": "南小鸟"
+        }
+      ],
       "repo": "Bird-South/ms-zh-cn",
       "version": "1.0.1",
       "assetName": "com.bird.zh-cn-1.0.1.zip",
       "sha256": "67f33fad2acc3d4f7279507ca306c6c84f4b52a9141e1bc804b4f7410b3420ec",
       "description": "Add Simplified Chinese support for Maker Studio, along with the Chinese localization of the PBS Editor Mod (1.5.0).",
-      "tags": ["ui", "translation", "i18n"],
+      "tags": [
+        "ui",
+        "translation",
+        "i18n"
+      ],
       "homepage": "https://github.com/Bird-South/ms-zh-cn",
       "apiVersion": "1.0.0"
     },
     {
       "id": "com.soysandi.interfaces",
       "name": "Editor de Interfaces",
-      "authors": [{ "name": "SoySandi" }],
+      "authors": [
+        {
+          "name": "SoySandi"
+        }
+      ],
       "repo": "yobrantoro/ms-interfaces",
       "version": "1.3.0",
       "assetName": "com.soysandi.interfaces-1.3.0.zip",
       "sha256": "d3dbe0da55f09ef15ad8dbc7955c8a60ca6fd8a9f7bdf6edee3f113895ae0b2d",
       "description": "Visual screen editor for Pokemon Essentials projects: place images, text, buttons, HP bars and party Pokemon by dragging, with entry animations and live game data. Saves to UI/<name>.json, no recompile needed to see changes.",
-      "tags": ["essentials", "ui", "editor", "pokemon", "rpg-maker-xp"],
+      "tags": [
+        "essentials",
+        "ui",
+        "editor",
+        "pokemon",
+        "rpg-maker-xp"
+      ],
       "icon": "https://raw.githubusercontent.com/yobrantoro/ms-interfaces/main/icon.png",
       "homepage": "https://github.com/yobrantoro/ms-interfaces",
       "apiVersion": "1.0.0",
-      "permissions": ["fs.project", "fs.write.project", "ui.dialogs", "ui.toasts"]
+      "permissions": [
+        "fs.project",
+        "fs.write.project",
+        "ui.dialogs",
+        "ui.toasts"
+      ]
     }
   ]
 }
