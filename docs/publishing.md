@@ -1,4 +1,4 @@
-# Tutorial — Your First Marketplace Mod
+# Publishing a Mod
 
 Hands-on walkthrough from zero to a live, installable mod in the Maker Studio Marketplace. Should take about 25 minutes the first time. Subsequent mods take 10.
 
