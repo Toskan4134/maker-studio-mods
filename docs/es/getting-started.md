@@ -39,7 +39,7 @@ Campos requeridos:
 | `id`          | Reverse-DNS, debe ser único. Se usa como identidad de la carpeta. |
 | `name`        | Nombre visible en el Mod Manager. |
 | `version`     | Semver. La versión de tu mod. |
-| `apiVersion`  | Versión de la API del editor a la que apunta tu mod (semver). |
+| `apiVersion`  | Mod API mínima que tu mod necesita (semver) — la versión que introdujo la API más nueva que usa. Los editores más antiguos lo rechazan. |
 | `main`        | Ruta al entry JS, relativa a la carpeta del mod. |
 
 Opcionales: `authors` (array de `{name, url?}` — admite varios autores), `description`, `homepage`, `tags` (tags de búsqueda del Marketplace — consulta [publicar](publishing.md)), `requires` (dependencias unificadas de mod + plugin — consulta la referencia de la API), `permissions`.

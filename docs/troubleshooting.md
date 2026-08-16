@@ -15,7 +15,7 @@ Common problems and how to fix them.
 
 2. **manifest.json exists and is valid JSON**. Required fields: `id`, `name`, `version`, `apiVersion`, `main`. Common mistake: missing comma or trailing comma in JSON.
 
-3. **apiVersion matches**. Must be `"1.0.0"`. A wrong version like `"2.0.0"` will be rejected.
+3. **apiVersion is one this editor provides**. A mod asking for a version newer than the editor's (`"1.0.2"` on a 1.0.1 editor) or a different major (`"2.0.0"`) is rejected. Set it to the version that introduced the newest API you call — see [api-changelog.md](api-changelog.md).
 
 4. **Entry file matches `main` field**. If `main` is `"index.js"`, the file `index.js` must exist in the mod folder.
 

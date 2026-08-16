@@ -369,7 +369,7 @@ Tu mod debe:
    - `id` (reverse-DNS, p. ej. `com.yourname.modname`) — identidad permanente
    - `name` (legible por humanos)
    - `version` (semver, debe coincidir con el tag de release)
-   - `apiVersion` (la versión de la Mod API a la que apunta tu mod, p. ej. `"1.0.0"`)
+   - `apiVersion` (la Mod API mínima que tu mod necesita, p. ej. `"1.0.0"`)
    - `main` (ruta relativa al archivo JS de entrada, p. ej. `"index.js"`)
 3. Taguear cada release `vX.Y.Z` coincidiendo exactamente con `manifest.json#version` (sin la `v` inicial).
 4. Adjuntar un asset zip llamado `<modId>-<version>.zip` a cada GitHub Release, con el `manifest.json` en la raíz del zip (o envuelto en una sola carpeta top-level — el installer la elimina automáticamente).
@@ -417,7 +417,7 @@ Reglas de campos:
 | `id` | sí | Reverse-DNS, permanente. No puede cambiar una vez publicado |
 | `name` | sí | Se muestra en el Mod Manager y en las tarjetas del Marketplace |
 | `version` | sí | Semver. Debe coincidir con el tag de release (sin la `v` inicial) |
-| `apiVersion` | sí | Versión de la Mod API del editor a la que apunta tu mod |
+| `apiVersion` | sí | Mod API mínima que tu mod necesita — la versión que introdujo la API más nueva que llama. Los editores anteriores se niegan a instalarlo o cargarlo |
 | `main` | sí | Ruta relativa al entry JS. Sin `..` ni rutas absolutas |
 | `authors` | recomendado | Array de `{ name, url? }`. Se muestran como enlaces clicables |
 | `description` | recomendado | Las descripciones largas se truncan en la tarjeta |
@@ -529,11 +529,13 @@ Luego abre un PR que añada una entrada al array `mods` en [`index.json`](../../
   "icon": "https://raw.githubusercontent.com/your-github-handle/ms-my-mod/main/icon.png",
   "homepage": "https://your-site-or-twitter",
   "minStudioVersion": "2.0.0",
-  "apiVersion": "1.x"
+  "apiVersion": "1.0.1"
 }
 ```
 
 Omite `icon`, `homepage`, `minStudioVersion`, `tags` si no aplican. `id`, `name`, `authors`, `repo`, `version`, `assetName`, `sha256` son obligatorios — el editor no instalará sin ellos.
+
+Mantén `apiVersion` idéntica a la de tu `manifest.json` (el job automático de PR la copia por ti). El editor la lee de la tarjeta y bloquea Install / Update cuando ofrece una Mod API más antigua, así que un valor demasiado alto esconde tu mod de editores que sí podrían ejecutarlo, y uno demasiado bajo deja pasar la instalación solo para que el mod acabe como `error` en el Mod Manager.
 
 Tres formas de abrir el PR:
 

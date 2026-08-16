@@ -1,6 +1,8 @@
 # API Reference
 
-The current API version is **1.0.0**. Mods declare it via `manifest.apiVersion`.
+The current API version is **1.0.1**. Mods declare via `manifest.apiVersion` the version that
+introduced the newest thing they use — an older editor refuses a mod that asks for more than it
+provides. See [api-changelog.md](./api-changelog.md) for what landed in each version.
 
 The TypeScript source of truth is [`mod-api.d.ts`](./mod-api.d.ts).
 This document mirrors that file.
@@ -1657,6 +1659,29 @@ Details:
 - Locale switches fire the `"locale.changed"` bus event (`{ locale }`) —
   `i18n.onChanged` is the convenience wrapper. See
   [events-reference.md](./events-reference.md).
+
+### Translating the whole editor — `app-strings.json`
+
+Every English source string the editor runs through `t()` is exported to
+**[app-strings.json](./app-strings.json)** — sorted alphabetically, with empty values, ready to
+fill in. A translation mod is that file with the values filled and handed to `registerLocale`:
+
+```js
+import fr from "./app-strings.fr.json";
+
+export function activate(ctx) {
+  ctx.i18n.registerLocale({ code: "fr", name: "Français", dict: fr });
+}
+```
+
+- Entries left as `""` fall back to English, so partial translations ship fine — no need to
+  finish all of it before releasing.
+- `{name}` placeholders must survive into your translation (they're substituted after lookup);
+  reorder the surrounding words freely, keep the braces literal.
+- The file is regenerated each editor release. Diff it against your dict to find new strings —
+  keys that disappeared are simply ignored.
+- To fix or extend an existing language instead of adding one, `registerLocale` with that code
+  (`"es"`, `"en"`) and only the keys you're changing.
 
 ---
 

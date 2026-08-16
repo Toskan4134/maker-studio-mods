@@ -8,11 +8,14 @@
  *     and type-checking against `ctx` in their `activate(ctx)` function.
  *
  * Stability rules (paraphrased — see api-changelog.md for version history):
- *   - Adding a new optional field to an interface = MINOR (additive, safe).
+ *   - Adding a new method, event, field, or optional property = PATCH or MINOR
+ *     (additive, safe) — but it still gets its own version number.
  *   - Adding a new required field, removing a field, changing a type = MAJOR.
  *
- * Pin your mod to a specific API version via `manifest.json#apiVersion`. The
- * editor refuses to load a mod whose major version doesn't match its own.
+ * `manifest.json#apiVersion` declares the MINIMUM API your mod needs: the
+ * version that introduced the newest thing it uses. An editor that provides an
+ * older version refuses the mod outright (blocked in the Marketplace, `error` in
+ * the Mod Manager) rather than loading it into a missing-method crash.
  *
  * Sister documents:
  *   - api-reference.md        — narrative reference with examples.
@@ -49,7 +52,8 @@ export interface ModManifest {
    * `index.json` entry. Lowercase `a-z0-9-`, up to 8.
    */
   tags?: string[];
-  /** Editor API version this mod targets (semver). */
+  /** Minimum Mod API this mod needs (semver) — the version that introduced the
+   *  newest API it uses. Older editors refuse to load it. */
   apiVersion: string;
   /** Path to the JS entry file, relative to the mod folder. */
   main: string;

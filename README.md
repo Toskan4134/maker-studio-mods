@@ -56,7 +56,7 @@ Example entry:
   "icon": "https://...",
   "homepage": "https://...",
   "minStudioVersion": "2.0.0",
-  "apiVersion": "1.x"
+  "apiVersion": "1.0.1"
 }
 ```
 

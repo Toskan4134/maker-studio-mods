@@ -250,6 +250,10 @@ ctx.i18n.onChanged((locale) => { /* re-render */ });   // = bus "locale.changed"
 // automatically when the mod re-registers (hot reload safe).
 ```
 
+Translating the **whole editor**: [app-strings.json](./app-strings.json) lists every English
+source string with empty values — fill it in and pass it as the `dict` above. Entries left `""`
+stay English.
+
 ## View options
 
 ```js

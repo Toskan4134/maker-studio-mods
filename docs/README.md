@@ -14,6 +14,7 @@ Reference docs for everything a mod can do. Mirror of the editor's internal mod-
 | **[api-changelog.md](api-changelog.md)** | What changed in each API version |
 | **[troubleshooting.md](troubleshooting.md)** | Common problems and how to fix them |
 | **[mod-api.d.ts](mod-api.d.ts)** | TypeScript type definitions — drop into your project for IDE autocomplete |
+| **[app-strings.json](app-strings.json)** | Every translatable editor string, empty-valued — the template for a translation mod |
 
 Publishing your mod through the Marketplace? See **[publishing.md](publishing.md)** — it starts with a hands-on tutorial, then the full reference.
 
@@ -44,7 +45,7 @@ The file is a single self-contained `.d.ts` with no dependencies. Copy it next t
 
 ## API versioning
 
-`manifest.json#apiVersion` pins your mod to a specific Mod API major version. The editor will refuse to load a mod whose major version doesn't match its own — guaranteeing your mod won't silently break on an editor update. See [api-changelog.md](api-changelog.md) for the history.
+`manifest.json#apiVersion` is the **minimum Mod API your mod needs** — the version that introduced the newest method, event, or field it uses. Every API change gets a new version (patch included), and an editor that doesn't provide the version you ask for refuses the mod up front: blocked in the Marketplace, `error` in the Mod Manager. So your mod never half-loads against an editor that lacks what it calls, and targeting an older version stays safe forever. See [api-changelog.md](api-changelog.md) for what each version added.
 
 ## Reporting doc bugs
 

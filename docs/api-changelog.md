@@ -3,14 +3,30 @@
 The mod API follows [semver](https://semver.org):
 
 - **Major** — breaking changes. Existing mods targeting the previous major version are routed through a compatibility shim. If no shim exists, the mod is refused with a clear error in the Mod Manager.
-- **Minor** — additive changes (new optional fields, new event names, new context methods). Old mods keep working without changes.
-- **Patch** — internal-only fixes; no observable changes.
+- **Minor** — a large additive batch (a whole new `ctx` surface). Old mods keep working without changes.
+- **Patch** — anything else additive (a new method, event, or field) plus behaviour fixes mods can observe.
+
+**Every API change gets a new version — including patch.** Set `manifest.apiVersion` to the version
+that introduced the newest thing your mod uses, and an editor older than that refuses the mod instead
+of running it into a crash on a method it doesn't have:
+
+- **Installing / updating from the Marketplace** is blocked, with the required version named on the card.
+- **An already-installed mod** loads as `error` in the Mod Manager (`apiVersion X not supported —
+  this editor provides Mod API Y`) and never activates.
+
+So keep `apiVersion` as low as your mod actually needs — it is the minimum editor requirement, not a
+"latest" badge. Targeting an older version is always safe; newer editors keep loading it.
 
 When a major bump happens, this file gets a section with the new shape and a link to a migration guide.
 
 ---
 
-## Additions since 1.0.0
+## 1.0.1
+
+Additive only — mods targeting `1.0.0` keep working untouched. Declare `"apiVersion": "1.0.1"` only
+if you use something from this section.
+
+### Added
 
 - **`ctx.ui.decorate(selector, apply)`**: take over any element of built-in editor UI that
   matches a CSS selector — the ones on screen now **and every one mounted later**, so a
@@ -130,7 +146,17 @@ When a major bump happens, this file gets a section with the new shape and a lin
   defaults on unload. Additive: mods that never call it see no change. See
   [api-reference.md](./api-reference.md) (`tileset`).
 
-## Fixes since 1.0.0
+- **`docs/app-strings.json`** — the editor's full list of translatable source strings, exported
+  empty-valued and sorted, as the starting template for a translation mod: fill in the values and
+  pass it as the `dict` of `ctx.i18n.registerLocale()`. Regenerated each editor release, so
+  diffing it against your dict surfaces the new strings. Docs only, no API change. See
+  [api-reference.md](./api-reference.md) (`i18n` → Translating the whole editor).
+
+### Fixed
+
+- **Empty dictionary values now fall back to English** (`ctx.i18n`). `t()` treated `""` as a
+  real translation and rendered blank text; it now falls through to the app dictionary and then
+  the source string. This is what makes a partially filled `app-strings.json` shippable.
 
 - **Event command lists are now readable and writable** (`ctx.events`). `PublicEventPage`
   carries `list?: PublicEventCommand[]`. `events.getFull()` returns each page's commands
@@ -150,6 +176,12 @@ When a major bump happens, this file gets a section with the new shape and a lin
   the flag only takes effect in-game with the MakerStudio plugin installed. Additive: mods that
   never touch the field keep working unchanged. See
   [api-reference.md](./api-reference.md) (`events`).
+
+- **`apiVersion` is now enforced down to the patch number.** The editor used to compare only
+  major and minor, so a mod targeting a version its editor didn't have loaded anyway and failed
+  later — at the first call to a method that wasn't there. It is now refused up front (blocked in
+  the Marketplace, `error` in the Mod Manager), which is what makes patch-level API versions a
+  real guarantee.
 
 ## v1.0.0 — Initial Release
 

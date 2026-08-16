@@ -369,7 +369,7 @@ Your mod must:
    - `id` (reverse-DNS, e.g. `com.yourname.modname`) — permanent identity
    - `name` (human-readable)
    - `version` (semver, must match release tag)
-   - `apiVersion` (the Mod API version your mod targets, e.g. `"1.0.0"`)
+   - `apiVersion` (the minimum Mod API your mod needs, e.g. `"1.0.0"`)
    - `main` (relative path to JS entry file, e.g. `"index.js"`)
 3. Tag each release `vX.Y.Z` matching `manifest.json#version` exactly (without the leading `v`).
 4. Attach a zip asset named `<modId>-<version>.zip` to each GitHub Release, with `manifest.json` at the zip root (or wrapped in one top-level folder — installer auto-strips it).
@@ -417,7 +417,7 @@ Field rules:
 | `id` | yes | Reverse-DNS, permanent. Cannot change once published |
 | `name` | yes | Shown in Mod Manager and Marketplace cards |
 | `version` | yes | Semver. Must match release tag (without leading `v`) |
-| `apiVersion` | yes | Editor's Mod API version your mod targets |
+| `apiVersion` | yes | Minimum Mod API your mod needs — the version that introduced the newest API it calls. Editors older than this refuse to install or load it |
 | `main` | yes | Relative path to JS entry. No `..` or absolute paths |
 | `authors` | recommended | Array of `{ name, url? }`. Shown as clickable links |
 | `description` | recommended | Long descriptions get truncated in the card |
@@ -529,11 +529,13 @@ Then open a PR that adds an entry to the `mods` array in [`index.json`](../index
   "icon": "https://raw.githubusercontent.com/your-github-handle/ms-my-mod/main/icon.png",
   "homepage": "https://your-site-or-twitter",
   "minStudioVersion": "2.0.0",
-  "apiVersion": "1.x"
+  "apiVersion": "1.0.1"
 }
 ```
 
 Drop `icon`, `homepage`, `minStudioVersion`, `tags` if not applicable. `id`, `name`, `authors`, `repo`, `version`, `assetName`, `sha256` are mandatory — the editor will not install otherwise.
+
+Keep `apiVersion` identical to your `manifest.json` (the automatic PR job copies it for you). The editor reads it off the card and blocks Install / Update when it provides an older Mod API, so a too-high value hides your mod from editors that could actually run it, and a too-low one lets the install through only for the mod to land as `error` in the Mod Manager.
 
 Three ways to open the PR:
 

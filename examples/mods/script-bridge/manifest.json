@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "authors": [{ "name": "Toskan4134", "url": "https://x.com/Toskan4134" }],
   "description": "Teaches the Game Simulator a set of common Ruby one-liners (switches, variables, self switches, messages, through/transparent, Change Gold), and marks in the editor which Script commands it can run. Demonstrates ctx.simulator, ctx.ui.decorate and ctx.ui.registerSlot.",
-  "apiVersion": "1.0.0",
+  "apiVersion": "1.0.1",
   "main": "index.js"
 }

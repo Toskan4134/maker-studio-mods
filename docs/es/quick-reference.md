@@ -250,6 +250,10 @@ ctx.i18n.onChanged((locale) => { /* re-renderizar */ });   // = bus "locale.chan
 // automáticamente cuando el mod se re-registra (seguro ante hot reload).
 ```
 
+Traducir el **editor entero**: [app-strings.json](../app-strings.json) lista todas las cadenas
+fuente en inglés con los valores vacíos — rellénalo y pásalo como el `dict` de arriba. Las
+entradas que queden en `""` se muestran en inglés.
+
 ## Opciones de vista
 
 ```js

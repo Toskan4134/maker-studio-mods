@@ -3,14 +3,31 @@
 La API de mods sigue [semver](https://semver.org):
 
 - **Major** — cambios rompedores. Los mods existentes que apuntan a la versión major anterior se enrutan a través de una capa de compatibilidad. Si no existe tal capa, el mod se rechaza con un error claro en el Mod Manager.
-- **Minor** — cambios aditivos (nuevos campos opcionales, nuevos nombres de evento, nuevos métodos de contexto). Los mods antiguos siguen funcionando sin cambios.
-- **Patch** — arreglos solo internos; sin cambios observables.
+- **Minor** — un lote aditivo grande (toda una superficie `ctx` nueva). Los mods antiguos siguen funcionando sin cambios.
+- **Patch** — cualquier otra adición (un método, un evento o un campo nuevos) más arreglos de comportamiento que los mods puedan observar.
+
+**Cada cambio de la API recibe una versión nueva — patch incluido.** Pon en `manifest.apiVersion` la
+versión que introdujo lo más nuevo que usa tu mod, y un editor más antiguo que eso rechazará el mod en
+lugar de ejecutarlo hasta que reviente en un método que no tiene:
+
+- **Instalar / actualizar desde el Marketplace** queda bloqueado, con la versión requerida indicada en la tarjeta.
+- **Un mod ya instalado** carga como `error` en el Mod Manager (`apiVersion X not supported — this
+  editor provides Mod API Y`) y nunca se activa.
+
+Así que mantén `apiVersion` tan baja como tu mod realmente necesite — es el requisito mínimo de editor,
+no una insignia de "lo último". Apuntar a una versión antigua siempre es seguro; los editores nuevos
+la siguen cargando.
 
 Cuando hay un salto de versión major, este archivo recibe una sección con la nueva forma y un enlace a una guía de migración.
 
 ---
 
-## Adiciones desde 1.0.0
+## 1.0.1
+
+Solo adiciones — los mods que apuntan a `1.0.0` siguen funcionando sin tocar nada. Declara
+`"apiVersion": "1.0.1"` solo si usas algo de esta sección.
+
+### Añadido
 
 - **`ctx.ui.decorate(selector, apply)`**: toma el control de cualquier elemento de la interfaz
   del editor que case con un selector CSS — los que ya están en pantalla **y todos los que se
@@ -139,7 +156,18 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
   descargar el mod. Aditivo: los mods que no lo llamen no notan ningún cambio. Consulta
   [api-reference.md](api-reference.md) (`tileset`).
 
-## Arreglos desde 1.0.0
+- **`docs/app-strings.json`** — la lista completa de cadenas traducibles del editor, exportada con
+  los valores vacíos y ordenada, como plantilla de partida para un mod de traducción: rellena los
+  valores y pásala como el `dict` de `ctx.i18n.registerLocale()`. Se regenera en cada release del
+  editor, así que diferenciarla con tu dict te muestra las cadenas nuevas. Solo documentación, sin
+  cambios en la API. Consulta [api-reference.md](api-reference.md) (`i18n` → Traducir el editor
+  entero).
+
+### Arreglado
+
+- **Los valores de diccionario vacíos ahora caen a inglés** (`ctx.i18n`). `t()` trataba `""` como
+  una traducción real y mostraba texto en blanco; ahora cae al diccionario de la app y después a la
+  cadena fuente. Esto es lo que hace publicable un `app-strings.json` a medio rellenar.
 
 - **Las listas de comandos de evento ahora son legibles y escribibles** (`ctx.events`). `PublicEventPage`
   lleva `list?: PublicEventCommand[]`. `events.getFull()` devuelve los comandos de cada página
@@ -153,6 +181,19 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
   incluidos los que tenían códigos de comando desconocidos. Aditivo: los mods escritos contra 1.0.0
   siguen funcionando sin cambios. Consulta
   [api-reference.md](api-reference.md) (`events`).
+
+- **`PublicEventPage.always_on_bottom`** (`ctx.events`). El espejo en Maker Studio del
+  `always_on_top` de RPG Maker XP: el evento se dibuja **por debajo** de todos los personajes.
+  `getFull()` lo informa y `update()` lo escribe, como cualquier otro campo de página. `always_on_top`
+  gana cuando ambos están puestos, y el flag solo surte efecto en el juego con el plugin MakerStudio
+  instalado. Aditivo: los mods que nunca tocan el campo siguen funcionando sin cambios. Consulta
+  [api-reference.md](api-reference.md) (`events`).
+
+- **`apiVersion` ahora se aplica hasta el número de patch.** El editor comparaba solo major y minor,
+  así que un mod que apuntaba a una versión que su editor no tenía se cargaba igualmente y fallaba
+  más tarde — en la primera llamada a un método que no existía. Ahora se rechaza por adelantado
+  (bloqueado en el Marketplace, `error` en el Mod Manager), que es lo que convierte las versiones de
+  API a nivel de patch en una garantía real.
 
 ## v1.0.0 — Versión inicial
 

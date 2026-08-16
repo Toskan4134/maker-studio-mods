@@ -43,7 +43,7 @@ Required fields:
 | `id`          | Reverse-DNS, must be unique. Used as the folder identity. |
 | `name`        | Display name in the Mod Manager. |
 | `version`     | Semver. Your mod's version. |
-| `apiVersion`  | Editor API version your mod targets (semver). |
+| `apiVersion`  | Minimum Mod API your mod needs (semver) — the version that introduced the newest API it uses. Older editors refuse it. |
 | `main`        | Path to the JS entry, relative to the mod folder. |
 
 Optional: `authors` (array of `{name, url?}` — supports multiple authors), `description`, `homepage`, `tags` (Marketplace search tags — see [publishing](./publishing.md)), `requires` (unified mod + plugin dependencies — see the API reference), `permissions`.

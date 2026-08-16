@@ -108,7 +108,7 @@
         },
         "apiVersion": {
           "type": "string",
-          "description": "Mod API version (semver or 'X.x' wildcard)."
+          "description": "Mod API version the mod needs — copy manifest.json#apiVersion verbatim. The editor blocks installs when it provides an older version. A 'X.x' wildcard reads as X.0.0."
         },
         "verified": {
           "type": "boolean",
