@@ -22,6 +22,29 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ---
 
+## 1.0.2
+
+Solo aditivo — los mods que apuntan a `1.0.1` siguen funcionando sin tocar nada. Declara
+`"apiVersion": "1.0.2"` solo si usas algo de esta sección.
+
+### Añadido
+
+- **Los colores de los comandos de evento forman parte de la paleta pública.** Las `vars` de un tema
+  pueden poner `--ec-<categoría>` para colorear toda una familia de comandos y `--ec-code-<código>`
+  para colorear uno solo; cada fila de la lista de comandos y del log del Simulador resuelve
+  `var(--ec-code-<código>, var(--ec-<categoría>, var(--ec-default)))`. Las filas de continuación y de
+  rama llevan el color del comando al que pertenecen, así que no necesitan token propio. Los tokens de
+  categoría ya existían pero estaban documentados como internos; los de comando concreto son nuevos, y
+  ambos son ahora un contrato. Consulta [api-reference.md](./api-reference.md)
+  (`theme` → Colores de los comandos de evento).
+- **`PublicCommandSchema.colorCategory` / `.colorOwner`**, para que las categorías y los códigos de
+  arriba se descubran en vez de escribirse a mano: `ctx.events.commandSchemas()` ahora indica a qué
+  `--ec-<categoría>` cae cada comando (`null` si va a `--ec-default`) y qué `--ec-code-<n>` pinta de
+  verdad su fila — el suyo, o el del comando padre en las filas de continuación, rama o movimiento.
+  La unión `EventCommandColorCategory` se exporta en los typings.
+
+---
+
 ## 1.0.1
 
 Solo adiciones — los mods que apuntan a `1.0.0` siguen funcionando sin tocar nada. Declara
