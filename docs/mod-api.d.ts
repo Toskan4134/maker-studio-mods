@@ -638,6 +638,16 @@ export interface UndoScope {
   abort(): void;
 }
 
+/**
+ * Which `--ec-<category>` token colours a command in the event command list.
+ * Finer than `PublicCommandSchema.category` (the picker's three RMXP tabs) —
+ * this one is about reading the list at a glance. See api-reference.md
+ * (`theme` → Event command colours).
+ */
+export type EventCommandColorCategory =
+  | "comment" | "conditional" | "flow" | "text" | "vars" | "party" | "system"
+  | "map" | "move" | "move-sub" | "picture" | "audio" | "actor" | "enemy" | "script";
+
 /** Event command schema (matches RPG Maker XP command structure). */
 export interface PublicCommandSchema {
   code: number;
@@ -648,6 +658,14 @@ export interface PublicCommandSchema {
   blockOpener?: boolean;
   blockCloser?: boolean;
   continuation?: boolean;
+  /** The `--ec-<category>` token this command falls back to, or null when it
+   *  has none and lands on `--ec-default`. */
+  colorCategory: EventCommandColorCategory | null;
+  /** The code whose `--ec-code-<n>` token actually colours this row. Its own,
+   *  except for rows that belong to another command: `Else` (411) reports 111,
+   *  a move sub-command reports 209. Setting the token of a code that is not
+   *  its own owner does nothing. */
+  colorOwner: number;
 }
 
 /** Single RMXP event command. */
@@ -1759,7 +1777,9 @@ export interface ModThemeDef {
    * moves the toggle to `base` when it is applied.
    */
   base: "dark" | "light";
-  /** CSS custom properties, with or without the leading `--`. */
+  /** CSS custom properties, with or without the leading `--`. Beyond the
+   *  palette, `--ec-<category>` / `--ec-code-<code>` colour the event command
+   *  list — see api-reference.md (Event command colours). */
   vars?: Record<string, string>;
   /** Extra CSS. A block with no selector of its own is folded into the theme's
    *  own `:root` scope. */

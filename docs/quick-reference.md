@@ -529,6 +529,12 @@ const url = await ctx.theme.assetUrl("bg.png");        // mod file → data: URI
 ctx.theme.register({ id, name, base: "dark", vars, css, canvas: { image: url } });
 ctx.theme.apply(id);                                   // null = built-in dark/light
 ctx.theme.current();                                   // active id or null
+
+// Event command list colours: a whole family, or one command code.
+ctx.theme.register({ id, name, base: "light", vars: {
+  "--ec-conditional": "#0000ff",   // every branch/loop command
+  "--ec-code-123": "#ff0000",      // just Control Self Switch
+} });
 ctx.theme.list();                                      // every registered theme
 ```
 

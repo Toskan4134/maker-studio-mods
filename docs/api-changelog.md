@@ -21,6 +21,28 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ---
 
+## 1.0.2
+
+Additive only — mods targeting `1.0.1` keep working untouched. Declare `"apiVersion": "1.0.2"` only
+if you use something from this section.
+
+### Added
+
+- **Event command colours are part of the public palette.** A theme's `vars` can set
+  `--ec-<category>` to colour a whole family of commands and `--ec-code-<code>` to colour a single
+  one; every row of the event command list and the Simulator log resolves
+  `var(--ec-code-<code>, var(--ec-<category>, var(--ec-default)))`. Continuation and branch rows wear
+  the colour of the command they belong to, so they need no token of their own. The category tokens
+  existed before but were documented as internal; the per-command ones are new, and both are now a
+  contract. See [api-reference.md](./api-reference.md) (`theme` → Event command colours).
+- **`PublicCommandSchema.colorCategory` / `.colorOwner`**, so the categories and codes above are
+  discoverable instead of hardcoded: `ctx.events.commandSchemas()` now reports which
+  `--ec-<category>` each command falls back to (`null` for `--ec-default`) and which code's
+  `--ec-code-<n>` actually paints its row — its own, or the opener of a continuation / branch / move
+  row. The new `EventCommandColorCategory` union is exported from the typings.
+
+---
+
 ## 1.0.1
 
 Additive only — mods targeting `1.0.0` keep working untouched. Declare `"apiVersion": "1.0.1"` only
