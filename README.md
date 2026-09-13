@@ -64,7 +64,7 @@ Example entry:
 
 ## License
 
-[MIT](LICENSE). Covers the registry tooling (schema, scripts, docs, examples). Third-party mods listed in `index.json` retain their own authors' copyright.
+[GPL-3.0](LICENSE). Covers the registry tooling (schema, scripts, docs, examples). Third-party mods listed in `index.json` retain their own authors' copyright.
 
 ## Reporting a malicious mod
 

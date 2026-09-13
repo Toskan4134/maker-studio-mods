@@ -1,6 +1,6 @@
 # API Reference
 
-The current API version is **1.0.1**. Mods declare via `manifest.apiVersion` the version that
+The current API version is **1.0.2**. Mods declare via `manifest.apiVersion` the version that
 introduced the newest thing they use — an older editor refuses a mod that asks for more than it
 provides. See [api-changelog.md](./api-changelog.md) for what landed in each version.
 
@@ -850,7 +850,7 @@ events.validateEvent(event: PublicEventFull): { valid: boolean; errors: string[]
 events.registerCommand(def: ModCommandDef): Disposable
 ```
 
-`commandSchemas()` returns all known RMXP event command schemas (code, name, category, defaultParams).
+`commandSchemas()` returns all known RMXP event command schemas (code, name, category, defaultParams, plus `colorCategory` / `colorOwner` — see [Event command colours](#event-command-colours)).
 `getCommandSchema(code)` looks up a single schema by code (returns `null` for unknown codes).
 `createCommand(code, params?)` builds a valid command struct — with the schema's default parameters when you omit `params`.
 `validateEvent` checks that every command code in the event's pages is a known code, and returns the unknown ones in `errors`. Run it before `events.update`.
@@ -1263,11 +1263,76 @@ Stable palette (same names in both themes — values differ per active theme):
 
 The body font is inherited too — set `font-family: inherit` (13px base) to match.
 
+#### Event command colours
+
+The command list in the event editor — and the Simulator's event log, which shares its palette —
+colours every row through a three-step chain:
+
+```css
+var(--ec-code-<code>, var(--ec-<category>, var(--ec-default)))
+```
+
+Set `--ec-<category>` to move a whole family of commands at once, `--ec-code-<code>` to move a single
+command out of its family. They are theme variables like any other:
+
+```ts
+ctx.theme.register({
+  id: "mymod.rpgmaker", name: "RPG Maker XP", base: "light",
+  light: { vars: { "--ec-conditional": "#0000ff", "--ec-code-123": "#ff0000" } },
+  dark:  { vars: { "--ec-conditional": "#7c9cff", "--ec-code-123": "#ff6b6b" } },
+});
+```
+
+
+The categories and the codes are **data, not a table to copy**:
+`ctx.events.commandSchemas()` reports each command's `colorCategory` (the `--ec-<category>` it falls
+back to, `null` when it lands on `--ec-default`) and its `colorOwner` — the code whose
+`--ec-code-<n>` actually paints the row. A row belonging to another command reports *that* code, so
+`--ec-code-411` is ignored while `--ec-code-111` moves the whole branch:
+
+```ts
+const vars: Record<string, string> = {};
+for (const cmd of ctx.events.commandSchemas()) {
+  if (cmd.colorOwner !== cmd.code) continue;      // painted by its opener
+  if (cmd.colorCategory === "audio") vars[`--ec-code-${cmd.code}`] = "#00b3a4";
+}
+ctx.theme.register({ id: "mymod.audio", name: "Loud audio", base: "dark", vars });
+```
+
+| Category token | Commands |
+|----------------|----------|
+| `--ec-comment` | Comment |
+| `--ec-conditional` | Conditional Branch, Show Choices, Loop — and their branch rows |
+| `--ec-flow` | Wait, labels, Exit / Erase Event, Call Common Event |
+| `--ec-text` | Show Text, Input Number, Change Text Options, Button Input |
+| `--ec-vars` | Control Switches / Variables / Self Switch / Timer |
+| `--ec-party` | Gold, items, weapons, armor, party members |
+| `--ec-system` | Windowskin, battle audio, access toggles, battle, shop, menus, save, title |
+| `--ec-map` | Transfers, map settings, scroll, fog, animations, screen effects, weather |
+| `--ec-move` | Set Move Route, Wait for Move's Completion |
+| `--ec-move-sub` | The individual move steps under a Set Move Route |
+| `--ec-picture` | Show / Move / Rotate / Tone / Erase Picture |
+| `--ec-audio` | BGM, BGS, ME, SE |
+| `--ec-actor` | Actor stat, state, skill, equipment and graphic changes |
+| `--ec-enemy` | Enemy changes in battle events |
+| `--ec-script` | Script |
+| `--ec-default` | Anything uncategorised — including the commands your own mod registers |
+| `--ec-end` | The page's terminator row |
+
+Rows that belong to another command wear **its** colour, so there is nothing to set for them: the
+extra lines of a Show Text / Comment / Script (401 / 408 / 655), the branch rows of a Conditional
+Branch, Show Choices and Battle Processing (411–412, 402–404, 601–604), the extra goods of a Shop
+Processing (605), and the move steps of a Set Move Route (which fall back to `--ec-move-sub` when the
+route itself has no per-code colour).
+
+Whatever the user picks in **Help → Settings… → Appearance** wins over a theme's values, per theme and
+per light/dark mode — a theme sets the starting point, not the last word.
+
 Notes:
-- Treat the names above as the **public** palette. Other variables exist
-  (`--ec-*` event-command syntax colors, `--dv-*` Dockview tab tokens,
-  `--tile-preview-*`) but are internal and may change — don't depend on them,
-  and don't override the `--dv-*` tokens.
+- Treat the names above, and the `--ec-*` family, as the **public** palette. Other
+  variables exist (`--dv-*` Dockview tab tokens, `--tile-preview-*`) but are
+  internal and may change — don't depend on them, and don't override the
+  `--dv-*` tokens.
 - CSS variables only apply to **DOM**. Canvas overlays (`registerOverlay` /
   `registerAdvancedOverlay`) draw with a `CanvasRenderingContext2D` where
   `var(--…)` does nothing — branch on `ctx.editor.theme()` for a literal color,

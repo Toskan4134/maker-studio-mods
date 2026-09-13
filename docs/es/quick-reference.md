@@ -525,6 +525,12 @@ const url = await ctx.theme.assetUrl("bg.png");        // fichero del mod → da
 ctx.theme.register({ id, name, base: "dark", vars, css, canvas: { image: url } });
 ctx.theme.apply(id);                                   // null = dark/light integrado
 ctx.theme.current();                                   // id activo o null
+
+// Colores de la lista de comandos: una familia entera, o un código concreto.
+ctx.theme.register({ id, name, base: "light", vars: {
+  "--ec-conditional": "#0000ff",   // todos los comandos de rama/bucle
+  "--ec-code-123": "#ff0000",      // solo Control Self Switch
+} });
 ctx.theme.list();                                      // todos los temas registrados
 ```
 

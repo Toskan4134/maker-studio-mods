@@ -1,6 +1,6 @@
 # Referencia de la API
 
-La versión actual de la API es **1.0.1**. Los mods declaran vía `manifest.apiVersion` la versión que
+La versión actual de la API es **1.0.2**. Los mods declaran vía `manifest.apiVersion` la versión que
 introdujo lo más nuevo que usan — un editor más antiguo rechaza un mod que pide más de lo que ofrece.
 Consulta [api-changelog.md](api-changelog.md) para ver qué entró en cada versión.
 
@@ -1258,11 +1258,76 @@ Paleta estable (mismos nombres en ambos temas — los valores difieren según el
 
 La fuente del body también se hereda — pon `font-family: inherit` (base 13px) para coincidir.
 
+#### Colores de los comandos de evento
+
+La lista de comandos del editor de eventos — y el log de eventos del Simulador, que comparte su
+paleta — colorea cada fila con una cadena de tres pasos:
+
+```css
+var(--ec-code-<código>, var(--ec-<categoría>, var(--ec-default)))
+```
+
+Pon `--ec-<categoría>` para mover toda una familia de comandos de golpe, y `--ec-code-<código>` para
+sacar un comando concreto de su familia. Son variables de tema como cualquier otra:
+
+```ts
+ctx.theme.register({
+  id: "mimod.rpgmaker", name: "RPG Maker XP", base: "light",
+  light: { vars: { "--ec-conditional": "#0000ff", "--ec-code-123": "#ff0000" } },
+  dark:  { vars: { "--ec-conditional": "#7c9cff", "--ec-code-123": "#ff6b6b" } },
+});
+```
+
+
+Las categorías y los códigos son **datos, no una tabla que copiar**:
+`ctx.events.commandSchemas()` da de cada comando su `colorCategory` (el `--ec-<categoría>` al que cae,
+`null` si acaba en `--ec-default`) y su `colorOwner` — el código cuyo `--ec-code-<n>` pinta realmente
+esa fila. Una fila que pertenece a otro comando devuelve *ese* código, así que `--ec-code-411` se
+ignora mientras que `--ec-code-111` mueve toda la rama:
+
+```ts
+const vars: Record<string, string> = {};
+for (const cmd of ctx.events.commandSchemas()) {
+  if (cmd.colorOwner !== cmd.code) continue;      // lo pinta su comando padre
+  if (cmd.colorCategory === "audio") vars[`--ec-code-${cmd.code}`] = "#00b3a4";
+}
+ctx.theme.register({ id: "mimod.audio", name: "Audio fuerte", base: "dark", vars });
+```
+
+| Token de categoría | Comandos |
+|--------------------|----------|
+| `--ec-comment` | Comment |
+| `--ec-conditional` | Conditional Branch, Show Choices, Loop — y sus filas de rama |
+| `--ec-flow` | Wait, etiquetas, Exit / Erase Event, Call Common Event |
+| `--ec-text` | Show Text, Input Number, Change Text Options, Button Input |
+| `--ec-vars` | Control Switches / Variables / Self Switch / Timer |
+| `--ec-party` | Oro, objetos, armas, armaduras, miembros del equipo |
+| `--ec-system` | Windowskin, audio de batalla, accesos, batalla, tienda, menús, guardado, título |
+| `--ec-map` | Transferencias, ajustes de mapa, scroll, niebla, animaciones, efectos de pantalla, clima |
+| `--ec-move` | Set Move Route, Wait for Move's Completion |
+| `--ec-move-sub` | Los pasos de movimiento sueltos bajo un Set Move Route |
+| `--ec-picture` | Show / Move / Rotate / Tone / Erase Picture |
+| `--ec-audio` | BGM, BGS, ME, SE |
+| `--ec-actor` | Cambios de stats, estados, habilidades, equipo y gráfico de actores |
+| `--ec-enemy` | Cambios de enemigos en eventos de batalla |
+| `--ec-script` | Script |
+| `--ec-default` | Todo lo no categorizado — incluidos los comandos que registre tu propio mod |
+| `--ec-end` | La fila terminadora de la página |
+
+Las filas que pertenecen a otro comando llevan **su** color, así que no hay nada que poner para ellas:
+las líneas extra de un Show Text / Comment / Script (401 / 408 / 655), las filas de rama de
+Conditional Branch, Show Choices y Battle Processing (411–412, 402–404, 601–604), los artículos extra
+de un Shop Processing (605) y los pasos de un Set Move Route (que caen a `--ec-move-sub` si la ruta no
+tiene color propio).
+
+Lo que el usuario elija en **Ayuda → Ajustes… → Apariencia** gana sobre los valores de un tema, por
+tema y por modo claro/oscuro: un tema pone el punto de partida, no la última palabra.
+
 Notas:
-- Trata los nombres anteriores como la paleta **pública**. Existen otras variables
-  (`--ec-*` colores de sintaxis de event-command, `--dv-*` tokens de pestañas Dockview,
-  `--tile-preview-*`) pero son internas y pueden cambiar — no dependas de ellas,
-  y no sobrescribas los tokens `--dv-*`.
+- Trata los nombres anteriores, y la familia `--ec-*`, como la paleta **pública**.
+  Existen otras variables (`--dv-*` tokens de pestañas Dockview, `--tile-preview-*`)
+  pero son internas y pueden cambiar — no dependas de ellas, y no sobrescribas los
+  tokens `--dv-*`.
 - Las variables CSS solo aplican a **DOM**. Los overlays de canvas (`registerOverlay` /
   `registerAdvancedOverlay`) dibujan con un `CanvasRenderingContext2D` donde
   `var(--…)` no hace nada — rama según `ctx.editor.theme()` para un color literal,
