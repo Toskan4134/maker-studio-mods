@@ -230,7 +230,7 @@
       "repo": "Bird-South/ms-zh-cn",
       "version": "1.2.0",
       "assetName": "com.bird.zh-cn-1.2.0.zip",
-      "sha256": "6dd18c399458b2515d59a26c2d3b50599fefc229778aaf323f915cafb075862b",
+      "sha256": "0bfc3b449aba1928c5e7d6cd482cd405dd712d588d69d10cb2282d62759dbb5a",
       "description": "Add Simplified Chinese support for Maker Studio, along with the Chinese localization of the PBS Editor Mod.",
       "tags": [
         "ui",
