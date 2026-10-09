@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-10-02T10:14:42Z",
+  "updatedAt": "2026-10-09T13:14:15Z",
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -296,6 +296,33 @@
         "fs.project",
         "fs.write.project",
         "ui.dialogs",
+        "ui.toasts"
+      ]
+    },
+    {
+      "id": "com.lacabrapalmonte.pbs-editor-launcher",
+      "name": "PBS Editor Launcher",
+      "authors": [
+        {
+          "name": "LaCabraPalMonte",
+          "url": "https://github.com/LaCabraPalMonte/PBS-Editor"
+        }
+      ],
+      "repo": "LaCabraPalMonte/msmod-pbs-editor-launcher",
+      "version": "1.1.2",
+      "assetName": "com.lacabrapalmonte.pbs-editor-launcher-1.1.2.zip",
+      "sha256": "c24b968b9d9171f279ad2208d84ab537360361969d39ee623e6fb49d690e7a9e",
+      "description": "Opens LaCabraPalMonte's standalone PBS Editor desktop app on the current project (a separate Windows program, not the built-in PBS Editor mod). Offers its download page if you don't have it.",
+      "tags": [
+        "pbs",
+        "essentials",
+        "tools",
+        "launcher"
+      ],
+      "icon": "https://raw.githubusercontent.com/LaCabraPalMonte/msmod-pbs-editor-launcher/main/icon.png",
+      "homepage": "https://lacabrapalmonte.github.io/PBS-Editor/",
+      "apiVersion": "1.0.0",
+      "permissions": [
         "ui.toasts"
       ]
     }
