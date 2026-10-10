@@ -1,11 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-<<<<<<< HEAD
   "updatedAt": "2026-10-10T13:01:44Z",
-=======
-  "updatedAt": "2026-10-07T15:28:00Z",
->>>>>>> upstream/main
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -303,31 +299,6 @@
         "ui.toasts"
       ]
     },
-<<<<<<< HEAD
-    {
-      "id": "com.lacabrapalmonte.pbs-editor-launcher",
-      "name": "PBS Editor Launcher",
-      "authors": [
-        {
-          "name": "LaCabraPalMonte",
-          "url": "https://github.com/LaCabraPalMonte/PBS-Editor"
-        }
-      ],
-      "repo": "LaCabraPalMonte/msmod-pbs-editor-launcher",
-      "version": "1.1.3",
-      "assetName": "com.lacabrapalmonte.pbs-editor-launcher-1.1.3.zip",
-      "sha256": "6f2ff4916bd5ce40e8e01e78ba08d79d1abdb477c78426f8d83dcb69590b9bb5",
-      "description": "Opens LaCabraPalMonte's standalone PBS Editor desktop app on the current project (a separate Windows program, not the built-in PBS Editor mod). Offers its download page if you don't have it.",
-      "tags": [
-        "pbs",
-        "essentials",
-        "tools",
-        "launcher"
-      ],
-      "icon": "https://raw.githubusercontent.com/LaCabraPalMonte/msmod-pbs-editor-launcher/main/icon.png",
-      "homepage": "https://lacabrapalmonte.github.io/PBS-Editor/",
-      "apiVersion": "1.0.2",
-=======
         {
       "id": "com.mimi.procedural-terrain",
       "name": "Procedural Terrain / 程序化地形",
@@ -351,7 +322,33 @@
       "homepage": "https://github.com/Baibian0727/procedural-terrain",
       "minStudioVersion": "1.7.1",
       "apiVersion": "1.0.0",
->>>>>>> upstream/main
+      "permissions": [
+        "ui.toasts"
+      ]
+    },
+    {
+      "id": "com.lacabrapalmonte.pbs-editor-launcher",
+      "name": "PBS Editor Launcher",
+      "authors": [
+        {
+          "name": "LaCabraPalMonte",
+          "url": "https://github.com/LaCabraPalMonte/PBS-Editor"
+        }
+      ],
+      "repo": "LaCabraPalMonte/msmod-pbs-editor-launcher",
+      "version": "1.1.3",
+      "assetName": "com.lacabrapalmonte.pbs-editor-launcher-1.1.3.zip",
+      "sha256": "6f2ff4916bd5ce40e8e01e78ba08d79d1abdb477c78426f8d83dcb69590b9bb5",
+      "description": "Opens LaCabraPalMonte's standalone PBS Editor desktop app on the current project (a separate Windows program, not the built-in PBS Editor mod). Offers its download page if you don't have it.",
+      "tags": [
+        "pbs",
+        "essentials",
+        "tools",
+        "launcher"
+      ],
+      "icon": "https://raw.githubusercontent.com/LaCabraPalMonte/msmod-pbs-editor-launcher/main/icon.png",
+      "homepage": "https://lacabrapalmonte.github.io/PBS-Editor/",
+      "apiVersion": "1.0.2",
       "permissions": [
         "ui.toasts"
       ]
