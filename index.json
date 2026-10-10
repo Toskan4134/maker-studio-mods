@@ -1,7 +1,11 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
+<<<<<<< HEAD
   "updatedAt": "2026-10-10T13:01:44Z",
+=======
+  "updatedAt": "2026-10-07T15:28:00Z",
+>>>>>>> upstream/main
   "mods": [
     {
       "id": "com.toskan4134.discord-rich-presence",
@@ -299,6 +303,7 @@
         "ui.toasts"
       ]
     },
+<<<<<<< HEAD
     {
       "id": "com.lacabrapalmonte.pbs-editor-launcher",
       "name": "PBS Editor Launcher",
@@ -322,6 +327,31 @@
       "icon": "https://raw.githubusercontent.com/LaCabraPalMonte/msmod-pbs-editor-launcher/main/icon.png",
       "homepage": "https://lacabrapalmonte.github.io/PBS-Editor/",
       "apiVersion": "1.0.2",
+=======
+        {
+      "id": "com.mimi.procedural-terrain",
+      "name": "Procedural Terrain / 程序化地形",
+      "authors": [
+        {
+          "name": "百变",
+          "url": "https://github.com/Baibian0727"
+        }
+      ],
+      "repo": "Baibian0727/procedural-terrain",
+      "version": "1.0.0",
+      "assetName": "com.mimi.procedural-terrain-1.0.0.zip",
+      "sha256": "f8777da05f57beca58cc9ab458b210ec4f6305615b0eafc46fd7e2c897aa0e94",
+      "description": "Procedural terrain tools for Maker Studio using the vanilla Pokemon Essentials Outside tileset: grass, cliffs, stacked heights, water, roads and fences.",
+      "tags": [
+        "mapping",
+        "terrain",
+        "tiles",
+        "pokemon-essentials"
+      ],
+      "homepage": "https://github.com/Baibian0727/procedural-terrain",
+      "minStudioVersion": "1.7.1",
+      "apiVersion": "1.0.0",
+>>>>>>> upstream/main
       "permissions": [
         "ui.toasts"
       ]
