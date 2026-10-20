@@ -2,6 +2,10 @@
 
 Shows your current project, map name, and elapsed time in Discord.
 
+> Maker Studio now has rich presence built in (**Settings → Editor → Show my activity in Discord**).
+> Keep this mod as an IPC example only: running it alongside the built-in presence makes the two
+> overwrite each other's status.
+
 ## What you'll learn
 
 - Calling Tauri IPC commands directly from a mod
