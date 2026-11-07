@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-10-23T12:04:41Z",
+  "updatedAt": "2026-10-26T04:30:19Z",
   "mods": [
     {
       "id": "com.toskan4134.image-to-tileset",
@@ -204,9 +204,9 @@
         }
       ],
       "repo": "Bird-South/ms-zh-cn",
-      "version": "1.4.0",
-      "assetName": "com.bird.zh-cn-1.4.0.zip",
-      "sha256": "de2d104aa08b53de31cb8ee7c5323c2ac5524298786ca4feb318c29452ec403b",
+      "version": "1.5.0",
+      "assetName": "com.bird.zh-cn-1.5.0.zip",
+      "sha256": "737ba5ae3a5c7ab8123f62b54c2e001e0ffcca8833f210899847009f0a5d695c",
       "description": "Add Simplified Chinese support for Maker Studio, along with the Chinese localization of the PBS Editor Mod.",
       "tags": [
         "ui",
