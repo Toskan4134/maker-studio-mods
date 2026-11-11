@@ -341,9 +341,9 @@
         }
       ],
       "repo": "dpertierra/msmod-2.5D-inspector",
-      "version": "1.1.0",
-      "assetName": "com.dpertierra.visual25d-inspector-1.1.0.zip",
-      "sha256": "3e0254acb4675da0f21cca9a4161a62cf6a281201d8101df9bbeed26eba5cae1",
+      "version": "1.1.1",
+      "assetName": "com.dpertierra.visual25d-inspector-1.1.1.zip",
+      "sha256": "065130d41646639317bc1e785350b9ac0cefc1f0d7a553751587ffc39a1d3fd6",
       "description": "Hace visible la geometria que el plugin Visual 2.5D HD lee del mapa: alturas por prioridad, tags de pared, y un validador de errores que en 2D no se ven.",
       "tags": [
         "2-5d",
@@ -355,9 +355,7 @@
       "homepage": "https://github.com/dpertierra/msmod-2.5D-inspector",
       "apiVersion": "1.0.0",
       "permissions": [
-        "ui.toasts",
-        "ui.panels",
-        "ui.overlays"
+        "ui.toasts"
       ]
     }
   ]
