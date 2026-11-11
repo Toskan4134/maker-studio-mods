@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-10-26T04:30:19Z",
+  "updatedAt": "2026-11-11T23:23:35Z",
   "mods": [
     {
       "id": "com.toskan4134.image-to-tileset",
@@ -329,6 +329,35 @@
       "apiVersion": "1.0.2",
       "permissions": [
         "ui.toasts"
+      ]
+    },
+    {
+      "id": "com.dpertierra.visual25d-inspector",
+      "name": "2.5D Inspector",
+      "authors": [
+        {
+          "name": "DPertierra",
+          "url": "https://github.com/dpertierra"
+        }
+      ],
+      "repo": "dpertierra/msmod-2.5D-inspector",
+      "version": "1.1.0",
+      "assetName": "com.dpertierra.visual25d-inspector-1.1.0.zip",
+      "sha256": "3e0254acb4675da0f21cca9a4161a62cf6a281201d8101df9bbeed26eba5cae1",
+      "description": "Hace visible la geometria que el plugin Visual 2.5D HD lee del mapa: alturas por prioridad, tags de pared, y un validador de errores que en 2D no se ven.",
+      "tags": [
+        "2-5d",
+        "essentials",
+        "validator",
+        "overlay",
+        "mapping"
+      ],
+      "homepage": "https://github.com/dpertierra/msmod-2.5D-inspector",
+      "apiVersion": "1.0.0",
+      "permissions": [
+        "ui.toasts",
+        "ui.panels",
+        "ui.overlays"
       ]
     }
   ]
