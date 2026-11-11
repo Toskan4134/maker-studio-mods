@@ -1383,10 +1383,17 @@ Multiple overlays sorted by `zOrder`.
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
   // handle shortcut
 });
+
+const scope = document.querySelector<HTMLElement>(".my-panel");
+if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope });
 ```
 
-Register global keyboard shortcuts. Key format: `"Ctrl+Shift+F"`, `"Alt+G"`, etc.
-Mod shortcuts take priority over built-in shortcuts.
+Register keyboard shortcuts. Key format: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Omitting the third
+argument keeps the existing global behavior. Set `{ scope: HTMLElement }` to make a shortcut apply
+only when the keyboard event's `composedPath()` contains that element. Among shortcuts for the same
+key, the closest matching scope wins over broader scopes and unscoped shortcuts. Editable fields
+and contenteditable surfaces keep priority for typing and their own keyboard handling. Mod
+shortcuts take priority over built-in shortcuts.
 
 ### Additional dialogs and pickers
 
@@ -1426,6 +1433,17 @@ const { close } = ctx.ui.showCustomDialog({
 Opens a styled modal dialog using the editor's standard shell (overlay, draggable
 header with title + close button, scrollable body). The `render` callback receives
 the body element — append any DOM content. Returns `{ close }` to close programmatically.
+The body receives initial focus when `render` has not focused a child. To register a dialog-local
+shortcut, pass `{ scope: body }` and dispose it in the cleanup returned by `render`:
+
+```ts
+render(body) {
+  const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+    // dialog-local action
+  }, { scope: body });
+  return () => shortcut.dispose();
+}
+```
 
 ### Advanced overlay
 

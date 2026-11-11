@@ -226,9 +226,24 @@ ctx.ui.registerOverlay({
 
 ```js
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
-  // el handler se dispara al pulsar el atajo
+  // atajo global (comportamiento anterior)
+});
+
+ctx.ui.showCustomDialog({
+  title: "Dialog",
+  render(body) {
+    const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+      // se activa si body aparece en el composedPath del evento
+    }, { scope: body });
+    return () => shortcut.dispose();
+  },
 });
 ```
+
+El diálogo personalizado enfoca `body` al abrirse, salvo que `render` enfoque primero un elemento
+hijo. El ámbito coincidente más cercano gana frente a ámbitos más generales o atajos sin ámbito.
+Los campos editables conservan su prioridad para escribir y usar su teclado. Sin `{ scope }`, el
+registro sigue siendo global como antes.
 
 ## Traducir tu mod / añadir un idioma
 

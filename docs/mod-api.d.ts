@@ -1084,8 +1084,10 @@ export interface UiCtx {
   registerContextMenuItem(def: ContextMenuRegistration): Disposable;
   /** Register an overlay that renders on top of the map canvas. */
   registerOverlay(def: OverlayDef): Disposable;
-  /** Register a keyboard shortcut. Key format: "Ctrl+Shift+F". */
-  registerShortcut(key: string, handler: () => void): Disposable;
+  /** Register a keyboard shortcut. Key format: "Ctrl+Shift+F". An optional scope
+   *  limits it to events whose composed path includes the element; the nearest
+   *  matching scope wins. Omitting scope keeps the global behavior. */
+  registerShortcut(key: string, handler: () => void, opts?: { scope?: HTMLElement }): Disposable;
 
   /** Open a native color picker. Returns hex string (e.g. "#ff0000") or null if cancelled. */
   showColorPicker?(opts?: { title?: string; initial?: string }): Promise<string | null>;

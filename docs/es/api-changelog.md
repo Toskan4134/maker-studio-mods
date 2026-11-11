@@ -22,6 +22,23 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ---
 
+## 1.0.3
+
+Solo aditivo — los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
+`"apiVersion": "1.0.3"` solo si usas un atajo con ámbito de esta sección.
+
+### Añadido
+
+- **`ctx.ui.registerShortcut` con ámbito**: el tercer argumento opcional `{ scope: HTMLElement }`
+  limita el atajo a eventos cuyo `composedPath()` contiene ese elemento. El ámbito coincidente más
+  cercano tiene prioridad sobre ámbitos más generales o atajos sin ámbito; omitir la opción conserva
+  el comportamiento global anterior. Los campos editables mantienen la prioridad al escribir. El
+  body de `showCustomDialog` recibe el foco inicial salvo que su callback `render` enfoque un
+  elemento hijo; así, `{ scope: body }` funciona de inmediato. Libera el registro en el cleanup que
+  devuelve `render`. Consulta [api-reference.md](./api-reference.md#atajos-de-teclado).
+
+---
+
 ## 1.0.2
 
 Solo aditivo — los mods que apuntan a `1.0.1` siguen funcionando sin tocar nada. Declara

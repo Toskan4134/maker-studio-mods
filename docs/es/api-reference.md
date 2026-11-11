@@ -1378,10 +1378,17 @@ Múltiples overlays ordenados por `zOrder`.
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
   // manejar atajo
 });
+
+const scope = document.querySelector<HTMLElement>(".my-panel");
+if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope });
 ```
 
-Registra atajos de teclado globales. Formato de tecla: `"Ctrl+Shift+F"`, `"Alt+G"`, etc.
-Los atajos de mod tienen prioridad sobre los atajos incluidos.
+Registra atajos de teclado. Formato de tecla: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Si omites el tercer
+argumento, se conserva el comportamiento global existente. Usa `{ scope: HTMLElement }` para que el
+atajo solo se aplique cuando el `composedPath()` del evento de teclado contenga ese elemento. Para
+una misma tecla, gana el ámbito coincidente más cercano frente a ámbitos más generales y atajos sin
+ámbito. Los campos editables y las superficies `contenteditable` conservan prioridad para escribir
+y usar sus propios atajos. Los atajos de mod tienen prioridad sobre los atajos incluidos.
 
 ### Diálogos y pickers adicionales
 
@@ -1421,6 +1428,18 @@ const { close } = ctx.ui.showCustomDialog({
 Abre un diálogo modal con estilo usando el shell estándar del editor (overlay, cabecera arrastrable
 con título + botón de cerrar, cuerpo con scroll). El callback `render` recibe
 el elemento body — añade cualquier contenido DOM. Devuelve `{ close }` para cerrar programáticamente.
+El body recibe el foco inicial si `render` no ha enfocado antes un elemento hijo. Para registrar un
+atajo propio del diálogo, usa `{ scope: body }` y llama a `dispose()` en el cleanup que devuelve
+`render`:
+
+```ts
+render(body) {
+  const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+    // acción local del diálogo
+  }, { scope: body });
+  return () => shortcut.dispose();
+}
+```
 
 ### Overlay avanzado
 

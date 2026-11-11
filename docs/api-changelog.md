@@ -21,6 +21,22 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ---
 
+## 1.0.3
+
+Additive only — mods targeting `1.0.2` keep working untouched. Declare `"apiVersion": "1.0.3"` only
+if you use a scoped shortcut from this section.
+
+### Added
+
+- **Scoped `ctx.ui.registerShortcut`**: an optional third argument `{ scope: HTMLElement }` limits
+  a shortcut to events whose `composedPath()` contains that element. The closest matching scope
+  takes priority over broader or unscoped matches; omitting the option preserves the previous
+  global behavior. Editable fields keep priority for typing. A `showCustomDialog` body receives
+  initial focus unless its render callback focuses a child, so `{ scope: body }` works immediately;
+  dispose the registration in the cleanup returned from `render`. See [api-reference.md](./api-reference.md#keyboard-shortcuts).
+
+---
+
 ## 1.0.2
 
 Additive only — mods targeting `1.0.1` keep working untouched. Declare `"apiVersion": "1.0.2"` only

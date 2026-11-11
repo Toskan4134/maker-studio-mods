@@ -226,9 +226,23 @@ ctx.ui.registerOverlay({
 
 ```js
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
-  // handler fires when shortcut is pressed
+  // global shortcut (the previous behavior)
+});
+
+ctx.ui.showCustomDialog({
+  title: "Dialog",
+  render(body) {
+    const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+      // fires when the dialog body is in the event's composed path
+    }, { scope: body });
+    return () => shortcut.dispose();
+  },
 });
 ```
+
+The custom dialog focuses `body` on open unless `render` focuses a child first. The closest matching
+scoped shortcut wins over broader or unscoped matches. Editable fields keep their own typing and
+keyboard behavior. Without `{ scope }`, registration remains global as before.
 
 ## Translate your mod / add a language
 
