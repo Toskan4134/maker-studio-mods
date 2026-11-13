@@ -737,7 +737,7 @@ Forma de `config` (`PublicFogConfig`): `{ graphicName, hue, blendType, zoom, sx,
 |-----------------|-----------|-------|
 | `graphicName`   | `string`  | Nombre de archivo en la carpeta de gráficos del grupo (sin extensión) — `Graphics/Fogs/` para fog, `Graphics/Panoramas/` para panorama. |
 | `hue`           | `number`  | 0-360. |
-| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract, 3=multiply. |
+| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract. |
 | `zoom`          | `number`  | Factor de escala (0.1-8.0). |
 | `sx`            | `number`  | Velocidad de scroll horizontal (px/frame). Positivo = derecha. |
 | `sy`            | `number`  | Velocidad de scroll vertical (px/frame). Positivo = abajo. |

@@ -731,7 +731,7 @@ fog.setConfig(mapId, fogId, config: Partial<PublicFogConfig>): void
 |-----------------|-----------|-------|
 | `graphicName`   | `string`  | Filename in the group's graphics folder (no extension) — `Graphics/Fogs/` for fog, `Graphics/Panoramas/` for panorama. |
 | `hue`           | `number`  | 0-360. |
-| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract, 3=multiply. |
+| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract. |
 | `zoom`          | `number`  | Scale factor (0.1-8.0). |
 | `sx`            | `number`  | Horizontal scroll speed (px/frame). Positive = right. |
 | `sy`            | `number`  | Vertical scroll speed (px/frame). Positive = down. |

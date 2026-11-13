@@ -24,7 +24,7 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ## 1.0.3
 
-Solo aditivo — los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
+Los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
 `"apiVersion": "1.0.3"` solo si usas un atajo con ámbito de esta sección.
 
 ### Añadido
@@ -36,6 +36,12 @@ Solo aditivo — los mods que apuntan a `1.0.2` siguen funcionando sin tocar nad
   body de `showCustomDialog` recibe el foco inicial salvo que su callback `render` enfoque un
   elemento hijo; así, `{ scope: body }` funciona de inmediato. Libera el registro en el cleanup que
   devuelve `render`. Consulta [api-reference.md](./api-reference.md#atajos-de-teclado).
+
+### Cambiado
+
+- **Eliminado el `blendType` 3 (multiply) de las capas gráficas.** Ningún motor de juego puede
+  dibujarlo, así que el editor ya no lo ofrece ni lo renderiza; una capa con `3` se dibuja como Normal
+  (`0`), igual que siempre ha hecho en el juego.
 
 ---
 

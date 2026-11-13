@@ -23,7 +23,7 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ## 1.0.3
 
-Additive only — mods targeting `1.0.2` keep working untouched. Declare `"apiVersion": "1.0.3"` only
+Mods targeting `1.0.2` keep working untouched. Declare `"apiVersion": "1.0.3"` only
 if you use a scoped shortcut from this section.
 
 ### Added
@@ -34,6 +34,11 @@ if you use a scoped shortcut from this section.
   global behavior. Editable fields keep priority for typing. A `showCustomDialog` body receives
   initial focus unless its render callback focuses a child, so `{ scope: body }` works immediately;
   dispose the registration in the cleanup returned from `render`. See [api-reference.md](./api-reference.md#keyboard-shortcuts).
+
+### Changed
+
+- **Graphic layer `blendType` 3 (multiply) removed.** No game engine can draw it, so the editor
+  no longer offers or renders it; a layer set to `3` draws as Normal (`0`), as it always did in-game.
 
 ---
 
