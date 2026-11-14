@@ -1390,6 +1390,22 @@ una misma tecla, gana el ámbito coincidente más cercano frente a ámbitos más
 ámbito. Los campos editables y las superficies `contenteditable` conservan prioridad para escribir
 y usar sus propios atajos. Los atajos de mod tienen prioridad sobre los atajos incluidos.
 
+### Paneles en ventanas separadas (popout)
+
+El usuario puede sacar un panel a su propia ventana nativa. El DOM del panel de un mod pasa a ser de
+esa ventana, así que `window`, `document`, `document.activeElement` y `document.body` siguen
+apuntando a la ventana principal. Usa `element.ownerDocument` / `element.ownerDocument.defaultView`
+para listeners y consultas globales, y no dependas de `instanceof HTMLElement` con los elementos de
+ese panel. `registerShortcut` y `showContextMenu` ya funcionan en esas ventanas.
+
+```ts
+const doc = ctx.ui.popupDocument?.(true) ?? document; // ventana con la que el usuario interactúa
+doc.body.appendChild(myPopover);
+```
+
+`popupDocument(sameWindow?)` devuelve el documento donde montar un popup: con `sameWindow` true, la
+ventana de la última interacción de puntero o teclado; si no, la ventana principal.
+
 ### Diálogos y pickers adicionales
 
 ```ts

@@ -245,6 +245,15 @@ hijo. El ámbito coincidente más cercano gana frente a ámbitos más generales 
 Los campos editables conservan su prioridad para escribir y usar su teclado. Sin `{ scope }`, el
 registro sigue siendo global como antes.
 
+## Popup en la ventana que usa el usuario
+
+```js
+// Los paneles pueden sacarse a su propia ventana; window/document son los de la principal.
+const doc = ctx.ui.popupDocument?.(true) ?? document;
+doc.body.appendChild(popover);
+// En código de panel: usa el.ownerDocument.defaultView en lugar de window para listeners globales.
+```
+
 ## Traducir tu mod / añadir un idioma
 
 ```js

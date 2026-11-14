@@ -24,10 +24,14 @@ When a major bump happens, this file gets a section with the new shape and a lin
 ## 1.0.3
 
 Mods targeting `1.0.2` keep working untouched. Declare `"apiVersion": "1.0.3"` only
-if you use a scoped shortcut from this section.
+if you use something from this section.
 
 ### Added
 
+- **`ctx.ui.popupDocument?(sameWindow?)`**: returns the document a popup should mount into. Panels
+  can be popped out into their own windows; with `sameWindow` true it is the window the user is
+  interacting with, otherwise the main window. Panel code should use `element.ownerDocument` instead
+  of `window`/`document` for global listeners. See [api-reference.md](./api-reference.md#panels-in-popout-windows).
 - **Scoped `ctx.ui.registerShortcut`**: an optional third argument `{ scope: HTMLElement }` limits
   a shortcut to events whose `composedPath()` contains that element. The closest matching scope
   takes priority over broader or unscoped matches; omitting the option preserves the previous

@@ -244,6 +244,15 @@ The custom dialog focuses `body` on open unless `render` focuses a child first. 
 scoped shortcut wins over broader or unscoped matches. Editable fields keep their own typing and
 keyboard behavior. Without `{ scope }`, registration remains global as before.
 
+## Popup in the window the user is using
+
+```js
+// Panels can be popped out into their own window; window/document are the main one.
+const doc = ctx.ui.popupDocument?.(true) ?? document;
+doc.body.appendChild(popover);
+// Panel code: use el.ownerDocument.defaultView instead of window for global listeners.
+```
+
 ## Translate your mod / add a language
 
 ```js

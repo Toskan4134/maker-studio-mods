@@ -1080,6 +1080,10 @@ export interface UiCtx {
   log(message: string): void;
   /** Show a native context menu at screen coordinates. */
   showContextMenu(x: number, y: number, items: Array<ContextMenuItemDef>): void;
+  /** The document a popup (dropdown, tooltip, popover) should mount into. Panels can be popped
+   *  out into their own windows: with `sameWindow` true this is the window the user is
+   *  interacting with, otherwise always the main window. Portal into `.body` of the result. */
+  popupDocument?(sameWindow?: boolean): Document;
   /** Register a context menu item that appears in editor context menus. */
   registerContextMenuItem(def: ContextMenuRegistration): Disposable;
   /** Register an overlay that renders on top of the map canvas. */

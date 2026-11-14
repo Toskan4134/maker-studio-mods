@@ -1395,6 +1395,22 @@ key, the closest matching scope wins over broader scopes and unscoped shortcuts.
 and contenteditable surfaces keep priority for typing and their own keyboard handling. Mod
 shortcuts take priority over built-in shortcuts.
 
+### Panels in popout windows
+
+Users can pop a panel out into its own native window. A mod panel's DOM then belongs to that
+window, so `window`, `document`, `document.activeElement` and `document.body` still point at the
+main window. Use `element.ownerDocument` / `element.ownerDocument.defaultView` for global
+listeners and queries, and don't rely on `instanceof HTMLElement` for elements of that panel.
+`registerShortcut` and `showContextMenu` already work in popouts.
+
+```ts
+const doc = ctx.ui.popupDocument?.(true) ?? document; // window the user is interacting with
+doc.body.appendChild(myPopover);
+```
+
+`popupDocument(sameWindow?)` returns the document a popup should mount into: with `sameWindow`
+true, the window of the latest pointer or keyboard interaction; otherwise the main window.
+
 ### Additional dialogs and pickers
 
 ```ts

@@ -25,9 +25,15 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 ## 1.0.3
 
 Los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
-`"apiVersion": "1.0.3"` solo si usas un atajo con ámbito de esta sección.
+`"apiVersion": "1.0.3"` solo si usas algo de esta sección.
 
 ### Añadido
+
+- **`ctx.ui.popupDocument?(sameWindow?)`**: devuelve el documento donde montar un popup. Los paneles
+  pueden sacarse a ventanas propias; con `sameWindow` true es la ventana con la que el usuario
+  interactúa, si no, la principal. El código de un panel debe usar `element.ownerDocument` en lugar
+  de `window`/`document` para listeners globales. Consulta
+  [api-reference.md](./api-reference.md#paneles-en-ventanas-separadas-popout).
 
 - **`ctx.ui.registerShortcut` con ámbito**: el tercer argumento opcional `{ scope: HTMLElement }`
   limita el atajo a eventos cuyo `composedPath()` contiene ese elemento. El ámbito coincidente más
