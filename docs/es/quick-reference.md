@@ -226,8 +226,32 @@ ctx.ui.registerOverlay({
 
 ```js
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
-  // el handler se dispara al pulsar el atajo
+  // atajo global (comportamiento anterior)
 });
+
+ctx.ui.showCustomDialog({
+  title: "Dialog",
+  render(body) {
+    const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+      // se activa si body aparece en el composedPath del evento
+    }, { scope: body });
+    return () => shortcut.dispose();
+  },
+});
+```
+
+El diálogo personalizado enfoca `body` al abrirse, salvo que `render` enfoque primero un elemento
+hijo. El ámbito coincidente más cercano gana frente a ámbitos más generales o atajos sin ámbito.
+Los campos editables conservan su prioridad para escribir y usar su teclado. Sin `{ scope }`, el
+registro sigue siendo global como antes.
+
+## Popup en la ventana que usa el usuario
+
+```js
+// Los paneles pueden sacarse a su propia ventana; window/document son los de la principal.
+const doc = ctx.ui.popupDocument?.(true) ?? document;
+doc.body.appendChild(popover);
+// En código de panel: usa el.ownerDocument.defaultView en lugar de window para listeners globales.
 ```
 
 ## Traducir tu mod / añadir un idioma

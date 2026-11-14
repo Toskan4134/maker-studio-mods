@@ -1080,12 +1080,18 @@ export interface UiCtx {
   log(message: string): void;
   /** Show a native context menu at screen coordinates. */
   showContextMenu(x: number, y: number, items: Array<ContextMenuItemDef>): void;
+  /** The document a popup (dropdown, tooltip, popover) should mount into. Panels can be popped
+   *  out into their own windows: with `sameWindow` true this is the window the user is
+   *  interacting with, otherwise always the main window. Portal into `.body` of the result. */
+  popupDocument?(sameWindow?: boolean): Document;
   /** Register a context menu item that appears in editor context menus. */
   registerContextMenuItem(def: ContextMenuRegistration): Disposable;
   /** Register an overlay that renders on top of the map canvas. */
   registerOverlay(def: OverlayDef): Disposable;
-  /** Register a keyboard shortcut. Key format: "Ctrl+Shift+F". */
-  registerShortcut(key: string, handler: () => void): Disposable;
+  /** Register a keyboard shortcut. Key format: "Ctrl+Shift+F". An optional scope
+   *  limits it to events whose composed path includes the element; the nearest
+   *  matching scope wins. Omitting scope keeps the global behavior. */
+  registerShortcut(key: string, handler: () => void, opts?: { scope?: HTMLElement }): Disposable;
 
   /** Open a native color picker. Returns hex string (e.g. "#ff0000") or null if cancelled. */
   showColorPicker?(opts?: { title?: string; initial?: string }): Promise<string | null>;

@@ -737,7 +737,7 @@ Forma de `config` (`PublicFogConfig`): `{ graphicName, hue, blendType, zoom, sx,
 |-----------------|-----------|-------|
 | `graphicName`   | `string`  | Nombre de archivo en la carpeta de gráficos del grupo (sin extensión) — `Graphics/Fogs/` para fog, `Graphics/Panoramas/` para panorama. |
 | `hue`           | `number`  | 0-360. |
-| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract, 3=multiply. |
+| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract. |
 | `zoom`          | `number`  | Factor de escala (0.1-8.0). |
 | `sx`            | `number`  | Velocidad de scroll horizontal (px/frame). Positivo = derecha. |
 | `sy`            | `number`  | Velocidad de scroll vertical (px/frame). Positivo = abajo. |
@@ -1378,10 +1378,33 @@ Múltiples overlays ordenados por `zOrder`.
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
   // manejar atajo
 });
+
+const scope = document.querySelector<HTMLElement>(".my-panel");
+if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope });
 ```
 
-Registra atajos de teclado globales. Formato de tecla: `"Ctrl+Shift+F"`, `"Alt+G"`, etc.
-Los atajos de mod tienen prioridad sobre los atajos incluidos.
+Registra atajos de teclado. Formato de tecla: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Si omites el tercer
+argumento, se conserva el comportamiento global existente. Usa `{ scope: HTMLElement }` para que el
+atajo solo se aplique cuando el `composedPath()` del evento de teclado contenga ese elemento. Para
+una misma tecla, gana el ámbito coincidente más cercano frente a ámbitos más generales y atajos sin
+ámbito. Los campos editables y las superficies `contenteditable` conservan prioridad para escribir
+y usar sus propios atajos. Los atajos de mod tienen prioridad sobre los atajos incluidos.
+
+### Paneles en ventanas separadas (popout)
+
+El usuario puede sacar un panel a su propia ventana nativa. El DOM del panel de un mod pasa a ser de
+esa ventana, así que `window`, `document`, `document.activeElement` y `document.body` siguen
+apuntando a la ventana principal. Usa `element.ownerDocument` / `element.ownerDocument.defaultView`
+para listeners y consultas globales, y no dependas de `instanceof HTMLElement` con los elementos de
+ese panel. `registerShortcut` y `showContextMenu` ya funcionan en esas ventanas.
+
+```ts
+const doc = ctx.ui.popupDocument?.(true) ?? document; // ventana con la que el usuario interactúa
+doc.body.appendChild(myPopover);
+```
+
+`popupDocument(sameWindow?)` devuelve el documento donde montar un popup: con `sameWindow` true, la
+ventana de la última interacción de puntero o teclado; si no, la ventana principal.
 
 ### Diálogos y pickers adicionales
 
@@ -1421,6 +1444,18 @@ const { close } = ctx.ui.showCustomDialog({
 Abre un diálogo modal con estilo usando el shell estándar del editor (overlay, cabecera arrastrable
 con título + botón de cerrar, cuerpo con scroll). El callback `render` recibe
 el elemento body — añade cualquier contenido DOM. Devuelve `{ close }` para cerrar programáticamente.
+El body recibe el foco inicial si `render` no ha enfocado antes un elemento hijo. Para registrar un
+atajo propio del diálogo, usa `{ scope: body }` y llama a `dispose()` en el cleanup que devuelve
+`render`:
+
+```ts
+render(body) {
+  const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+    // acción local del diálogo
+  }, { scope: body });
+  return () => shortcut.dispose();
+}
+```
 
 ### Overlay avanzado
 

@@ -731,7 +731,7 @@ fog.setConfig(mapId, fogId, config: Partial<PublicFogConfig>): void
 |-----------------|-----------|-------|
 | `graphicName`   | `string`  | Filename in the group's graphics folder (no extension) — `Graphics/Fogs/` for fog, `Graphics/Panoramas/` for panorama. |
 | `hue`           | `number`  | 0-360. |
-| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract, 3=multiply. |
+| `blendType`     | `number`  | 0=normal, 1=add, 2=subtract. |
 | `zoom`          | `number`  | Scale factor (0.1-8.0). |
 | `sx`            | `number`  | Horizontal scroll speed (px/frame). Positive = right. |
 | `sy`            | `number`  | Vertical scroll speed (px/frame). Positive = down. |
@@ -1383,10 +1383,33 @@ Multiple overlays sorted by `zOrder`.
 ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
   // handle shortcut
 });
+
+const scope = document.querySelector<HTMLElement>(".my-panel");
+if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope });
 ```
 
-Register global keyboard shortcuts. Key format: `"Ctrl+Shift+F"`, `"Alt+G"`, etc.
-Mod shortcuts take priority over built-in shortcuts.
+Register keyboard shortcuts. Key format: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Omitting the third
+argument keeps the existing global behavior. Set `{ scope: HTMLElement }` to make a shortcut apply
+only when the keyboard event's `composedPath()` contains that element. Among shortcuts for the same
+key, the closest matching scope wins over broader scopes and unscoped shortcuts. Editable fields
+and contenteditable surfaces keep priority for typing and their own keyboard handling. Mod
+shortcuts take priority over built-in shortcuts.
+
+### Panels in popout windows
+
+Users can pop a panel out into its own native window. A mod panel's DOM then belongs to that
+window, so `window`, `document`, `document.activeElement` and `document.body` still point at the
+main window. Use `element.ownerDocument` / `element.ownerDocument.defaultView` for global
+listeners and queries, and don't rely on `instanceof HTMLElement` for elements of that panel.
+`registerShortcut` and `showContextMenu` already work in popouts.
+
+```ts
+const doc = ctx.ui.popupDocument?.(true) ?? document; // window the user is interacting with
+doc.body.appendChild(myPopover);
+```
+
+`popupDocument(sameWindow?)` returns the document a popup should mount into: with `sameWindow`
+true, the window of the latest pointer or keyboard interaction; otherwise the main window.
 
 ### Additional dialogs and pickers
 
@@ -1426,6 +1449,17 @@ const { close } = ctx.ui.showCustomDialog({
 Opens a styled modal dialog using the editor's standard shell (overlay, draggable
 header with title + close button, scrollable body). The `render` callback receives
 the body element — append any DOM content. Returns `{ close }` to close programmatically.
+The body receives initial focus when `render` has not focused a child. To register a dialog-local
+shortcut, pass `{ scope: body }` and dispose it in the cleanup returned by `render`:
+
+```ts
+render(body) {
+  const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
+    // dialog-local action
+  }, { scope: body });
+  return () => shortcut.dispose();
+}
+```
 
 ### Advanced overlay
 
