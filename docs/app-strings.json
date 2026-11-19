@@ -2414,7 +2414,7 @@
   "Wait…": "",
   "Waiting for one character requires the MakerStudio plugin in-game": "",
   "Waits for the Set Move Route commands this event ran, whoever they moved. Without the MakerStudio plugin the game falls back to waiting for every character.": "",
-  "Waits only for the route this event set on that event. Without the MakerStudio plugin the game falls back to waiting for every character.": "",
+  "Waits only for the route this event set on the selected character. Without the MakerStudio plugin the game falls back to waiting for every character.": "",
   "Waits only for this character. Without the MakerStudio plugin the game falls back to waiting for every character.": "",
   "Waits until no character on the map is following a forced move route — the stock behaviour, plugin not required.": "",
   "walk": "",
