@@ -64,8 +64,29 @@ Example entry:
 
 ## License
 
-[GPL-3.0](LICENSE). Covers the registry tooling (schema, scripts, docs, examples). Third-party mods listed in `index.json` retain their own authors' copyright.
+The registry schema, scripts, documentation, and examples are licensed under [GPLv3](LICENSE).
+New Marketplace listings must offer the mod and its corresponding source as free downloads under
+the [Maker Studio Mod Free Distribution License](templates/MOD-LICENSE.txt). Authors can also
+adopt these terms for mods they publish independently. The terms apply to copies of a mod released
+under this license wherever they are shared. Check each existing mod for its published terms.
+The desktop editor's source code is currently private. See
+[Maker Studio's licensing information](https://github.com/Toskan4134/maker-studio#licensing)
+for details on the editor and game integrations.
 
-## Reporting a malicious mod
+## Marketplace listing terms
 
-Open an issue on this repo with the mod id and what you observed. Confirmed malicious mods are removed from `index.json` and stop appearing in the Marketplace.
+By requesting a new listing, the publisher agrees to release the submitted mod under
+the [Maker Studio Mod Free Distribution License](templates/MOD-LICENSE.txt) and to keep
+the package and corresponding source available free of charge while that version is listed.
+This applies to access through the Marketplace and any other channel where the publisher
+distributes the listed version. The publisher must own or have permission to license the
+code and assets included in the submission. The maintainer may reject or remove listings
+that do not meet these terms.
+
+## Reporting a mod
+
+Open an issue here with the mod ID, affected version, and links or screenshots showing
+the issue. For a paid download or missing source, include the download page, checkout
+page, or source link that shows the problem. The maintainer can remove listings that
+violate the listing terms. For unauthorized copies hosted elsewhere, contact the host
+if you own or represent the rights to the copied material.

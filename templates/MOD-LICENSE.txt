@@ -1,0 +1,28 @@
+Maker Studio Mod Free Distribution License, version 1.0
+
+Copyright (c) [year] [copyright holder]
+
+You may use this mod for any purpose, including to create and sell games.
+You may copy, modify, and redistribute the mod, including modified versions,
+subject to the conditions below.
+
+1. If you distribute the mod, provide the distributed version and its
+   corresponding source code free of charge. Source code is the preferred
+   form for modifying that version, including any files and build scripts
+   needed to produce the distributed copy.
+2. You may not sell the mod, charge to access its source code, or make access
+   to either conditional on a payment, purchase, paid subscription, or paid
+   bundle. You may accept voluntary donations that confer no access advantage.
+3. Keep the copyright notices and this license with every copy. Indicate
+   material changes to the mod and make modified versions available under
+   these same terms if you distribute them.
+
+These conditions apply to the mod itself. Games and other works created with
+the mod may be sold under their own terms. A separately downloadable free
+copy does not permit including the mod itself in a paid bundle.
+
+Third-party components identified with their own licenses remain subject to
+those licenses. This license does not grant rights beyond those the copyright
+holder is entitled to grant or limit rights under applicable law.
+
+The mod is provided as is, without warranties to the extent permitted by law.
