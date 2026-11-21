@@ -330,9 +330,11 @@ export interface ToastAction {
 export interface ToastOptions {
   message: string;
   level?: "info" | "warn" | "error";
-  /** Auto-dismiss after N ms; default 3000 (floored at 500). Pass 0 for a
-   *  sticky toast that never auto-dismisses (the user closes it manually). */
+  /** Milliseconds before dismissal. Defaults to 8000, or 0 for errors.
+   *  Zero keeps the toast visible. Positive durations range from 500 to 2147483647 ms. */
   durationMs?: number;
+  /** Show the copy button. Defaults to true. */
+  showCopyButton?: boolean;
   /** Primary action button, rendered rightmost (before the close button). */
   action?: ToastAction;
   /** Secondary action button, rendered left of the primary action. Use for

@@ -21,6 +21,10 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ---
 
+## 1.0.4
+
+- **`ctx.ui.showToast`**. Error toasts now stay visible by default. Explicit `durationMs` values override the default for any level. Added `showCopyButton` to control whether the copy button is visible.
+
 ## 1.0.3
 
 Mods targeting `1.0.2` keep working untouched. Declare `"apiVersion": "1.0.3"` only

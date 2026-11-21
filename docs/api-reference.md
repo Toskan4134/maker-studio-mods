@@ -1183,6 +1183,8 @@ behavior; only the user closes panels.
 null if cancelled. `showContextMenu` displays a native context menu at the
 given screen coordinates with labels, actions, separators, and submenus.
 
+Toasts dismiss after 8 seconds by default. Error toasts stay visible until dismissed. Set `durationMs: 0` for a persistent toast or set a positive duration in milliseconds for any level. Positive values are clamped to 500–2,147,483,647 ms. Invalid values use the default for the level. Moving the pointer off a timed toast restarts its full countdown. Use `showCopyButton: false` to hide the copy button. It is visible by default.
+
 ### Toast action buttons
 
 ```js
