@@ -457,7 +457,16 @@ export interface CancellableResult {
 // Sub-context interfaces
 // ============================================================================
 
+export interface GameLaunchOptions {
+  /** Project-relative executable path. Defaults to the project's Run setting. */
+  entrypoint?: string;
+}
+
+export type GameLaunchStatus = "launched" | "cancelled" | "already_running";
+
 export interface EditorCtx {
+  /** Launch the active project in debug mode using the editor's Run flow. */
+  runGame(options?: GameLaunchOptions): Promise<GameLaunchStatus>;
   /** The running editor's version (e.g. "1.0.0") — same value the updater checks. */
   version(): string;
   activeMapId(): number | null;

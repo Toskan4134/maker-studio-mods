@@ -1598,6 +1598,13 @@ Worked example of both mechanisms side by side: [`script-bridge`](../examples/mo
 
 ---
 
+
+### Run the game
+
+`ctx.editor.runGame({ entrypoint?: string })` resolves to `"launched"`, `"cancelled"`, or `"already_running"`. The last status means an existing instance was found and no new one opened. Pass a path relative to the project. Omitting it uses the **Game executable** setting or automatic detection. This uses the editor's Run flow, including its unsaved-maps prompt. The promise rejects if launching fails, no project is open, or another launch request is in progress.
+
+To open two distinct executables from one action, await the first call before making the second. Both instances run from the project root and may share save files.
+
 ## `simulator`
 
 The Game Simulator interprets a useful subset of RMXP. What it cannot run — Script commands

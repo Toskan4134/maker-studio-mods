@@ -571,3 +571,7 @@ ctx.theme.register({ id, name, base: "dark", dark: { vars: darkVars } });
 Scoped to `:root[data-ms-theme="<id>"]` (and `[data-theme="dark|light"]` for a variant); pick it in
 **View → Theme**. Style regions with
 `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
+
+## Run the game
+
+`await ctx.editor.runGame({ entrypoint: "Game2.exe" })` launches a project-relative executable. Requires Mod API 1.0.4.

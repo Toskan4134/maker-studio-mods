@@ -22,6 +22,12 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ---
 
+## 1.0.4
+
+Añadido `ctx.editor.runGame()` con selección de ejecutable por llamada.
+
+---
+
 ## 1.0.3
 
 Los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
