@@ -32,6 +32,7 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 ### Corregido
 
 - `map.layers()`, `map.addLayer()`, la lectura y escritura de tiles y los cambios de capa usan los mismos índices para las capas extendidas.
+- **`ctx.ui.showToast`**. Los toasts de error quedan fijos por defecto. Un valor explícito de `durationMs` tiene prioridad en cualquier nivel. Se añade `showCopyButton` para controlar si se muestra el botón de copiar.
 
 ## 1.0.3
 

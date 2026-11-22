@@ -1179,6 +1179,8 @@ paneles.
 null si se cancela. `showContextMenu` muestra un menú contextual nativo en las coordenadas de
 pantalla dadas, con etiquetas, acciones, separadores y submenús.
 
+Los toasts se cierran a los 8 segundos por defecto. Los errores siguen visibles hasta que se cierran. Usa `durationMs: 0` para dejar un aviso fijo o un valor positivo en milisegundos para elegir la duración de cualquier nivel. Los valores positivos se limitan al intervalo de 500 a 2 147 483 647 ms. Los valores inválidos usan el plazo por defecto del nivel. Al retirar el puntero de un toast temporal se reinicia la cuenta completa. Usa `showCopyButton: false` para ocultar el botón de copiar. Por defecto está visible.
+
 ### Botones de acción en toasts
 
 ```js

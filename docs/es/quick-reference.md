@@ -32,6 +32,8 @@ Se descubren todos los archivos `.js` del directorio del mod (incluidos subdirec
 
 ## Mostrar un toast
 
+Los toasts se cierran a los 8 segundos por defecto. Los errores siguen visibles hasta que se cierran. Usa `durationMs: 0` para dejar un aviso fijo o un valor positivo en milisegundos para elegir la duración de cualquier nivel. Usa `showCopyButton: false` para ocultar el botón de copiar. Por defecto está visible.
+
 ```js
 ctx.ui.showToast({ message: "Done!", level: "info" });
 // level: "info" | "warn" | "error"

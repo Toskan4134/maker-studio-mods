@@ -33,6 +33,8 @@ Only `./` and `../` relative imports are rewritten. CommonJS mods stay single-fi
 
 ## Show a toast
 
+Toasts dismiss after 8 seconds by default. Error toasts stay visible until dismissed. Set `durationMs: 0` for a persistent toast or set a positive duration in milliseconds for any level. Use `showCopyButton: false` to hide the copy button. It is visible by default.
+
 ```js
 ctx.ui.showToast({ message: "Done!", level: "info" });
 // level: "info" | "warn" | "error"
