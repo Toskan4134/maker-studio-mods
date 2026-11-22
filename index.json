@@ -1,7 +1,7 @@
 {
   "$schema": "./schema/index.schema.json",
   "schemaVersion": 2,
-  "updatedAt": "2026-11-21T06:12:03Z",
+  "updatedAt": "2026-11-22T19:10:26Z",
   "mods": [
     {
       "id": "com.toskan4134.image-to-tileset",
@@ -355,6 +355,34 @@
       "homepage": "https://github.com/dpertierra/msmod-2.5D-inspector",
       "apiVersion": "1.0.0",
       "permissions": [
+        "ui.toasts"
+      ]
+    },
+    {
+      "id": "com.dpertierra.ruby-debugger",
+      "name": "Ruby Debugger (VS Code)",
+      "authors": [
+        {
+          "name": "DPertierra",
+          "url": "https://github.com/dpertierra"
+        }
+      ],
+      "repo": "dpertierra/msmod-ruby-debugger",
+      "version": "1.0.0",
+      "assetName": "com.dpertierra.ruby-debugger-1.0.0.zip",
+      "sha256": "99af67dcdcdddb2f5eb578d6a3282406db3986a31bb2469c7c705633e1b042f5",
+      "description": "Toggles the Ruby debugger on the next launch of a compatible game.",
+      "tags": [
+        "debugger",
+        "ruby",
+        "vscode",
+        "essentials"
+      ],
+      "homepage": "https://github.com/dpertierra/msmod-ruby-debugger",
+      "apiVersion": "1.0.0",
+      "permissions": [
+        "fs.project",
+        "fs.write.project",
         "ui.toasts"
       ]
     }
