@@ -30,6 +30,7 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ### Fixed
 
+- Undo groups and scopes now include tile-data writes and undo changes across all affected layers together. A scope records its history on the map passed to `createUndoScope`.
 - `map.layers()`, `map.addLayer()`, tile reads and writes, and layer changes now agree on extended tile layer indices.
 - **`ctx.ui.showToast`**. Error toasts now stay visible by default. Explicit `durationMs` values override the default for any level. Added `showCopyButton` to control whether the copy button is visible.
 
