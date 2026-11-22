@@ -1091,7 +1091,7 @@ export interface UiCtx {
   /** Register a keyboard shortcut. Key format: "Ctrl+Shift+F". An optional scope
    *  limits it to events whose composed path includes the element; the nearest
    *  matching scope wins. Omitting scope keeps the global behavior. */
-  registerShortcut(key: string, handler: () => void, opts?: { scope?: HTMLElement }): Disposable;
+  registerShortcut(key: string, handler: () => void, opts?: { scope?: HTMLElement; label?: string }): Disposable;
 
   /** Open a native color picker. Returns hex string (e.g. "#ff0000") or null if cancelled. */
   showColorPicker?(opts?: { title?: string; initial?: string }): Promise<string | null>;

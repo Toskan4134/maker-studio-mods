@@ -1385,8 +1385,10 @@ ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
 });
 
 const scope = document.querySelector<HTMLElement>(".my-panel");
-if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope });
+if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope, label: "Find assets" });
 ```
+
+With Mod API 1.0.4, `label` adds the shortcut to contextual Controls. Scoped shortcuts appear on their containing panel or dialog. A custom dialog or contributed panel displays the keyboard button when it has a labeled shortcut. Unscoped labeled shortcuts, including menu shortcuts, appear in the main toolbar’s Controls. Disposing the registration removes its entry.
 
 Register keyboard shortcuts. Key format: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Omitting the third
 argument keeps the existing global behavior. Set `{ scope: HTMLElement }` to make a shortcut apply

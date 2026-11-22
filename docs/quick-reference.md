@@ -234,7 +234,7 @@ ctx.ui.showCustomDialog({
   render(body) {
     const shortcut = ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
       // fires when the dialog body is in the event's composed path
-    }, { scope: body });
+    }, { scope: body, label: "Find assets" });
     return () => shortcut.dispose();
   },
 });

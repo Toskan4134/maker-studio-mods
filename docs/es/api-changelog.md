@@ -22,6 +22,12 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 ---
 
+## 1.0.4
+
+### Añadido
+
+- `ctx.ui.registerShortcut` acepta un `label` opcional para la ayuda contextual. Los atajos con ámbito aparecen en su panel o diálogo, incluidos los diálogos y paneles personalizados. La barra principal lista los atajos globales con nombre y refleja las reasignaciones de los atajos de menú.
+
 ## 1.0.3
 
 Los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara

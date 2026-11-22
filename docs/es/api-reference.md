@@ -1380,8 +1380,10 @@ ctx.ui.registerShortcut("Ctrl+Shift+F", () => {
 });
 
 const scope = document.querySelector<HTMLElement>(".my-panel");
-if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope });
+if (scope) ctx.ui.registerShortcut("Ctrl+Shift+F", () => {}, { scope, label: "Buscar recursos" });
 ```
+
+Desde la API de mods 1.0.4, `label` añade el atajo a la ayuda contextual. Los atajos con ámbito aparecen en su panel o diálogo. Un diálogo o panel personalizado muestra el botón de teclado cuando tiene un atajo con nombre. Los atajos globales con nombre, incluidos los de menú, aparecen en la ayuda de la barra principal. Al liberar el registro, se retira la entrada.
 
 Registra atajos de teclado. Formato de tecla: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Si omites el tercer
 argumento, se conserva el comportamiento global existente. Usa `{ scope: HTMLElement }` para que el
