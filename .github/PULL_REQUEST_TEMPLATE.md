@@ -11,6 +11,10 @@
 ## Checklist
 
 - [ ] I own the mod repo (or have permission to submit on the author's behalf).
+- [ ] For a new listing, I accept the [Marketplace listing terms](https://github.com/Toskan4134/maker-studio-mods#marketplace-listing-terms) on behalf of the mod publisher.
+- [ ] For a new listing, the ZIP includes the Maker Studio Mod Free Distribution License. The ZIP and corresponding source are available free of charge.
+
+**Free source download URL:**
 - [ ] `manifest.json#version` matches the GitHub Release tag (without the `v`) **and** the `version` field in my registry entry.
 - [ ] The release at the pinned tag has an asset whose name matches `assetName`.
 - [ ] `sha256sum <assetName>` on the released zip matches the `sha256` field I added.

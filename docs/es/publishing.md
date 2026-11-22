@@ -194,6 +194,10 @@ Pulsa **Create repository**. Copia la URL del repo (p. ej. `https://github.com/T
 
 ## Paso 6 — Pushea y taguea el release
 
+Si es tu primera publicación en el Marketplace, añade la
+[licencia del mod](../../templates/MOD-LICENSE.txt) como `LICENSE.txt` antes de crear
+el tag. Completa el año y el nombre del titular de los derechos.
+
 ```powershell
 cd C:\Users\TU_USUARIO\Desktop\ms-TU_MOD
 
@@ -226,7 +230,7 @@ Pushear el tag dispara `.github/workflows/publish.yml`. Abre la pestaña **Actio
 
 ```powershell
 $zip = "com.TU_USUARIO.TU_MOD-1.0.0.zip"
-Compress-Archive -Path manifest.json,index.js,README.md -DestinationPath $zip
+Compress-Archive -Path manifest.json,index.js,README.md,LICENSE.txt -DestinationPath $zip
 $sha = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
 Write-Host "sha256: $sha"
 
@@ -483,14 +487,14 @@ Cada release en tu repo debe seguir estas reglas:
 ### Construir el zip en Windows
 
 ```powershell
-Compress-Archive -Path manifest.json,index.js,README.md -DestinationPath com.yourname.mymod-1.2.0.zip
+Compress-Archive -Path manifest.json,index.js,README.md,LICENSE.txt -DestinationPath com.yourname.mymod-1.2.0.zip
 Get-FileHash com.yourname.mymod-1.2.0.zip -Algorithm SHA256
 ```
 
 ### Construir el zip en macOS/Linux
 
 ```bash
-zip -r com.yourname.mymod-1.2.0.zip manifest.json index.js README.md
+zip -r com.yourname.mymod-1.2.0.zip manifest.json index.js README.md LICENSE.txt
 sha256sum com.yourname.mymod-1.2.0.zip
 ```
 
@@ -510,6 +514,13 @@ El registro trae un workflow listo para usar en [`templates/publish.yml`](../../
 El `GITHUB_TOKEN` por defecto basta — no hay secrets extra que configurar. Hay un job de seguimiento opcional comentado en el template que abre automáticamente el PR al registro si configuras un secret `REGISTRY_PAT` — ver el paso 4.
 
 ## 4 — Listarse en el registro
+
+Para una nueva publicación, incluye `LICENSE.txt` en el ZIP y ofrece tanto el ZIP
+como el código fuente de esa versión como descargas gratuitas. Los términos también
+se aplican si distribuyes copias del mod fuera del Marketplace.
+En tu pull request al registro, acepta las
+[condiciones de publicación del Marketplace](../../README.md#marketplace-listing-terms)
+y enlaza la descarga gratuita del código fuente de esa versión.
 
 Publica el primer GitHub Release en tu repo de mod (pushea el tag `v1.0.0`). Si copiaste el Action del template, construye el zip y calcula el SHA-256 automáticamente; si no, ejecuta `sha256sum <modId>-1.0.0.zip` tú mismo.
 
@@ -605,4 +616,4 @@ Los PR pueden rechazarse por:
 - Llamadas de red ocultas a dominios desconocidos.
 - Los permisos del manifest no coinciden con lo que el código usa realmente.
 - Nombre/descripción engañosos.
-- Conflictos de licencia (tu repo de mod debe estar disponible abiertamente; el mod mismo puede ser cualquier licencia OSI).
+- Falta la [licencia del mod](../../templates/MOD-LICENSE.txt), se cobra por la descarga o falta el código fuente de la versión publicada.
