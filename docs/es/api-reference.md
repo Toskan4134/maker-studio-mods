@@ -1587,6 +1587,13 @@ Ejemplo completo de los dos mecanismos juntos: [`script-bridge`](../../examples/
 
 ---
 
+
+### Ejecutar el juego
+
+`ctx.editor.runGame({ entrypoint?: string })` devuelve una promesa con `"launched"`, `"cancelled"` o `"already_running"`. Esta última respuesta indica que ya había una instancia y no se abrió otra. La ruta se pasa relativa al proyecto. Si se omite, se usa el ajuste **Ejecutable del juego** o la detección automática. Se aplica el flujo de Run, incluido el aviso de mapas sin guardar. La promesa se rechaza si falla el lanzamiento, no hay proyecto o hay una solicitud en curso.
+
+Para abrir dos ejecutables distintos desde una acción, espera a que termine la primera llamada antes de iniciar la segunda. Ambas instancias se ejecutan desde la raíz del proyecto y pueden compartir partidas guardadas.
+
 ## `simulator`
 
 El Game Simulator interpreta un subconjunto útil de RMXP. Lo que no puede ejecutar — sobre todo

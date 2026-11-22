@@ -568,3 +568,7 @@ ctx.theme.register({ id, name, base: "dark", dark: { vars: varsOscuro } });
 Acotado a `:root[data-ms-theme="<id>"]` (y `[data-theme="dark|light"]` para una variante); se elige
 en **Ver → Tema**. Estiliza zonas con
 `data-ms-part="menubar|toolbar|statusbar|panel-header|dialog|canvas"`.
+
+## Ejecutar el juego
+
+`await ctx.editor.runGame({ entrypoint: "Game2.exe" })` ejecuta un archivo relativo al proyecto. Requiere Mod API 1.0.4.

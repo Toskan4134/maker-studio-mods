@@ -25,6 +25,7 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 ### Added
 
+- `ctx.editor.runGame()` supports per-call executable selection.
 - `ctx.ui.registerShortcut` accepts an optional `label` for contextual Controls. Scoped shortcuts appear on their surface, including custom dialogs and contributed panels. The main toolbar lists labeled global shortcuts and reflects menu shortcut overrides.
 
 ### Fixed
