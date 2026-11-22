@@ -125,7 +125,9 @@ reversibles como cualquier edición incluida.
 
 `writeTileData` escribe propiedades completas por tile (rotación, flip, opacidad, etc.) en capas
 extendidas. `setSelection` crea o limpia una selección de tiles.
-La gestión de capas opera sobre capas extendidas (3+). `createMap` crea un archivo de mapa nuevo y
+Usa el índice devuelto por `layers()` o `addLayer()` al leer o escribir tiles.
+Los índices de las capas extendidas empiezan en 4 y pueden dejar huecos al borrar capas.
+`createMap` crea un archivo de mapa nuevo y
 lo registra en MapInfos. `deleteMap` elimina el archivo de mapa.
 
 ```ts

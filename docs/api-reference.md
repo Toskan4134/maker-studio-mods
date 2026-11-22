@@ -126,7 +126,9 @@ pipeline — your changes are undoable like any built-in edit.
 
 `writeTileData` writes full per-tile properties (rotation, flip, opacity, etc.)
 on extended layers. `setSelection` creates or clears a tile selection.
-Layer management operates on extended layers (3+). `createMap` creates a new
+Use the index returned by `layers()` or `addLayer()` for tile reads and writes.
+Extended tile layer indices start at 4 and can have gaps after deletion.
+`createMap` creates a new
 map file and registers it in MapInfos. `deleteMap` removes the map file.
 
 ```ts

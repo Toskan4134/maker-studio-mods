@@ -62,7 +62,7 @@ The TypeScript source of truth is the `EventMap` interface in
   or closed in the dock.
 - **`selection.changed`** — fires when the tile selection changes (set,
   clear, modify).
-- **`layer.changed`** — fires when a layer is mutated. `change` is one of:
+- **`layer.changed`** — fires when a layer is mutated. The `layerIndex` of an added tile layer matches `map.layers()`. `change` is one of:
   `"visibility"`, `"opacity"`, `"added"`, `"removed"`, `"active"`.
 - **`viewport.changed`** — fires when the map viewport pans or zooms.
 - **`hover.changed`** — fires when the cursor moves to a different tile. `x`/`y` are `null` when the cursor leaves the map canvas.

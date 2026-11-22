@@ -27,6 +27,10 @@ When a major bump happens, this file gets a section with the new shape and a lin
 
 - `ctx.ui.registerShortcut` accepts an optional `label` for contextual Controls. Scoped shortcuts appear on their surface, including custom dialogs and contributed panels. The main toolbar lists labeled global shortcuts and reflects menu shortcut overrides.
 
+### Fixed
+
+- `map.layers()`, `map.addLayer()`, tile reads and writes, and layer changes now agree on extended tile layer indices.
+
 ## 1.0.3
 
 Mods targeting `1.0.2` keep working untouched. Declare `"apiVersion": "1.0.3"` only

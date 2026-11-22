@@ -529,7 +529,7 @@ export interface MapCtx {
   selection(mapId: number): PublicSelection;
   /** Read full tile data including per-tile properties (rotation, flip, opacity, etc.). */
   readTileData(mapId: number, layer: number, x: number, y: number): PublicTileData | null;
-  /** Write full tile data with per-tile properties. Only effective on extended layers (3+). */
+  /** Write full tile data with per-tile properties on an extended layer from layers(). */
   writeTileData(mapId: number, layer: number, x: number, y: number, data: PublicTileData, label?: string): void;
   /** Get actual tiles within the current selection. Returns null if no selection. */
   selectionTiles(mapId: number): Array<{ x: number; y: number; tileId: number; layerIndex: number }> | null;

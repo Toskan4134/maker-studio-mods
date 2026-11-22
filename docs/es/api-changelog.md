@@ -28,6 +28,10 @@ Cuando hay un salto de versión major, este archivo recibe una sección con la n
 
 - `ctx.ui.registerShortcut` acepta un `label` opcional para la ayuda contextual. Los atajos con ámbito aparecen en su panel o diálogo, incluidos los diálogos y paneles personalizados. La barra principal lista los atajos globales con nombre y refleja las reasignaciones de los atajos de menú.
 
+### Corregido
+
+- `map.layers()`, `map.addLayer()`, la lectura y escritura de tiles y los cambios de capa usan los mismos índices para las capas extendidas.
+
 ## 1.0.3
 
 Los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
