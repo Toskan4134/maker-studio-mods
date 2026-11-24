@@ -112,9 +112,9 @@ O usa una directiva `/// <reference types="..." />` en tu archivo de entrada. La
 
 **Síntoma**: se llamó a `ctx.ui.registerShortcut()` (o al `shortcut` de un elemento de menú) pero pulsar las teclas no hace nada.
 
-1. **Revisa el formato de la tecla** — debe ser `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Distingue mayúsculas, separado por `+`.
+1. Usa una combinación separada por `+`, como `"Ctrl+Shift+F"` o `"Alt+G"`. El sistema normaliza el orden de los modificadores y las mayúsculas.
 2. **Revisa conflictos** — si tu tecla choca con un atajo integrado o de otro mod, abre el diálogo **Keyboard Shortcuts** del editor (la sección "Mods" lista cada atajo de menú de mod) y reasigna el lado que quieras. Evita los integrados comunes como `Ctrl+S` (guardar) y `Ctrl+Z` (deshacer).
-3. **Revisa que el mod esté activo** — los atajos solo funcionan mientras el mod está cargado y activado.
+3. Comprueba que el mod esté activo. Si registraste un ámbito, enfoca un elemento dentro de él. Los campos editables tienen prioridad. En un diálogo personalizado, registra el atajo con ámbito. Consulta [Atajos de teclado](api-reference.md#atajos-de-teclado).
 
 > **Nota**: el `shortcut` de un elemento de menú (`ctx.menu.registerMenuItem({ shortcut })`) ahora dispara `handler` por sí solo y es reasignable en el diálogo Keyboard Shortcuts. **No** necesitas un `ctx.ui.registerShortcut` aparte para él — llamar a ambos doble-registra la tecla.
 

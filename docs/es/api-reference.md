@@ -1394,7 +1394,7 @@ argumento, se conserva el comportamiento global existente. Usa `{ scope: HTMLEle
 atajo solo se aplique cuando el `composedPath()` del evento de teclado contenga ese elemento. Para
 una misma tecla, gana el ámbito coincidente más cercano frente a ámbitos más generales y atajos sin
 ámbito. Los campos editables y las superficies `contenteditable` conservan prioridad para escribir
-y usar sus propios atajos. Los atajos de mod tienen prioridad sobre los atajos incluidos.
+y usar sus propios atajos. Los atajos con ámbito pueden funcionar en diálogos. Los atajos sin ámbito funcionan en el espacio de trabajo. Ambos ceden ante Cerrar diálogo, Reiniciar aplicación y Alternar DevTools. En los ajustes de Atajos de teclado aparecen los atajos de menú de mods. Los registros directos con nombre se muestran en Controles, la ayuda contextual.
 
 ### Paneles en ventanas separadas (popout)
 
@@ -1683,11 +1683,11 @@ keybinds.onChanged(cb: (actionId, oldKey, newKey) => void): Disposable
 
 Consulta y modifica los atajos de teclado del editor. `KeybindInfo` contiene `actionId`, `label`, `category`, `key`, `defaultKey`, e `isCustom`.
 
-`set` devuelve el ID de acción en conflicto si la tecla ya está bindeada, o `null` en caso de éxito. El formato de tecla usa notación normalizada: `"ctrl+s"`, `"ctrl+shift+s"`, `"g"`, etc.
+`set` aplica la asignación y devuelve el ID de la primera acción integrada en conflicto, o `null` si la tecla está libre. Las demás asignaciones conservan su tecla. Usa una combinación como `"ctrl+s"`, `"ctrl+shift+s"` o `"g"`. Control y Comando/Meta se normalizan como `ctrl`.
 
-`onChanged` se suscribe a cualquier cambio de keybind (desde el diálogo de ajustes u otros mods). Devuelve un `Disposable`.
+`onChanged` devuelve una suscripción `Disposable` a `keybind.changed`. La API emite el evento al llamar a `set` sin conflicto y al llamar a `reset`. Los cambios en el diálogo Atajos de teclado se aplican sin emitir este evento.
 
-Los IDs de acción incluidos comprenden: `tool.brush`, `tool.eraser`, `tool.fill`, `tool.rectangle`, `tool.eyedropper`, `tool.select`, `tool.pan`, `view.toggleGrid`, `view.toggleCollision`, `view.toggleDim`, `brush.sizeUp`, `brush.sizeDown`, `brush.rotateCW`, `brush.rotateCCW`, `zoom.in`, `zoom.out`, `layer.select1`–`layer.select9`, `edit.save`, `edit.saveAll`, `edit.saveShadow`, `edit.undo`, `edit.redo`, `edit.selectAll`, `edit.deselect`, `edit.copy`, `edit.paste`, `edit.cut`, `app.runGame`, `dev.toggleDevTools`. Llama a `ctx.keybinds.list()` para el conjunto completo.
+Llama a `ctx.keybinds.list()` para consultar el catálogo completo de acciones integradas y a `ctx.keybinds.get(actionId)` para consultar una acción concreta, como `edit.undo` o `app.closeDialog`. El catálogo cubre todas las pantallas del editor, incluidos los valores de tilesets, los comandos de evento, las rutas visuales, los scripts y los controles del simulador. Los atajos de menú de mods y los controles fijos quedan fuera de esta API.
 
 ### Ciclo de vida
 

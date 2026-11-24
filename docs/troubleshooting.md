@@ -113,9 +113,9 @@ The type definitions live in `src/mod-api/types.ts` in the editor source.
 
 **Symptom**: `ctx.ui.registerShortcut()` (or a menu item's `shortcut`) was called but pressing the keys does nothing.
 
-1. **Check key format** — must be `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Case-sensitive, `+` separated.
+1. Use a `+`-separated combo such as `"Ctrl+Shift+F"` or `"Alt+G"`. Modifier order and letter case are normalized.
 2. **Check for conflicts** — if your key clashes with a built-in or another mod's shortcut, open the editor's **Keyboard Shortcuts** dialog (the "Mods" section lists every mod menu shortcut) and rebind whichever side you want. Avoid the common built-ins like `Ctrl+S` (save) and `Ctrl+Z` (undo).
-3. **Check mod is active** — shortcuts only work while the mod is loaded and enabled.
+3. Make sure the mod is active. If you registered a scope, focus an element inside it. Editable fields take priority. Use a scoped registration for a custom dialog. See [Keyboard shortcuts](api-reference.md#keyboard-shortcuts).
 
 > **Note**: A menu item's `shortcut` (`ctx.menu.registerMenuItem({ shortcut })`) now fires `handler`
 > on its own and is rebindable in the Keyboard Shortcuts dialog. You do **not** need a separate

@@ -1398,8 +1398,7 @@ Register keyboard shortcuts. Key format: `"Ctrl+Shift+F"`, `"Alt+G"`, etc. Omitt
 argument keeps the existing global behavior. Set `{ scope: HTMLElement }` to make a shortcut apply
 only when the keyboard event's `composedPath()` contains that element. Among shortcuts for the same
 key, the closest matching scope wins over broader scopes and unscoped shortcuts. Editable fields
-and contenteditable surfaces keep priority for typing and their own keyboard handling. Mod
-shortcuts take priority over built-in shortcuts.
+and contenteditable surfaces keep priority for typing and their own keyboard handling. Scoped shortcuts can run in dialogs, while unscoped shortcuts run in the workspace. Both yield to the app’s Close Dialog, Reset App, and Toggle DevTools handlers. The Keyboard Shortcuts settings list mod menu shortcuts. Direct registrations are discoverable through contextual Controls when labeled.
 
 ### Panels in popout windows
 
@@ -1699,11 +1698,11 @@ keybinds.onChanged(cb: (actionId, oldKey, newKey) => void): Disposable
 
 Query and modify the editor's keyboard shortcuts. `KeybindInfo` contains `actionId`, `label`, `category`, `key`, `defaultKey`, and `isCustom`.
 
-`set` returns the conflicting action ID if the key is already bound, or `null` on success. The key format uses normalized notation: `"ctrl+s"`, `"ctrl+shift+s"`, `"g"`, etc.
+`set` applies the assignment and returns the first conflicting built-in action ID, or `null` if the key is free. Other assignments keep their keys. Use a combo such as `"ctrl+s"`, `"ctrl+shift+s"`, or `"g"`. Control and Command/Meta normalize to `ctrl`.
 
-`onChanged` subscribes to any keybind change (from the settings dialog or other mods). Returns a `Disposable`.
+`onChanged` returns a `Disposable` subscription to `keybind.changed`. The API emits the event on a conflict-free `set` and on `reset`. Changes through the Keyboard Shortcuts dialog bypass this notification.
 
-Built-in action IDs include: `tool.brush`, `tool.eraser`, `tool.fill`, `tool.rectangle`, `tool.eyedropper`, `tool.select`, `tool.pan`, `view.toggleGrid`, `view.toggleCollision`, `view.toggleDim`, `brush.sizeUp`, `brush.sizeDown`, `brush.rotateCW`, `brush.rotateCCW`, `zoom.in`, `zoom.out`, `layer.select1`–`layer.select9`, `edit.save`, `edit.saveAll`, `edit.saveShadow`, `edit.undo`, `edit.redo`, `edit.selectAll`, `edit.deselect`, `edit.copy`, `edit.paste`, `edit.cut`, `app.runGame`, `dev.toggleDevTools`. Call `ctx.keybinds.list()` for the full set.
+Call `ctx.keybinds.list()` for the full built-in catalog and `ctx.keybinds.get(actionId)` for one action, such as `edit.undo` or `app.closeDialog`. The catalog covers actions across all editor surfaces, including tileset values, event commands, visual routes, scripts, and simulator controls. Mod menu shortcuts and fixed interface controls are outside this API.
 
 ### Lifecycle
 
