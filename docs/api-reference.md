@@ -70,8 +70,8 @@ editor.setViewOptions(opts: Partial<{...}>): void
 ```
 
 Read/write access to editor state. `version()` returns the running editor's
-version (e.g. `"1.0.0"`) — the same value the in-app updater compares against;
-handy for gating features behind a `minStudioVersion`. `setTool` accepts both
+version (e.g. `"1.0.0"`), the same value the in-app updater compares against.
+Use it to check for features added during an existing API version. `setTool` accepts both
 built-in ids (`"brush"`, `"eraser"`, ...) and ids of mod-registered tools.
 
 `setBrushSize` changes the active brush size. `setBrushTileProperties` merges
@@ -84,13 +84,15 @@ editor.requestRedraw(): void
 editor.setStatusBarText(text: string | null): void
 editor.recentMaps(): number[]
 editor.projectName(): string | null
+editor.isLbdsProject?(): Promise<boolean>
 ```
 
 `theme()` is a shorthand for `viewOptions().darkMode ? "dark" : "light"`.
 `animationFrame()` returns a coarse counter (~10fps) useful for overlay animation.
 `requestRedraw()` fires a `mod:requestRedraw` DOM event for canvas re-renders.
 `setStatusBarText(text)` sets a transient mod-owned status message (pass `null` to clear). Auto-cleared on mod unload.
-`recentMaps()` returns open map IDs most-recent first. `projectName()` returns the game folder name.
+`recentMaps()` returns the IDs of open map tabs in tab order. `projectName()` returns the game folder name.
+`isLbdsProject?.()` checks whether the project uses a La Base de Sky integration. It resolves to `false` when no LBDS build is detected. It is available from Maker Studio v1.10.0 (Mod API 1.0.3).
 
 ---
 
@@ -832,11 +834,15 @@ condition) plus its command list:
 ```ts
 page.list?: PublicEventCommand[]
 page.always_on_bottom: boolean   // Maker Studio: draw the event below every character
+page.block?: boolean
+page.condition.tree?: ConditionNode
 ```
 
 `always_on_bottom` is Maker Studio's mirror of RPG Maker XP's `always_on_top`
 and takes effect in-game only with the MakerStudio plugin installed
 (`always_on_top` wins when both are set).
+
+`block: true` makes the event impassable, including when `through` is set. The optional `switch1_negate`, `switch2_negate`, and `self_switch_negate` condition fields test for OFF. An advanced `condition.tree` uses nested AND/OR groups of switch, variable, and self-switch checks. The root is a group. The tree and the basic conditions must all pass. These fields are available from Maker Studio v1.4.0.
 
 `list` is **always present** on pages returned by `getFull()`, and **optional**
 when you pass pages back to `update()` — omit it to leave that page's existing
@@ -1184,6 +1190,8 @@ behavior; only the user closes panels.
 `showInputDialog` shows a text input dialog — returns the entered string or
 null if cancelled. `showContextMenu` displays a native context menu at the
 given screen coordinates with labels, actions, separators, and submenus.
+
+`showUnsavedChangesDialog({ title?, message?, saveLabel?, discardLabel? })` resolves to `"save"`, `"discard"`, or `"cancel"`. The mod handles the decision. With `showCustomDialog({ …, onCloseRequest })`, Escape, the close button, and the backdrop call your handler. Use the returned `close()` to close the dialog when ready. Both options are available from Maker Studio v1.0.0.
 
 Toasts dismiss after 8 seconds by default. Error toasts stay visible until dismissed. Set `durationMs: 0` for a persistent toast or set a positive duration in milliseconds for any level. Positive values are clamped to 500–2,147,483,647 ms. Invalid values use the default for the level. Moving the pointer off a timed toast restarts its full countdown. Use `showCopyButton: false` to hide the copy button. It is visible by default.
 

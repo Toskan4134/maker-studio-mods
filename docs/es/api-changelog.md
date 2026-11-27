@@ -41,6 +41,7 @@ Los mods que apuntan a `1.0.2` siguen funcionando sin tocar nada. Declara
 
 ### Añadido
 
+- **`ctx.editor.isLbdsProject?()`** detecta integraciones de La Base de Sky desde Maker Studio v1.10.0.
 - **`ctx.ui.popupDocument?(sameWindow?)`**: devuelve el documento donde montar un popup. Los paneles
   pueden sacarse a ventanas propias; con `sameWindow` true es la ventana con la que el usuario
   interactúa, si no, la principal. El código de un panel debe usar `element.ownerDocument` en lugar
@@ -269,6 +270,11 @@ La referencia completa de métodos/tipos está en [api-reference.md](api-referen
 [mod-api.d.ts](../mod-api.d.ts); cada evento del editor está documentado en
 [events-reference.md](events-reference.md). Esta entrada enumera las capacidades esenciales,
 no la superficie exhaustiva.
+
+### Versiones del editor con la API de mods 1.0.0
+
+- **Maker Studio v1.0.0** incorporó `ctx.ui.showUnsavedChangesDialog()` y `CustomDialogOptions.onCloseRequest`.
+- **Maker Studio v1.4.0** incorporó `PublicEventPage.block`, la negación de condiciones y el árbol de condiciones avanzadas. Comprueba `ctx.editor.version()` si tu mod también admite versiones anteriores del editor.
 
 ### Características esenciales
 

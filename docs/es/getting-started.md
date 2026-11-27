@@ -69,15 +69,15 @@ Puntos clave:
 - **`ctx.ui.showToast(...)`** muestra una notificación transitoria.
 - **`ctx.log.info(...)`** escribe en el buffer de log del mod (visible en el panel Mod Manager).
 
-## 4. Recarga el editor
+## 4. Detecta el mod
 
-Reabre tu proyecto. Abre **Mods → Mod Manager**. Deberías ver `Hello World` listado como `active`. Haz clic en él para ver los logs.
+Abre el proyecto y pulsa **Reescanear** en **Mods → Gestor de mods → Instalado**. Deberías ver `Hello World` listado como `active`. Haz clic en él para ver los logs.
 
 Ahora carga cualquier mapa — debería aparecer un toast abajo a la derecha.
 
 ## 5. Itera
 
-Mientras desarrollas, haz clic en **Reload** en la fila de tu mod en el Mod Manager para reescanear sus archivos sin reiniciar el editor.
+Mientras desarrollas, haz clic en **Recargar** en la fila de tu mod en el Mod Manager para aplicar los cambios de ese mod sin reiniciar el editor. Usa **Reescanear** si añadiste una carpeta o cambiaste el ID del mod.
 
 ## Próximos pasos
 
@@ -88,6 +88,6 @@ Mientras desarrollas, haz clic en **Reload** en la fila de tu mod en el Mod Mana
 - Registra atajos de teclado vía `ctx.ui.registerShortcut(key, handler)`.
 - Alterna opciones de vista vía `ctx.editor.viewOptions()` / `setViewOptions(...)`.
 - Añade un panel de Dockview vía `ctx.ui.registerPanel({ id, title, render })`.
-- Llama a cualquier comando Tauri directamente vía `window.__TAURI__.core.invoke("command_name", args)` — consulta la sección [Available Tauri Commands](api-reference.md#available-tauri-commands-for-mods).
+- Llama a cualquier comando Tauri directamente vía `window.__TAURI__.core.invoke("command_name", args)` — consulta la sección [Available Tauri Commands](api-reference.md#comandos-de-tauri-disponibles-para-mods).
 - Revisa el [API Changelog](api-changelog.md) para ver las novedades de cada versión.
-- Mira [examples/mods/](https://github.com/Toskan4134/maker-studio-mods/tree/main/examples/mods) para doce mods incluidos con recorridos anotados, entre ellos `custom-theme` — un tema entero del editor en una sola llamada a `ctx.theme.register`.
+- Consulta los [mods de ejemplo](../../examples/mods/) con guías comentadas, entre ellos `custom-theme` — un tema entero del editor en una sola llamada a `ctx.theme.register`.

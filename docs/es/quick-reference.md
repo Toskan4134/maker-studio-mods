@@ -36,6 +36,7 @@ Los toasts se cierran a los 8 segundos por defecto. Los errores siguen visibles 
 
 ```js
 ctx.ui.showToast({ message: "Done!", level: "info" });
+const choice = await ctx.ui.showUnsavedChangesDialog(); // "save", "discard" o "cancel"
 // level: "info" | "warn" | "error"
 
 // Hasta dos botones: secondaryAction se renderiza a la izquierda de action. Al
@@ -429,6 +430,7 @@ const mapId = ctx.editor.activeMapId();
 const layer = ctx.editor.activeLayerIndex();
 const tool = ctx.editor.activeTool();
 const root = ctx.editor.gameRoot();
+const isLbds = (await ctx.editor.isLbdsProject?.()) ?? false; // Maker Studio v1.10.0+
 const maps = ctx.editor.listOpenMaps();
 
 ctx.editor.setTool("brush");

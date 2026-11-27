@@ -19,7 +19,7 @@ Common problems and how to fix them.
 
 4. **Entry file matches `main` field**. If `main` is `"index.js"`, the file `index.js` must exist in the mod folder.
 
-5. **Re-open the project** or click **Reload** in Mod Manager. The editor only scans on project open or manual reload.
+5. **Reopen the project** or use **Rescan** in the **Installed** tab to find a new mod folder or a changed mod ID. Use **Reload** on a row to reload a mod that is already listed.
 
 ## Mod shows "error" status
 

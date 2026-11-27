@@ -454,7 +454,7 @@ The `ctx` argument exposes the full editor API: `editor`, `map`, `tileset`, `eve
 
 Two ways to learn it:
 
-- Read the bundled example mods under [`examples/mods/`](../examples/mods/) — every folder ships with a walkthrough README explaining what API surface it uses.
+- Browse the example mods under [`examples/mods/`](../examples/mods/) — every folder ships with a walkthrough README explaining what API surface it uses.
 - Read the API reference docs in this folder — [api-reference.md](api-reference.md), [events-reference.md](events-reference.md), [quick-reference.md](quick-reference.md). For IDE autocomplete, drop [mod-api.d.ts](mod-api.d.ts) next to your `index.js`.
 
 ### Permissions

@@ -1,6 +1,6 @@
 # Mod API Documentation
 
-Reference docs for everything a mod can do. Mirror of the editor's internal mod-api documentation, published here so authors can browse without needing the editor source.
+Develop JavaScript mods with this public API reference, examples, and TypeScript definitions. Browse the website in [English](https://makerstudio.toskan.es/mods/overview/) or [Español](https://makerstudio.toskan.es/es/mods/overview/).
 
 ## Documents
 
@@ -45,7 +45,7 @@ The file is a single self-contained `.d.ts` with no dependencies. Copy it next t
 
 ## API versioning
 
-`manifest.json#apiVersion` is the **minimum Mod API your mod needs** — the version that introduced the newest method, event, or field it uses. Every API change gets a new version (patch included), and an editor that doesn't provide the version you ask for refuses the mod up front: blocked in the Marketplace, `error` in the Mod Manager. So your mod never half-loads against an editor that lacks what it calls, and targeting an older version stays safe forever. See [api-changelog.md](api-changelog.md) for what each version added.
+`manifest.json#apiVersion` is the **minimum Mod API your mod needs** — the version that introduced the newest method, event, or field it uses. Every API change gets a new version (patch included), and an editor that doesn't provide the version you ask for refuses the mod up front: blocked in the Marketplace, `error` in the Mod Manager. So your mod never half-loads against an editor that lacks what it calls, and earlier API versions within the same major remain compatible. See [api-changelog.md](api-changelog.md) for what each version added.
 
 ## Reporting doc bugs
 

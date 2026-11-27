@@ -19,7 +19,7 @@ Problemas comunes y cómo arreglarlos.
 
 4. **El archivo de entrada coincide con el campo `main`**. Si `main` es `"index.js"`, el archivo `index.js` debe existir en la carpeta del mod.
 
-5. **Reabre el proyecto** o haz clic en **Reload** en el Mod Manager. El editor solo escanea al abrir el proyecto o al recargar manualmente.
+5. **Reabre el proyecto** o usa **Reescanear** en **Instalado** para detectar una carpeta nueva o un ID de mod que haya cambiado. Usa **Recargar** en la fila de un mod que ya figure en la lista.
 
 ## El mod muestra estado "error"
 

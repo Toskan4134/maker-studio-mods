@@ -69,8 +69,8 @@ editor.setViewOptions(opts: Partial<{...}>): void
 ```
 
 Acceso de lectura/escritura al estado del editor. `version()` devuelve la versión del editor en
-ejecución (p. ej. `"1.0.0"`) — el mismo valor contra el que compara el actualizador interno de la
-app; útil para gating de características detrás de un `minStudioVersion`. `setTool` admite tanto ids
+ejecución (p. ej. `"1.0.0"`), el mismo valor que usa el actualizador. Úsalo para comprobar si el
+editor incluye funciones añadidas durante una misma versión de la API. `setTool` admite tanto IDs
 incluidos (`"brush"`, `"eraser"`, ...) como ids de herramientas registradas por mods.
 
 `setBrushSize` cambia el tamaño activo del pincel. `setBrushTileProperties` fusiona props parciales
@@ -83,13 +83,15 @@ editor.requestRedraw(): void
 editor.setStatusBarText(text: string | null): void
 editor.recentMaps(): number[]
 editor.projectName(): string | null
+editor.isLbdsProject?(): Promise<boolean>
 ```
 
 `theme()` es un atajo para `viewOptions().darkMode ? "dark" : "light"`.
 `animationFrame()` devuelve un contador grueso (~10fps) útil para animar overlays.
 `requestRedraw()` dispara un evento DOM `mod:requestRedraw` para re-renderizados del canvas.
 `setStatusBarText(text)` define un mensaje de estado transitorio propiedad del mod (pasa `null` para limpiarlo). Se limpia automáticamente al descargar el mod.
-`recentMaps()` devuelve los IDs de mapas abiertos, los más recientes primero. `projectName()` devuelve el nombre de la carpeta del juego.
+`recentMaps()` devuelve los IDs de los mapas abiertos en el orden de sus pestañas. `projectName()` devuelve el nombre de la carpeta del juego.
+`isLbdsProject?.()` comprueba si el proyecto usa una integración de La Base de Sky. Devuelve `false` si no detecta una variante de LBDS. Está disponible desde Maker Studio v1.10.0 (API de mods 1.0.3).
 
 ---
 
@@ -836,7 +838,14 @@ condición) más su lista de comandos:
 
 ```ts
 page.list?: PublicEventCommand[]
+page.always_on_bottom: boolean
+page.block?: boolean
+page.condition.tree?: ConditionNode
 ```
+
+`always_on_bottom` dibuja el evento debajo de los personajes si la integración está instalada. Si también está activo `always_on_top`, este último tiene prioridad.
+
+`block: true` hace que el evento sea infranqueable, aunque tenga `through`. Los campos de condición opcionales `switch1_negate`, `switch2_negate` y `self_switch_negate` comprueban que el interruptor esté desactivado. `condition.tree` admite grupos AND/OR anidados de interruptores, variables e interruptores locales. La raíz es un grupo. Deben cumplirse tanto el árbol como las condiciones básicas. Estos campos están disponibles desde Maker Studio v1.4.0.
 
 `list` está **siempre presente** en las páginas devueltas por `getFull()`, y es **opcional**
 cuando devuelves páginas a `update()` — ómítelo para dejar intactos los comandos existentes de esa
@@ -1180,6 +1189,8 @@ null si se cancela. `showContextMenu` muestra un menú contextual nativo en las 
 pantalla dadas, con etiquetas, acciones, separadores y submenús.
 
 Los toasts se cierran a los 8 segundos por defecto. Los errores siguen visibles hasta que se cierran. Usa `durationMs: 0` para dejar un aviso fijo o un valor positivo en milisegundos para elegir la duración de cualquier nivel. Los valores positivos se limitan al intervalo de 500 a 2 147 483 647 ms. Los valores inválidos usan el plazo por defecto del nivel. Al retirar el puntero de un toast temporal se reinicia la cuenta completa. Usa `showCopyButton: false` para ocultar el botón de copiar. Por defecto está visible.
+
+`showUnsavedChangesDialog({ title?, message?, saveLabel?, discardLabel? })` devuelve una promesa con `"save"`, `"discard"` o `"cancel"`. El mod aplica la decisión. Con `showCustomDialog({ …, onCloseRequest })`, Escape, el botón de cierre y el fondo llaman a tu función. Usa el `close()` devuelto para cerrar el diálogo cuando corresponda. Ambas opciones están disponibles desde Maker Studio v1.0.0.
 
 ### Botones de acción en toasts
 

@@ -329,7 +329,7 @@ Eso es todo. Has publicado un mod.
 
 ## Publicar actualizaciones
 
-Cada release posterior repite el mismo bucle — subir versión, taguear, pushear y luego un PR al registro que solo cambie `version`, `assetName` y `sha256`. Consulta [Publicar una actualización](#5--publicar-una-actualizacin) para los pasos canónicos.
+Cada release posterior repite el mismo bucle — subir versión, taguear, pushear y luego un PR al registro que solo cambie `version`, `assetName` y `sha256`. Consulta [Publicar una actualización](#5--publicar-una-actualización) para los pasos canónicos.
 
 ---
 
@@ -353,10 +353,10 @@ Referencia de punta a punta para meter tu mod en el Marketplace de Maker Studio.
 
 1. [De un vistazo](#de-un-vistazo)
 2. [El repo de tu mod](#1--el-repo-de-tu-mod)
-3. [Convención de release](#2--convencin-de-release)
+3. [Convención de release](#2--convención-de-release)
 4. [Automatizar releases](#3--automatizar-releases-con-github-actions)
 5. [Envío al registro](#4--listarse-en-el-registro)
-6. [Actualizar](#5--publicar-una-actualizacin)
+6. [Actualizar](#5--publicar-una-actualización)
 7. [Eliminar o renombrar](#6--eliminar-o-renombrar-un-mod)
 8. [Lo que ven los usuarios](#7--lo-que-ven-los-usuarios)
 9. [Errores comunes](#8--errores-comunes)
@@ -455,7 +455,7 @@ El argumento `ctx` expone la API completa del editor: `editor`, `map`, `tileset`
 
 Dos formas de aprenderla:
 
-- Lee los mods de ejemplo incluidos en [`examples/mods/`](../../examples/mods/) — cada carpeta trae un README con recorrido que explica qué superficie de API usa.
+- Consulta los mods de ejemplo en [`examples/mods/`](../../examples/mods/) — cada carpeta trae un README con recorrido que explica qué superficie de API usa.
 - Lee la documentación de referencia de la API en la carpeta `docs/` —[api-reference.md](../api-reference.md), [events-reference.md](../events-reference.md), [quick-reference.md](../quick-reference.md). Para autocompletado en el IDE, coloca [mod-api.d.ts](../mod-api.d.ts) junto a tu `index.js`.
 
 ### Permisos

@@ -1,6 +1,6 @@
 # Documentación de la API de mods
 
-Documentación de referencia de todo lo que puede hacer un mod. Espejo de la documentación interna mod-api del editor, publicada aquí para que los autores puedan navegarla sin necesitar el código fuente del editor.
+Desarrolla mods en JavaScript con esta referencia pública de la API, sus ejemplos y las definiciones de TypeScript.
 
 ## Documentos
 
@@ -45,7 +45,7 @@ El archivo es un único `.d.ts` autocontenido sin dependencias. Cópialo junto a
 
 ## Versionado de la API
 
-`manifest.json#apiVersion` es la **Mod API mínima que tu mod necesita** — la versión que introdujo el método, evento o campo más nuevo que usa. Cada cambio de la API recibe una versión nueva (patch incluido), y un editor que no ofrece la versión que pides rechaza el mod por adelantado: bloqueado en el Marketplace, `error` en el Mod Manager. Así tu mod nunca se carga a medias contra un editor al que le falta lo que llama, y apuntar a una versión antigua sigue siendo seguro para siempre. Consulta [api-changelog](api-changelog.md) para ver qué añadió cada versión.
+`manifest.json#apiVersion` es la **Mod API mínima que tu mod necesita** — la versión que introdujo el método, evento o campo más nuevo que usa. Cada cambio de la API recibe una versión nueva (patch incluido), y un editor que no ofrece la versión que pides rechaza el mod por adelantado: bloqueado en el Marketplace, `error` en el Mod Manager. Así tu mod nunca se carga a medias contra un editor al que le falta lo que llama, y las versiones anteriores del mismo major siguen siendo compatibles. Consulta [api-changelog](api-changelog.md) para ver qué añadió cada versión.
 
 ## Reportar errores de documentación
 

@@ -41,6 +41,7 @@ if you use something from this section.
 
 ### Added
 
+- **`ctx.editor.isLbdsProject?()`** detects La Base de Sky integrations starting in Maker Studio v1.10.0.
 - **`ctx.ui.popupDocument?(sameWindow?)`**: returns the document a popup should mount into. Panels
   can be popped out into their own windows; with `sameWindow` true it is the window the user is
   interacting with, otherwise the main window. Panel code should use `element.ownerDocument` instead
@@ -253,6 +254,11 @@ The full method/type reference lives in [api-reference.md](./api-reference.md) a
 [mod-api.d.ts](./mod-api.d.ts); every editor event is documented in
 [events-reference.md](./events-reference.md). This entry lists the essential
 capabilities, not the exhaustive surface.
+
+### Editor releases using Mod API 1.0.0
+
+- **Maker Studio v1.0.0** introduced `ctx.ui.showUnsavedChangesDialog()` and `CustomDialogOptions.onCloseRequest`.
+- **Maker Studio v1.4.0** added `PublicEventPage.block`, the condition negation fields, and the advanced condition tree. Check `ctx.editor.version()` if your mod also supports earlier editor versions.
 
 ### Essential features
 

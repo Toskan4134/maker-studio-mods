@@ -75,9 +75,9 @@ Key points:
 - **`ctx.log.info(...)`** writes to the mod's log buffer (visible in the
   Mod Manager panel).
 
-## 4. Reload the editor
+## 4. Discover the mod
 
-Re-open your project. Open **Mods → Mod Manager**. You should see
+Open your project, go to **Mods → Mod Manager → Installed**, and click **Rescan**. You should see
 `Hello World` listed as `active`. Click it to view logs.
 
 Now load any map — a toast should appear in the bottom-right.
@@ -85,7 +85,7 @@ Now load any map — a toast should appear in the bottom-right.
 ## 5. Iterate
 
 While developing, click **Reload** on your mod row in the Mod Manager
-to re-scan its files without restarting the editor.
+to apply changes to that mod without restarting the editor. Use **Rescan** to discover a new folder or a changed mod ID.
 
 ## Next steps
 
@@ -98,4 +98,4 @@ to re-scan its files without restarting the editor.
 - Add a Dockview panel via `ctx.ui.registerPanel({ id, title, render })`.
 - Call any Tauri command directly via `window.__TAURI__.core.invoke("command_name", args)` — see the [Available Tauri Commands](./api-reference.md#available-tauri-commands-for-mods) section.
 - Check the [API Changelog](./api-changelog.md) for what's new in each version.
-- Look at [examples/mods/](../examples/mods/) for twelve bundled mods with annotated walkthroughs, including `custom-theme` — a whole editor theme in one `ctx.theme.register` call.
+- Browse the [example mods](../examples/mods/) with annotated walkthroughs, including `custom-theme` — a whole editor theme in one `ctx.theme.register` call.

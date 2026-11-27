@@ -1,6 +1,6 @@
 # Example Mods
 
-Reference mods you can clone, study, and adapt. None of these are listed in `index.json` — they ship with the editor binary itself (under `examples/mods/`). The copies here exist so authors can browse them on GitHub without owning a local editor checkout.
+Reference mods you can clone, study, and adapt. Download or clone the examples from this repository, then copy the ones you want to try into a mods folder.
 
 Each mod folder is self-contained: `manifest.json`, `index.js`, and a `README.md` walkthrough that explains what the code does and the API surface it uses.
 
@@ -41,7 +41,7 @@ examples/mods/
 2. Copy it into one of your mods folders:
    - **Global** (always loaded): `%APPDATA%/maker-studio/Mods/<example-folder>/`
    - **Project** (per-project): `<gameRoot>/Plugins/MakerStudio/003_Editor/Mods/<example-folder>/`
-3. Restart the editor (or use **Mods → Mod Manager → Rescan**).
+3. Open a project and click **Rescan** in **Mods → Mod Manager → Installed**.
 4. The mod appears in the Mod Manager. Open the matching `README.md` inside the folder to learn what it does.
 
 ## How to copy an example as a starting point for your own mod

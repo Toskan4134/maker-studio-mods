@@ -174,6 +174,12 @@ export interface PublicEvent {
   trigger?: number;
 }
 
+export type ConditionNode =
+  | { kind: "switch"; id: number; negate?: boolean }
+  | { kind: "variable"; id: number; value: number; negate?: boolean }
+  | { kind: "self_switch"; ch: string; negate?: boolean }
+  | { kind: "group"; op: "and" | "or"; children: ConditionNode[] };
+
 export interface PublicEventPage {
   trigger: number;
   graphic: { character_name: string; character_hue: number; direction: number; pattern: number; opacity: number };
@@ -184,14 +190,18 @@ export interface PublicEventPage {
   step_anime: boolean;
   direction_fix: boolean;
   through: boolean;
+  /** Maker Studio extension: always impassable, ignoring tile passage bits and Through. */
+  block?: boolean;
   always_on_top: boolean;
   /** Maker Studio extension: draw the event below every character. */
   always_on_bottom: boolean;
   condition: {
-    switch1_valid: boolean; switch1_id: number;
-    switch2_valid: boolean; switch2_id: number;
+    switch1_valid: boolean; switch1_id: number; switch1_negate?: boolean;
+    switch2_valid: boolean; switch2_id: number; switch2_negate?: boolean;
     variable_valid: boolean; variable_id: number; variable_value: number;
-    self_switch_valid: boolean; self_switch_ch: string;
+    self_switch_valid: boolean; self_switch_ch: string; self_switch_negate?: boolean;
+    /** Advanced conditions, combined with the basic conditions by AND. */
+    tree?: ConditionNode;
   };
   /** The page's event commands. Always present on pages returned by
    *  `events.getFull()`; optional when passing pages to `events.update()`
@@ -309,6 +319,13 @@ export interface InputDialogOptions {
   cancelLabel?: string;
 }
 
+export interface UnsavedChangesDialogOptions {
+  title?: string;
+  message?: string;
+  saveLabel?: string;
+  discardLabel?: string;
+}
+
 export interface CustomDialogOptions {
   title: string;
   width?: string;
@@ -318,6 +335,9 @@ export interface CustomDialogOptions {
    *  editor's theme CSS variables (`var(--bg-primary)`, `var(--accent)`, …)
    *  cascade in — use them to match the app. Return a cleanup function or void. */
   render(body: HTMLElement): (() => void) | void;
+  /** Handles a close request from Escape, the close button, or the backdrop.
+   *  Call the returned close handle when the dialog is ready to close. */
+  onCloseRequest?: () => void;
 }
 
 /** A clickable button rendered on a toast. Clicking any action button
@@ -523,10 +543,12 @@ export interface EditorCtx {
   requestRedraw?(): void;
   /** Set a transient status bar message for this mod. Pass null to clear. Auto-cleared on mod unload. */
   setStatusBarText?(text: string | null): void;
-  /** IDs of recently opened maps, most-recent first. */
+  /** IDs of open maps in tab order. */
   recentMaps?(): number[];
-  /** Game title from System.rxdata, or null if not loaded. */
+  /** Name of the project folder, or null when no project is open. */
   projectName?(): string | null;
+  /** Whether the project's detected game integration is a La Base de Sky build. */
+  isLbdsProject?(): Promise<boolean>;
 }
 
 export interface MapCtx {
@@ -1082,6 +1104,8 @@ export interface UiCtx {
   showConfirmDialog(opts: DialogOptions): Promise<boolean>;
   /** Show an input dialog with a text field. Returns the entered string or null if cancelled. */
   showInputDialog(opts: InputDialogOptions): Promise<string | null>;
+  /** Returns the user's decision. The mod handles saving or discarding its changes. */
+  showUnsavedChangesDialog(opts?: UnsavedChangesDialogOptions): Promise<"save" | "discard" | "cancel">;
   /** Show a custom dialog with the editor's standard shell (overlay, draggable header, close button).
    *  The mod provides a render callback that receives the body element. Returns a close function. */
   showCustomDialog(opts: CustomDialogOptions): { close: () => void };
